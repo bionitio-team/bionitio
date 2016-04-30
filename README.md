@@ -5,41 +5,48 @@ by demonstrating best practice using a toy example called `biotool`.
 
 ## Usage
 
-No parameters:
+Help:
 ```
-% biotool
-
+% biotool -h
 Synposis:
   Print fasta stats
 Usage:
-  biotool [options] contigs.fasta
-  biotool [options] < contigs.fasta
+  biotool [options] contigs.fasta [another.fa ...]
 Options:
-  --help get help
-  --version print version and exit
-  --verbose print more stuff about what's happening do i don't get anxious about it not doing anytjhing
-  --min N  min seq size to include
+  --help       Show this help
+  --version    Print version and exit
+  --verbose    Print more stuff about what's happening
+  --minlen N   Minimum length sequence to include in stats (default=0)
 ```
 
 One file parameter:
 ```
-% biotool file1.fa
-file1.fa seqs=132 min=13 max=45211 mean=21333 n50=32321 total=234234 
+% biotool file.fa
+FILENAME  TOTAL  NUMSEQ   MIN  AVG  MAX
+file.fa   5264   3801855  31   722  53540
 ```
 
 Multiple files:
 ```
-% biotool file1.fa
-file1.fa seqs=132 ....
-file2.fa seqs=11 ....
-file3.fa seqs=2342 ...
+% biotool file1.fa file2.fa file3.fa
+FILENAME   TOTAL  NUMSEQ   MIN  AVG  MAX
+file1.fa   5264   3801855  31   722  53540
+file2.fa   5264   3801855  31   722  53540
+file3.fa   5264   3801855  31   722  53540
 ```
-
 
 Standard input:
 ```
-% biotool < file1.fa
-stdin seqs=132 ....
+% biotool < file.fa
+FILENAME  TOTAL  NUMSEQ   MIN  AVG  MAX
+stdin     5264   3801855  31   722  53540
+```
+
+Restricted length:
+```
+% biotool --minlen 1000 file.fa
+FILENAME  TOTAL  NUMSEQ   MIN    AVG  MAX
+file.fa   4711   2801855  1021   929  53540
 ```
 
 ## Languages

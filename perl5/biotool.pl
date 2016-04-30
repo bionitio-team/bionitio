@@ -27,7 +27,7 @@ GetOptions(
   "verbose"  => sub { $verbose++ },
   "minlen=i" => \$minlen,
 )
-or usage();
+or usage(1);
 
 push @ARGV, "/dev/stdin" unless @ARGV;
 

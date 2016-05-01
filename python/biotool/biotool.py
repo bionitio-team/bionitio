@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 
-import sys
 from argparse import ArgumentParser
-from Bio import SeqIO
 from version import program_version 
+from Bio import SeqIO
 
 
 DEFAULT_MIN_LEN = 0

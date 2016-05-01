@@ -1,6 +1,5 @@
 module Main where
 
-import Lib
 import Bio.Sequence.Fasta as Fasta
 import Options.Applicative 
    ( Parser, option, auto, long, metavar, help, value

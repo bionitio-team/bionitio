@@ -63,7 +63,7 @@ sub process_file {
   while (my $seq = $in->next_seq) {
     my $L = $seq->length;
     next if $L < $minlen;
-    print STDERR join("\t", $fname, $seq->id, $seq->length),"\n" if $verbose >= 2;
+    print STDERR tsv( [ $fname, $seq->id, $seq->length ] ) if $verbose >= 2;
     $n++;
     $bp += $seq->length;
     $min = $L if $L < $min;
@@ -71,7 +71,7 @@ sub process_file {
   }
   
   return if $n <= 0;
-  # FILENAME TOTAL NUMSEQ MIN AVG MAX)
+  # FILENAME TOTAL NUMSEQ MIN AVG MAX
   return [ $fname, $n, $bp, $min, int($bp/$n), $max ];
 }
 

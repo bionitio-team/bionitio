@@ -4,6 +4,7 @@
  -     ignore sequences with len < minlen
 -}
 
+{-# LANGUAGE RecordWildCards #-}
 module Main where
 
 import Bio.Sequence.Fasta
@@ -50,30 +51,28 @@ header :: String
 header = "FILENAME\tTOTAL\tNUMSEQ\tMIN\tAVG\tMAX"
 
 processFastaFiles :: [FilePath] -> IO ()
-processFastaFiles files = do
-    putStrLn header
-    mapM_ processFile files
+processFastaFiles files = putStrLn header >> mapM_ processFile files
 
 processFile :: FilePath -> IO ()
 processFile filePath = do
     sequences <- readFasta filePath
     case sequences of
         [] -> return ()
-        (s:ss) -> do
-            let stats = foldl' updateStats (initStats s) ss 
+        (firstSeq:restSeqs) -> do
+            let stats = foldl' updateStats (initStats firstSeq) restSeqs
             putStrLn $ prettyOutput filePath stats 
 
 prettyOutput :: FilePath -> Stats -> String
-prettyOutput filePath stats =
+prettyOutput filePath stats@(Stats {..}) =
     concat $ intersperse "\t" (filePath : numbers)
     where
-    average = round ((fromIntegral $ numBases stats) / 
-                     (fromIntegral $ numSequences stats))
-    numbers = map show [ numSequences stats
-                       , numBases stats
-                       , minSequenceLength stats
+    average = round (fromIntegral numBases / 
+                     fromIntegral numSequences)
+    numbers = map show [ numSequences
+                       , numBases
+                       , minSequenceLength
                        , average
-                       , maxSequenceLength stats ]
+                       , maxSequenceLength]
 
 data Stats =
     Stats 
@@ -86,29 +85,25 @@ data Stats =
 
 initStats :: Sequence -> Stats
 initStats sequence = Stats
-    { numSequences = 0
-    , numBases = 0
-    , minSequenceLength = fromIntegral thisLength
-    , maxSequenceLength = fromIntegral thisLength
+    { numSequences = 1
+    , numBases = thisLength 
+    , minSequenceLength = thisLength
+    , maxSequenceLength = thisLength
     }
     where
-    thisLength = seqlength sequence
+    thisLength = fromIntegral $ seqlength sequence
 
 updateStats :: Stats -> Sequence -> Stats
-updateStats oldStats sequence =
-    Stats { numSequences = newNumSequences
-          , numBases = newNumBases
-          , minSequenceLength = newMinSequenceLength
-          , maxSequenceLength = newMaxSequenceLength }
+updateStats (Stats {..}) sequence =
+    Stats newNumSequences newNumBases
+          newMinSequenceLength newMaxSequenceLength 
     where
+    newNumSequences = numSequences + 1
     thisLength = fromIntegral $ seqlength sequence
-    newNumSequences = (numSequences oldStats) + 1
-    newNumBases = (numBases oldStats) + thisLength 
-    oldMin = minSequenceLength oldStats 
-    oldMax = minSequenceLength oldStats 
+    newNumBases = numBases + thisLength 
     newMinSequenceLength
-        | thisLength < oldMin = thisLength
-        | otherwise = oldMin
+        | thisLength < minSequenceLength = thisLength
+        | otherwise = minSequenceLength 
     newMaxSequenceLength
-        | thisLength > oldMax = thisLength
-        | otherwise = oldMax 
+        | thisLength > maxSequenceLength = thisLength
+        | otherwise = maxSequenceLength 

@@ -1,11 +1,19 @@
+{-
+ - TODO: 
+ -     handle fasta file from stdin
+ -     ignore sequences with len < minlen
+-}
+
 module Main where
 
-import Bio.Sequence.Fasta as Fasta
+import Bio.Sequence.Fasta
+   ( readFasta, seqlength, Sequence )
 import Options.Applicative 
    ( Parser, option, auto, long, metavar, help, value
-   , some, argument, str, info, execParser, switch, fullDesc, (<*>), (<$>) , (<>)
-   , helper, progDesc )
-import Data.List (foldl', intersperse)
+   , some, argument, str, info, execParser, switch
+   , fullDesc, (<*>), (<$>), (<>), helper, progDesc )
+import Data.List
+    ( foldl', intersperse )
 
 defaultMinLen :: Integer
 defaultMinLen = 0
@@ -31,11 +39,12 @@ defineOptions = Options
 
 main :: IO ()
 main = do
-    options <- execParser opts
+    options <- execParser optionParser 
     processFastaFiles $ fastaFiles options
     where
-    opts = info (helper <*> defineOptions)
-                (fullDesc <> progDesc "Print fasta stats")
+    optionParser =
+        info (helper <*> defineOptions)
+             (fullDesc <> progDesc "Print fasta stats")
 
 header :: String
 header = "FILENAME\tTOTAL\tNUMSEQ\tMIN\tAVG\tMAX"
@@ -48,36 +57,43 @@ processFastaFiles files = do
 processFile :: FilePath -> IO ()
 processFile filePath = do
     sequences <- readFasta filePath
-    let stats = foldl' updateStats initStats sequences
-        -- XXX check the output of average. Also make sure denominator is not zero
-        average = round ((fromIntegral $ numBases stats) / (fromIntegral $ numSequences stats))
-        result = concat $ intersperse "\t"
-                [ filePath, show (numSequences stats), show (numBases stats)
-                , pretty (minSequenceLength stats), show average, pretty (maxSequenceLength stats) ]
-    putStrLn result 
+    case sequences of
+        [] -> return ()
+        (s:ss) -> do
+            let stats = foldl' updateStats (initStats s) ss 
+            putStrLn $ prettyOutput filePath stats 
 
-pretty :: Show a => Maybe a -> String
-pretty Nothing = "N/A"
-pretty (Just x) = show x
+prettyOutput :: FilePath -> Stats -> String
+prettyOutput filePath stats =
+    concat $ intersperse "\t" (filePath : numbers)
+    where
+    average = round ((fromIntegral $ numBases stats) / 
+                     (fromIntegral $ numSequences stats))
+    numbers = map show [ numSequences stats
+                       , numBases stats
+                       , minSequenceLength stats
+                       , average
+                       , maxSequenceLength stats ]
 
 data Stats =
     Stats 
     { numSequences :: !Integer
     , numBases :: !Integer
-    , minSequenceLength :: !(Maybe Integer)
-    , maxSequenceLength :: !(Maybe Integer)
+    , minSequenceLength :: !Integer
+    , maxSequenceLength :: !Integer
     }
     deriving (Eq, Ord, Show)
 
-initStats :: Stats
-initStats = Stats
+initStats :: Sequence -> Stats
+initStats sequence = Stats
     { numSequences = 0
     , numBases = 0
-    , minSequenceLength = Nothing
-    , maxSequenceLength = Nothing
+    , minSequenceLength = fromIntegral thisLength
+    , maxSequenceLength = fromIntegral thisLength
     }
+    where
+    thisLength = seqlength sequence
 
--- XXX this needs cleaning up
 updateStats :: Stats -> Sequence -> Stats
 updateStats oldStats sequence =
     Stats { numSequences = newNumSequences
@@ -88,15 +104,11 @@ updateStats oldStats sequence =
     thisLength = fromIntegral $ seqlength sequence
     newNumSequences = (numSequences oldStats) + 1
     newNumBases = (numBases oldStats) + thisLength 
-    newMinSequenceLength =
-        case minSequenceLength oldStats of
-            Nothing -> Just thisLength
-            orig@(Just oldMin)
-                | thisLength < oldMin -> Just thisLength
-                | otherwise -> orig
-    newMaxSequenceLength =
-        case maxSequenceLength oldStats of
-            Nothing -> Just thisLength
-            orig@(Just oldMax)
-                | thisLength > oldMax -> Just thisLength
-                | otherwise -> orig
+    oldMin = minSequenceLength oldStats 
+    oldMax = minSequenceLength oldStats 
+    newMinSequenceLength
+        | thisLength < oldMin = thisLength
+        | otherwise = oldMin
+    newMaxSequenceLength
+        | thisLength > oldMax = thisLength
+        | otherwise = oldMax 

@@ -8,7 +8,6 @@ import Options.Applicative
    , helper, progDesc )
 import Data.List (foldl', intersperse)
 
-
 defaultMinLen :: Integer
 defaultMinLen = 0
 
@@ -51,6 +50,7 @@ processFile :: FilePath -> IO ()
 processFile filePath = do
     sequences <- readFasta filePath
     let stats = foldl' updateStats initStats sequences
+        -- XXX check the output of average. Also make sure denominator is not zero
         average = round ((fromIntegral $ numBases stats) / (fromIntegral $ numSequences stats))
         result = concat $ intersperse "\t"
                 [ filePath, show (numSequences stats), show (numBases stats)
@@ -78,6 +78,7 @@ initStats = Stats
     , maxSequenceLength = Nothing
     }
 
+-- XXX this needs cleaning up
 updateStats :: Stats -> Sequence -> Stats
 updateStats oldStats sequence =
     Stats { numSequences = newNumSequences
@@ -100,40 +101,3 @@ updateStats oldStats sequence =
             orig@(Just oldMax)
                 | thisLength > oldMax -> Just thisLength
                 | otherwise -> orig
-
-
-{-
-biotool -h
-Synposis:
-  Print fasta stats
-Usage:
-  biotool [options] contigs.fasta [another.fa ...]
-Options:
-  --help       Show this help
-  --version    Print version and exit
-  --verbose    Print more stuff about what's happening
-  --minlen N   Minimum length sequence to include in stats (default=0)
-
-One file parameter:
-
-% biotool file.fa
-FILENAME  TOTAL  NUMSEQ   MIN  AVG  MAX
-file.fa   5264   3801855  31   722  53540
-Multiple files:
-
-% biotool file1.fa file2.fa file3.fa
-FILENAME   TOTAL  NUMSEQ   MIN  AVG  MAX
-file1.fa   5264   3801855  31   722  53540
-file2.fa   5264   3801855  31   722  53540
-file3.fa   5264   3801855  31   722  53540
-Standard input:
-
-% biotool < file.fa
-FILENAME  TOTAL  NUMSEQ   MIN  AVG  MAX
-stdin     5264   3801855  31   722  53540
-Restricted length:
-
-% biotool --minlen 1000 file.fa
-FILENAME  TOTAL  NUMSEQ   MIN    AVG  MAX
-file.fa   4711   2801855  1021   929  53540
--}

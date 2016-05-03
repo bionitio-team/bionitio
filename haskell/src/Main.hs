@@ -1,17 +1,17 @@
 {-
  - TODO: 
  -    handle fasta file from stdin
- -    ignore sequences with len < minlenThreshold
 -}
 
 {-# LANGUAGE RecordWildCards #-}
 module Main where
 
 import Bio.Sequence.Fasta
-   ( readFasta, seqlength, Sequence )
+   ( readFasta, hReadFasta, seqlength, Sequence )
+import System.IO ( stdin )
 import Options.Applicative 
    ( Parser, option, auto, long, metavar, help, value
-   , some, argument, str, info, execParser, switch
+   , many, argument, str, info, execParser, switch
    , fullDesc, (<*>), (<$>), (<>), helper, progDesc )
 import Data.List
    ( foldl', intersperse )
@@ -36,7 +36,7 @@ defineOptions = Options
             <> value defaultMinLengthThreshold)
    <*> switch (long "version" <> help "Print version and exit")
    <*> switch (long "verbose" <> help "Print more stuff about what's happening")
-   <*> some (argument str (metavar "FASTA_FILE [FASTA_FILE ...]"))
+   <*> many (argument str (metavar "[FASTA_FILE ...]"))
 
 main :: IO ()
 main = do
@@ -51,14 +51,19 @@ header :: String
 header = "FILENAME\tTOTAL\tNUMSEQ\tMIN\tAVG\tMAX"
 
 processFastaFiles :: Options -> [FilePath] -> IO ()
-processFastaFiles options files =
+processFastaFiles options [] = do
+   sequences <- hReadFasta stdin
+   putStrLn $ prettyOutput "<stdin>" $ sequenceStats options sequences 
+processFastaFiles options files@(_:_) =
    putStrLn header >> mapM_ (processFile options) files
 
 processFile :: Options -> FilePath -> IO ()
 processFile options@(Options {..}) filePath = do
    sequences <- readFasta filePath
-   let stats = foldl' (updateStats options) initStats sequences 
-   putStrLn $ prettyOutput filePath stats 
+   putStrLn $ prettyOutput filePath $ sequenceStats options sequences 
+
+sequenceStats :: Options -> [Sequence] -> Stats
+sequenceStats options = foldl' (updateStats options) initStats
 
 prettyOutput :: FilePath -> Stats -> String
 prettyOutput filePath stats@(Stats {..}) =

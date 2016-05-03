@@ -1,8 +1,3 @@
-{-
- - TODO: 
- -    handle fasta file from stdin
--}
-
 {-# LANGUAGE RecordWildCards #-}
 module Main where
 

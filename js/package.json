@@ -1,0 +1,25 @@
+{
+  "name": "biotool",
+  "version": "1.0.0",
+  "description": "Print fasta stats",
+  "main": "biotool.js",
+  "dependencies": {
+    "through2": "~0.6.0",
+    "bionode-fasta": "^0.5.4",
+    "commander": "^2.9.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/biotool-paper/biotool.git"
+  },
+  "author": "David R. Powell",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/biotool-paper/biotool/issues"
+  },
+  "homepage": "https://github.com/biotool-paper/biotool#readme"
+}

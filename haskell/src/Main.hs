@@ -48,7 +48,8 @@ header = "FILENAME\tTOTAL\tNUMSEQ\tMIN\tAVG\tMAX"
 processFastaFiles :: Options -> [FilePath] -> IO ()
 processFastaFiles options [] = do
    sequences <- hReadFasta stdin
-   putStrLn $ prettyOutput "<stdin>" $ sequenceStats options sequences 
+   putStrLn header
+   putStrLn $ prettyOutput "stdin" $ sequenceStats options sequences 
 processFastaFiles options files@(_:_) =
    putStrLn header >> mapM_ (processFile options) files
 
@@ -57,63 +58,60 @@ processFile options@(Options {..}) filePath = do
    sequences <- readFasta filePath
    putStrLn $ prettyOutput filePath $ sequenceStats options sequences 
 
-sequenceStats :: Options -> [Sequence] -> Stats
-sequenceStats options = foldl' (updateStats options) initStats
+sequenceStats :: Options -> [Sequence] -> Maybe Stats
+sequenceStats (Options {..}) sequences =
+   case filteredLengths of
+      [] -> Nothing
+      first:rest -> 
+        Just $ foldl' updateStats (initStats first) rest 
+   where
+   filteredLengths =
+      filter (\x -> sequenceLengthInteger x >= minLengthThreshold) sequences
 
-prettyOutput :: FilePath -> Stats -> String
-prettyOutput filePath stats@(Stats {..}) =
+prettyOutput :: FilePath -> Maybe Stats -> String
+prettyOutput filePath Nothing =
+   filePath ++ "\t0\t0\t-\t-\t-"
+prettyOutput filePath (Just stats@(Stats {..})) =
    concat $ intersperse "\t" (filePath : numbers)
    where
    average
       | numSequences > 0 =
-           Just $ round (fromIntegral numBases / fromIntegral numSequences)
-      | otherwise = Nothing
-   numbers = [ show numSequences
-             , show numBases
-             , prettyMaybe minSequenceLength
-             , prettyMaybe average
-             , prettyMaybe maxSequenceLength ]
-   prettyMaybe :: Show a => Maybe a -> String
-   prettyMaybe Nothing = "-"
-   prettyMaybe (Just x) = show x
+           show $ floor (fromIntegral numBases / fromIntegral numSequences)
+      | otherwise = "-"
+   numbers = [ show numBases, show numSequences, show minSequenceLength
+             , average, show maxSequenceLength ]
 
 data Stats =
    Stats 
    { numSequences :: !Integer
    , numBases :: !Integer
-   , minSequenceLength :: !(Maybe Integer)
-   , maxSequenceLength :: !(Maybe Integer)
+   , minSequenceLength :: !Integer
+   , maxSequenceLength :: !Integer
    }
    deriving (Eq, Ord, Show)
 
-initStats :: Stats
-initStats = Stats
-   { numSequences = 0
-   , numBases = 0 
-   , minSequenceLength = Nothing 
-   , maxSequenceLength = Nothing 
+initStats :: Sequence -> Stats
+initStats sequence = Stats
+   { numSequences = 1
+   , numBases = thisLength 
+   , minSequenceLength = thisLength 
+   , maxSequenceLength = thisLength 
    }
+   where
+   thisLength = sequenceLengthInteger sequence
 
-sequenceLengthInteger :: Sequence -> Integer
-sequenceLengthInteger = fromIntegral . seqlength
-
-updateStats :: Options -> Stats -> Sequence -> Stats
-updateStats (Options {..}) oldStats@(Stats {..}) sequence
-   | thisLength < minLengthThreshold = oldStats
-   | otherwise =
-        Stats newNumSequences newNumBases
-              newMinSequenceLength newMaxSequenceLength 
+updateStats :: Stats -> Sequence -> Stats
+updateStats oldStats@(Stats {..}) sequence =
+   Stats newNumSequences newNumBases
+         newMinSequenceLength newMaxSequenceLength 
    where
    newNumSequences = numSequences + 1
    thisLength = sequenceLengthInteger sequence
    newNumBases = numBases + thisLength 
    newMinSequenceLength
-      | Just oldMinLength <- minSequenceLength =
-           if thisLength < oldMinLength
-              then Just thisLength else minSequenceLength
-      | otherwise = Just thisLength 
+      = min thisLength minSequenceLength
    newMaxSequenceLength
-      | Just oldMaxLength <- maxSequenceLength =
-           if thisLength > oldMaxLength
-              then Just thisLength else maxSequenceLength
-      | otherwise = Just thisLength 
+      = max thisLength maxSequenceLength 
+
+sequenceLengthInteger :: Sequence -> Integer
+sequenceLengthInteger = fromIntegral . seqlength

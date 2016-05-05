@@ -1,3 +1,5 @@
+[![travis](https://travis-ci.org/biotool-paper/biotool.svg?branch=master)](https://travis-ci.org/biotool-paper/biotool)
+
 # biotool
 
 This project will provide a template for implementing command line bioinformatics tools in various languages, 

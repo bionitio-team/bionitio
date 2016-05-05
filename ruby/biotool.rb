@@ -3,6 +3,7 @@
 require 'rubygems'
 require 'bundler/setup'
 
+require 'optparse'
 require 'bio'
 
 opts = { :minlen => 0,
@@ -48,10 +49,11 @@ class FastaSummary
     def process(seq)
         return if seq.length < @opts[:minlen]
         $stderr.puts [@file, seq.entry_id, seq.length ].join("\t") if @opts[:verbose] >= 2
+        @min = @max = seq.length if @n==0
         @n += 1
         @bp += seq.length
-        @min = [@min, seq.length]
-        @max = [@max, seq.length]
+        @min = [@min, seq.length].min
+        @max = [@max, seq.length].max
     end
 end
 

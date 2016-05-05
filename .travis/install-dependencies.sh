@@ -5,6 +5,9 @@
 # Install node modules
 (cd js ; npm install)
 
+############
+# Ruby
+(cd ruby; bundle install)
 
 ############
 # Haskell
@@ -13,5 +16,6 @@ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 575159689
 echo 'deb http://download.fpcomplete.com/ubuntu precise main'|sudo tee /etc/apt/sources.list.d/fpco.list
 sudo apt-get update && sudo apt-get install stack -y
 (cd haskell; stack setup ; stack install)
+
 
 

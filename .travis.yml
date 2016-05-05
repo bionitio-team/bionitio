@@ -1,0 +1,16 @@
+
+sudo: true
+
+# Choose a lightweight base image
+language: c
+
+addons:
+  apt:
+    packages:
+      npm
+
+
+before_install:
+  - ./.travis/install-dependencies.sh
+
+script: ./.travis/test-all.sh

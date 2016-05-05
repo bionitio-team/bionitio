@@ -1,4 +1,4 @@
-[![travis](https://travis-ci.org/drpowell/biotool.svg?branch=master)](https://travis-ci.org/drpowell/biotool)
+[![travis](https://travis-ci.org/biotool-paper/biotool.svg?branch=master)](https://travis-ci.org/biotool-paper/biotool)
 
 # biotool
 

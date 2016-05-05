@@ -33,14 +33,14 @@ function process_fasta(file) {
 
     function next_seq(data, enc, next) {
         var l = data.seq.length
-        if (l<opts.minlen)
-            return
-        if (opts.verbose>=2)
-            console.error([file, data.id, l].join("\t"))
-        min = n==0 ? l : Math.min(l,min)
-        max = n==0 ? l : Math.max(l,max)
-        n += 1
-        bp += l
+        if (l>=opts.minlen) {
+            if (opts.verbose>=2)
+                console.error([file, data.id, l].join("\t"))
+            min = n==0 ? l : Math.min(l,min)
+            max = n==0 ? l : Math.max(l,max)
+            n += 1
+            bp += l
+        }
         next()
     }
 

@@ -27,31 +27,27 @@ def parseArgs():
 
 
 class FastaStats(object):
-    def __init__(self, fasta_file, minlen):
+    def __init__(self, fasta_file, minlen_threshold):
         if fasta_file is stdin:
             self.filename = "stdin"
         else:
             self.filename = fasta_file 
 
-        num_seqs = num_bases = 0
-        min_len = max_len = None
+        self.num_seqs = self.num_bases = 0
+        self.min_len = self.max_len = None
         for seq in SeqIO.parse(fasta_file, "fasta"):
             this_len = len(seq)
-            if this_len >= minlen:
-                if num_seqs == 0:
-                    min_len = max_len = this_len
+            if this_len >= minlen_threshold:
+                if self.num_seqs == 0:
+                    self.min_len = self.max_len = this_len
                 else:
-                    min_len = min(this_len, min_len)
-                    max_len = max(this_len, max_len) 
-                num_seqs += 1
-                num_bases += this_len 
+                    self.min_len = min(this_len, self.min_len)
+                    self.max_len = max(this_len, self.max_len) 
+                self.num_seqs += 1
+                self.num_bases += this_len 
 
-        self.num_seqs = num_seqs
-        self.num_bases = num_bases
-        self.min_len = min_len
-        self.max_len = max_len
-        if num_seqs > 0:
-            self.average = int(floor(float(num_bases) / num_seqs))
+        if self.num_seqs > 0:
+            self.average = int(floor(float(self.num_bases) / self.num_seqs))
         else:
             self.average = None
 
@@ -64,8 +60,7 @@ class FastaStats(object):
             average = str(self.average)
             max_len = str(self.max_len)
         else:
-            num_seqs = "0"
-            num_bases = "0"
+            num_seqs = num_bases = "0"
             min_len = average = max_len = "-"
         return "\t".join([self.filename, num_seqs, num_bases, min_len, average,
            max_len])

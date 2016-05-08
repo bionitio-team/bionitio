@@ -1,8 +1,9 @@
-#!/usr/bin/env python
-
 from argparse import ArgumentParser
 from version import program_version 
 from Bio import SeqIO
+from math import floor
+from collections import namedtuple
+from sys import stdin
 
 
 DEFAULT_MIN_LEN = 0
@@ -20,35 +21,68 @@ def parseArgs():
         '--verbose', action='store_true', default=DEFAULT_VERBOSE,
         help="Print more stuff about what's happening")
     parser.add_argument(
-        'fasta_files', nargs='+', metavar='FASTA_FILE', type=str,
+        'fasta_files', nargs='*', metavar='FASTA_FILE', type=str,
         help='Input FASTA files')
     return parser.parse_args()
 
 
-def process_files(options):
-    for filepath in options.fasta_files:
-        min_len = max_len = None
-        num_sequences = num_bases = 0
-        for sequence in SeqIO.parse(filepath, "fasta"):
-            num_sequences += 1
-            this_len = len(sequence)
-            num_bases += this_len 
-            if min_len is None or this_len < min_len:
-                min_len = this_len
-            if max_len is None or this_len > max_len:
-                max_len = this_len
-        if num_sequences > 0:
-            average = int(round(float(num_bases) / num_sequences))
-            print("{}\t{}\t{}\t{}\t{}\t{}".format(filepath, num_sequences, num_bases,
-                min_len, average, max_len))
+class FastaStats(object):
+    def __init__(self, fasta_file, minlen):
+        if fasta_file is stdin:
+            self.filename = "stdin"
         else:
-            print("{}\t{}\t{}\t-\t-\t-".format(filepath, num_sequences, num_bases))
+            self.filename = fasta_file 
 
- 
-def main():
-    options = parseArgs()
+        num_seqs = num_bases = 0
+        min_len = max_len = None
+        for seq in SeqIO.parse(fasta_file, "fasta"):
+            this_len = len(seq)
+            if this_len >= minlen:
+                if num_seqs == 0:
+                    min_len = max_len = this_len
+                else:
+                    min_len = min(this_len, min_len)
+                    max_len = max(this_len, max_len) 
+                num_seqs += 1
+                num_bases += this_len 
+
+        self.num_seqs = num_seqs
+        self.num_bases = num_bases
+        self.min_len = min_len
+        self.max_len = max_len
+        if num_seqs > 0:
+            self.average = int(floor(float(num_bases) / num_seqs))
+        else:
+            self.average = None
+
+
+    def __str__(self):
+        if self.num_seqs > 0:
+            num_seqs = str(self.num_seqs)
+            num_bases = str(self.num_bases)
+            min_len = str(self.min_len)
+            average = str(self.average)
+            max_len = str(self.max_len)
+        else:
+            num_seqs = "0"
+            num_bases = "0"
+            min_len = average = max_len = "-"
+        return "\t".join([self.filename, num_seqs, num_bases, min_len, average,
+           max_len])
+
+
+def process_files(options):
     print(HEADER)
-    process_files(options)
+    if options.fasta_files:
+        files = options.fasta_files
+    else:
+        files = [stdin]
+    for fasta_file in files:
+        print(FastaStats(fasta_file, options.minlen))
+
+
+def main():
+    process_files(parseArgs())
 
 
 if __name__ == '__main__':

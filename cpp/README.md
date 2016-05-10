@@ -1,4 +1,4 @@
-## How to build on OSX
+## How to build
 
 Assuming the full path to `biotool/cpp` is assigned to the shell variable `BIOTOOL_CPP_PATH`.
 

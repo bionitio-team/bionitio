@@ -24,14 +24,14 @@ Options:
 One file parameter:
 ```
 % biotool file.fa
-FILENAME  TOTAL  NUMSEQ   MIN  AVG  MAX
+FILENAME  NUMSEQ TOTAL    MIN  AVG  MAX
 file.fa   5264   3801855  31   722  53540
 ```
 
 Multiple files:
 ```
 % biotool file1.fa file2.fa file3.fa
-FILENAME   TOTAL  NUMSEQ   MIN  AVG  MAX
+FILENAME   NUMSEQ TOTAL    MIN  AVG  MAX
 file1.fa   5264   3801855  31   722  53540
 file2.fa   5264   3801855  31   722  53540
 file3.fa   5264   3801855  31   722  53540
@@ -40,25 +40,29 @@ file3.fa   5264   3801855  31   722  53540
 Standard input:
 ```
 % biotool < file.fa
-FILENAME  TOTAL  NUMSEQ   MIN  AVG  MAX
+FILENAME  NUMSEQ TOTAL    MIN  AVG  MAX
 stdin     5264   3801855  31   722  53540
 ```
 
 Restricted length:
 ```
 % biotool --minlen 1000 file.fa
-FILENAME  TOTAL  NUMSEQ   MIN    AVG  MAX
+FILENAME  NUMSEQ TOTAL    MIN    AVG  MAX
 file.fa   4711   2801855  1021   929  53540
 ```
 
 ## Languages
 
-* Python
-* Perl5
-* Ruby
-* R
+* BASH
+* C++
+* Java
 * Javascript
-* C
+* Haskell
+* Perl5
+* Python
+* R
+* Ruby
+* Rust
 
 ## Licence
 
@@ -72,8 +76,10 @@ File at our [Issue Tracker](https://github.com/biotool-paper/biotool/issues)
 
 Alphabetically:
 
+* Jessica Chung
 * Harriet Dashnow
+* Peter Georgeson
 * Andrew Lonsdale
-* Bernard J Pope
+* Bernard Pope
 * David R Powell
 * Torsten Seemann

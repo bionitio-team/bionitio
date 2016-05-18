@@ -10,7 +10,6 @@ fn main() {
    let mut max_len = 0;
    let mut min_len = 0;
    let mut this_len;
-   let mut first_seq = true;
 
    println!("FILENAME\tTOTAL\tNUMSEQ\tMIN\tAVG\tMAX");
 
@@ -20,12 +19,12 @@ fn main() {
             num_seqs += 1;
             this_len = record.seq().len();
             total += this_len; 
-            max_len = cmp::max(max_len, this_len);
-            if first_seq {
+            if num_seqs == 1 {
+               max_len = this_len;
                min_len = this_len;
-               first_seq = false;
             }
             else {
+               max_len = cmp::max(max_len, this_len);
                min_len = cmp::min(min_len, this_len);
             }
          }, 

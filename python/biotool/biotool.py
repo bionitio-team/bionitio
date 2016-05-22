@@ -26,12 +26,15 @@ def parseArgs():
 
 
 class FastaStats(object):
-    def __init__(self, minlen_threshold, fasta_file, fasta_filename=None):
+    def __init__(self, minlen_threshold=DEFAULT_MIN_LEN, fasta_filename=None):
 
+        # If no filename is specified then use stdin as input
         if fasta_filename is None:
-            self.fasta_filename = str(fasta_file)
+            self.fasta_filename = "stdin"
+            fasta_file = stdin 
         else:
             self.fasta_filename = fasta_filename
+            fasta_file = fasta_filename 
 
         num_seqs = num_bases = 0
         min_len = max_len = None
@@ -73,11 +76,10 @@ class FastaStats(object):
 def process_files(options):
     print(HEADER)
     if options.fasta_files:
-        files = [(filename, filename) for filename in options.fasta_files]
+        for fasta_filename in options.fasta_files:
+            print(FastaStats(options.minlen, fasta_filename))
     else:
-        files = [(stdin, "stdin")]
-    for fasta_file, fasta_filename in files:
-        print(FastaStats(options.minlen, fasta_file, fasta_filename))
+        print(FastaStats(options.minlen))
 
 
 def main():

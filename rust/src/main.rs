@@ -4,7 +4,8 @@ use std::io;
 use std::cmp;
 use bio::io::fasta;
 use std::fmt;
-use argparse::{ArgumentParser, StoreTrue, Store, Print};
+use std::fs::File;
+use argparse::{ArgumentParser, StoreTrue, Store, Print, Collect};
 
 struct FastaStats {
    min_len: u64,
@@ -15,7 +16,7 @@ struct FastaStats {
 }
 
 impl FastaStats {
-   pub fn new<R: io::Read>(options: Options, reader: R) -> Option<FastaStats> {
+   pub fn new<R: io::Read>(options: &Options, reader: R) -> Option<FastaStats> {
       let fasta_reader = fasta::Reader::new(reader);
       let mut num_seqs:u64 = 0;
       let mut total:u64 = 0;
@@ -69,10 +70,11 @@ impl fmt::Display for FastaStats {
 struct Options {
     verbose: bool,
     minlen: u64,
+    fasta_files: Vec<String>,
 }
 
 fn parse_options() -> Options {
-   let mut options = Options { verbose: false, minlen: 0 };
+   let mut options = Options { verbose: false, minlen: 0, fasta_files: Vec::new() };
    {  let mut ap = ArgumentParser::new();
        ap.set_description("Print fasta stats");
        ap.refer(&mut options.verbose)
@@ -81,6 +83,9 @@ fn parse_options() -> Options {
        ap.refer(&mut options.minlen)
            .add_option(&["--minlen"], Store,
            "Minimum length sequence to include in stats");
+       ap.refer(&mut options.fasta_files)
+           .add_argument(&"fasta_files", Collect,
+           "Input FASTA files");
        ap.add_option(&["--version"],
           Print(env!("CARGO_PKG_VERSION").to_string()), "Show version");
        ap.parse_args_or_exit();
@@ -91,12 +96,22 @@ fn parse_options() -> Options {
 fn main() {
    let options = parse_options();
    println!("FILENAME\tTOTAL\tNUMSEQ\tMIN\tAVG\tMAX");
-   match FastaStats::new(options, io::stdin()) {
-      Some(stats) => {
-         println!("{}", stats);
-      }
-      None => {
-         println!("0\t0\t-\t-\t-");
+   for filename in &options.fasta_files {
+      match File::open(filename) {
+         Ok(file) => {
+            match FastaStats::new(&options, file) {
+               Some(stats) => {
+                  println!("{}\t{}", filename, stats);
+               },
+               None => {
+                  println!("{}\t0\t0\t-\t-\t-", filename);
+               }
+            }
+         },
+         Err(e) => {
+            // XXX handle errors properly
+            println!("{}", e);
+         }
       }
    }
 }

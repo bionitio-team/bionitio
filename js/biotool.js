@@ -65,5 +65,6 @@ function process_files(files) {
        });
 }
 
+console.log("FILENAME\tNUMSEQ\tTOTAL\tMIN\tAVG\tMAX");
 process_files(opts.args)
 

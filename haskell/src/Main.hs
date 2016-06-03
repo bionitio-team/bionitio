@@ -43,7 +43,7 @@ main = do
            (fullDesc <> progDesc "Print fasta stats")
 
 header :: String
-header = "FILENAME\tTOTAL\tNUMSEQ\tMIN\tAVG\tMAX"
+header = "FILENAME\tNUMSEQ\tTOTAL\tMIN\tAVG\tMAX"
 
 processFastaFiles :: Options -> [FilePath] -> IO ()
 processFastaFiles options [] = do
@@ -78,7 +78,7 @@ prettyOutput filePath (Just stats@(Stats {..})) =
       | numSequences > 0 =
            show $ floor (fromIntegral numBases / fromIntegral numSequences)
       | otherwise = "-"
-   numbers = [ show numBases, show numSequences, show minSequenceLength
+   numbers = [ show numSequences, show numBases, show minSequenceLength
              , average, show maxSequenceLength ]
 
 data Stats =

@@ -18,6 +18,7 @@ fn exit_with_error(status :i32, message: &String) -> () {
    std::process::exit(status);
 }
 
+#[derive(Debug)]
 pub struct FastaStats {
    min_len: u64,
    average_len: u64,
@@ -26,6 +27,7 @@ pub struct FastaStats {
    num_seqs: u64,
 }
 
+#[derive(Debug)]
 pub enum StatsResult {
    StatsNone,
    StatsSome(FastaStats),
@@ -159,18 +161,72 @@ mod tests {
    #[test]
    fn test_zero_byte_input() {
       match FastaStats::new(0, "".as_bytes()) {
-         StatsResult::StatsSome(_stats) => panic!("Zero byte input should produce no stats"),
-         StatsResult::StatsError(_error) => panic!("Zero byte input should produce no stats, not an error"),
-         StatsResult::StatsNone => ()
+         StatsResult::StatsNone => (),
+         other => panic!(format!("expected StatsNone, got {:?}", other))
       }
    }
 
    #[test]
    fn test_single_newline_input() {
       match FastaStats::new(0, "\n".as_bytes()) {
-         StatsResult::StatsSome(_stats) => panic!("Single newline input should produce an error"),
-         StatsResult::StatsNone => panic!("Single newline input should produce an error, not no stats"),
-         StatsResult::StatsError(_error) => ()
+         StatsResult::StatsError(_error) => (),
+         other => panic!(format!("expected StatsError, got {:?}", other))  
+      }
+   }
+
+   #[test]
+   fn test_single_greater_than_input() {
+      match FastaStats::new(0, ">".as_bytes()) {
+         StatsResult::StatsSome(FastaStats{min_len :0, average_len :0, max_len :0, total :0, num_seqs :1}) => (),
+         other => panic!(format!("expected FastaStats(0,0,0,0,1), got {:?}", other))  
+      }
+   }
+
+   #[test]
+   fn one_sequence() {
+      match FastaStats::new(0, ">header\nATGC\nA".as_bytes()) {
+         StatsResult::StatsSome(FastaStats{min_len :5, average_len :5, max_len :5, total :5, num_seqs :1}) => (),
+         other => panic!(format!("expected FastaStats(5,5,5,5,1), got {:?}", other))  
+      }
+   }
+
+   #[test]
+   fn two_sequence() {
+      match FastaStats::new(0, ">header1\nATGC\nAGG\n>header2\nTT\n".as_bytes()) {
+         StatsResult::StatsSome(FastaStats{min_len :2, average_len :4, max_len :7, total :9, num_seqs :2}) => (),
+         other => panic!(format!("expected FastaStats(2,4,7,9,2), got {:?}", other))  
+      }
+   }
+
+   #[test]
+   fn no_header() {
+      match FastaStats::new(0, "no header\n".as_bytes()) {
+         StatsResult::StatsError(_error) => (),
+         other => panic!(format!("expected StatsError, got {:?}", other))  
+      }
+   }
+
+   #[test]
+   fn minlen_less_than_all() {
+      match FastaStats::new(2, ">header1\nATGC\nAGG\n>header2\nTT\n".as_bytes()) {
+         StatsResult::StatsSome(FastaStats{min_len :2, average_len :4, max_len :7, total :9, num_seqs :2}) => (),
+         other => panic!(format!("expected FastaStats(2,4,7,9,2), got {:?}", other))  
+      }
+   }
+
+   #[test]
+   fn minlen_greater_than_one() {
+      match FastaStats::new(3, ">header1\nATGC\nAGG\n>header2\nTT\n".as_bytes()) {
+         StatsResult::StatsSome(FastaStats{min_len :7, average_len :7, max_len :7, total :7, num_seqs :1}) => (),
+         other => panic!(format!("expected FastaStats(2,4,7,9,2), got {:?}", other))  
+      }
+   }
+
+   #[test]
+   fn minlen_greater_than_all() {
+      match FastaStats::new(8, ">header1\nATGC\nAGG\n>header2\nTT\n".as_bytes()) {
+         StatsResult::StatsNone => (),
+         other => panic!(format!("expected StatsNone, got {:?}", other))  
       }
    }
 }

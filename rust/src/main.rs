@@ -28,7 +28,7 @@ struct FastaStats {
 }
 
 impl FastaStats {
-   pub fn new<R: io::Read>(options: &Options, reader: R) -> Option<FastaStats> {
+   pub fn new<R: io::Read>(minlen: u64, reader: R) -> Option<FastaStats> {
       let fasta_reader = fasta::Reader::new(reader);
       let mut num_seqs:u64 = 0;
       let mut total:u64 = 0;
@@ -40,7 +40,7 @@ impl FastaStats {
          match next { 
             Ok(record) => {
                this_len = record.seq().len() as u64;
-               if this_len >= options.minlen {
+               if this_len >= minlen {
                   num_seqs += 1;
                   total += this_len; 
                   if num_seqs == 1 {
@@ -105,7 +105,7 @@ fn parse_options() -> Options {
 }
 
 fn compute_print_stats<R: io::Read>(options: &Options, filename: &String, reader: R) -> () {
-   match FastaStats::new(options, reader) {
+   match FastaStats::new(options.minlen, reader) {
       Some(stats) => {
          println!("{}\t{}", filename, stats);
       },

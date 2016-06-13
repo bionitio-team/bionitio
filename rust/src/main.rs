@@ -9,8 +9,7 @@ use std::fs::File;
 use argparse::{ArgumentParser, StoreTrue, Store, Print, Collect};
 
 const EXIT_FILE_IO_ERROR: i32 = 1;
-// exit status 2 currently used by argparse on failure of command
-// line argument parsing.
+const EXIT_COMMAND_LINE_ERROR: i32 = 2;
 const EXIT_FASTA_PARSE_ERROR: i32 = 3;
 static PROGRAM_NAME: &'static str = "biotool";
 
@@ -92,22 +91,31 @@ struct Options {
 fn parse_options() -> Options {
    let mut options = Options { verbose: false, minlen: 0, fasta_files: Vec::new() };
    {  let mut ap = ArgumentParser::new();
-       ap.set_description("Print fasta stats");
-       ap.refer(&mut options.verbose)
-           .add_option(&["-v", "--verbose"], StoreTrue,
-           "Print more stuff about what's happening");
-       ap.refer(&mut options.minlen)
-           .add_option(&["--minlen"], Store,
-           "Minimum length sequence to include in stats");
-       ap.refer(&mut options.fasta_files)
-           .add_argument(&"fasta_files", Collect,
-           "Input FASTA files");
-       ap.add_option(&["--version"],
-          Print(env!("CARGO_PKG_VERSION").to_string()), "Show version");
-       // XXX ideally we should be able to use our own exit status here. Currently uses 2.
-       ap.parse_args_or_exit();
+      ap.set_description("Print fasta stats");
+      ap.refer(&mut options.verbose)
+         .add_option(&["-v", "--verbose"], StoreTrue,
+         "Print more stuff about what's happening");
+      ap.refer(&mut options.minlen)
+         .add_option(&["--minlen"], Store,
+         "Minimum length sequence to include in stats");
+      ap.refer(&mut options.fasta_files)
+         .add_argument(&"fasta_files", Collect,
+         "Input FASTA files");
+      ap.add_option(&["--version"],
+         Print(env!("CARGO_PKG_VERSION").to_string()), "Show version");
+      match ap.parse_args() {
+         Ok(()) => (),
+         Err(0) => {
+            // Help and version commands
+            std::process::exit(0);
+         },
+         Err(_error_code) => {
+            // Parse error
+            std::process::exit(EXIT_COMMAND_LINE_ERROR);
+         }
+      }
    }
-   return options;
+   return options
 }
 
 fn compute_print_stats<R: io::Read>(options: &Options, filename: &String, reader: R) -> () {

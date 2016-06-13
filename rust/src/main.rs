@@ -19,7 +19,7 @@ fn exit_with_error(status :i32, message: &String) -> () {
    std::process::exit(status);
 }
 
-struct FastaStats {
+pub struct FastaStats {
    min_len: u64,
    average_len: u64,
    max_len: u64,
@@ -27,8 +27,14 @@ struct FastaStats {
    num_seqs: u64,
 }
 
+pub enum StatsResult {
+   StatsNone,
+   StatsSome(FastaStats),
+   StatsError(io::Error)
+}
+
 impl FastaStats {
-   pub fn new<R: io::Read>(minlen: u64, reader: R) -> Option<FastaStats> {
+   pub fn new<R: io::Read>(minlen: u64, reader: R) -> StatsResult {
       let fasta_reader = fasta::Reader::new(reader);
       let mut num_seqs:u64 = 0;
       let mut total:u64 = 0;
@@ -53,19 +59,19 @@ impl FastaStats {
                   }
                }
             }, 
-            Err(error) => exit_with_error(EXIT_FASTA_PARSE_ERROR, &format!("{}", error))
+            Err(error) => return StatsResult::StatsError(error)
          }
       }
       if num_seqs > 0 {
          let average_len = ((total as f64) / (num_seqs as f64)).floor() as u64;
-         Some(FastaStats { min_len: min_len,
+         StatsResult::StatsSome(FastaStats { min_len: min_len,
                            average_len: average_len, 
                            max_len: max_len, 
                            total: total, 
                            num_seqs: num_seqs })
       } 
       else {
-         None
+         StatsResult::StatsNone
       }
    }
 }
@@ -106,11 +112,14 @@ fn parse_options() -> Options {
 
 fn compute_print_stats<R: io::Read>(options: &Options, filename: &String, reader: R) -> () {
    match FastaStats::new(options.minlen, reader) {
-      Some(stats) => {
+      StatsResult::StatsSome(stats) => {
          println!("{}\t{}", filename, stats);
       },
-      None => {
+      StatsResult::StatsNone => {
          println!("{}\t0\t0\t-\t-\t-", filename);
+      }
+      StatsResult::StatsError(error) => {
+         exit_with_error(EXIT_FASTA_PARSE_ERROR, &format!("{}", error))
       }
    }
 }
@@ -131,6 +140,29 @@ fn main() {
                exit_with_error(EXIT_FILE_IO_ERROR, &format!("{}", error))
             }
          }
+      }
+   }
+}
+
+#[cfg(test)]
+mod tests {
+   use super::*;
+
+   #[test]
+   fn test_zero_byte_input() {
+      match FastaStats::new(0, "".as_bytes()) {
+         StatsResult::StatsSome(_stats) => panic!("Zero byte input should produce no stats"),
+         StatsResult::StatsError(_error) => panic!("Zero byte input should produce no stats, not an error"),
+         StatsResult::StatsNone => ()
+      }
+   }
+
+   #[test]
+   fn test_single_newline_input() {
+      match FastaStats::new(0, "\n".as_bytes()) {
+         StatsResult::StatsSome(_stats) => panic!("Single newline input should produce an error"),
+         StatsResult::StatsNone => panic!("Single newline input should produce an error, not no stats"),
+         StatsResult::StatsError(_error) => ()
       }
    }
 }

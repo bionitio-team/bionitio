@@ -10,6 +10,12 @@ curl -sSf https://static.rust-lang.org/rustup.sh | sh
 cargo build
 ```
 
+### Run test cases 
+
+```
+cargo test
+```
+
 ### Run the program on some input:
 
 ```

@@ -93,24 +93,33 @@ fn parse_options() -> Options {
    return options;
 }
 
+fn compute_print_stats<R: io::Read>(options: &Options, filename: &String, reader: R) -> () {
+   match FastaStats::new(options, reader) {
+      Some(stats) => {
+         println!("{}\t{}", filename, stats);
+      },
+      None => {
+         println!("{}\t0\t0\t-\t-\t-", filename);
+      }
+   }
+}
+
 fn main() {
    let options = parse_options();
    println!("FILENAME\tTOTAL\tNUMSEQ\tMIN\tAVG\tMAX");
-   for filename in &options.fasta_files {
-      match File::open(filename) {
-         Ok(file) => {
-            match FastaStats::new(&options, file) {
-               Some(stats) => {
-                  println!("{}\t{}", filename, stats);
-               },
-               None => {
-                  println!("{}\t0\t0\t-\t-\t-", filename);
-               }
+   if options.fasta_files.len() == 0 {
+      compute_print_stats(&options, &String::from("stdin"), io::stdin());
+   }
+   else {
+      for filename in &options.fasta_files {
+         match File::open(filename) {
+            Ok(file) => {
+               compute_print_stats(&options, filename, file);
+            },
+            Err(e) => {
+               // XXX handle errors properly
+               println!("{}", e);
             }
-         },
-         Err(e) => {
-            // XXX handle errors properly
-            println!("{}", e);
          }
       }
    }

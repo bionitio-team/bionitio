@@ -1,11 +1,23 @@
 extern crate bio;
 extern crate argparse;
 use std::io;
+use std::io::Write;
 use std::cmp;
 use bio::io::fasta;
 use std::fmt;
 use std::fs::File;
 use argparse::{ArgumentParser, StoreTrue, Store, Print, Collect};
+
+const EXIT_FILE_IO_ERROR: i32 = 1;
+// exit status 2 currently used by argparse on failure of command
+// line argument parsing.
+const EXIT_FASTA_PARSE_ERROR: i32 = 3;
+static PROGRAM_NAME: &'static str = "biotool";
+
+fn exit_with_error(status :i32, message: &String) -> () {
+   writeln!(&mut std::io::stderr(), "{} ERROR: {}!", PROGRAM_NAME, message).unwrap();
+   std::process::exit(status);
+}
 
 struct FastaStats {
    min_len: u64,
@@ -41,12 +53,10 @@ impl FastaStats {
                   }
                }
             }, 
-            // XXX handle errors properly
-            Err(error) => println!("{}", error),
+            Err(error) => exit_with_error(EXIT_FASTA_PARSE_ERROR, &format!("{}", error))
          }
       }
       if num_seqs > 0 {
-         // XXX check whether integer division does floor
          let average_len = ((total as f64) / (num_seqs as f64)).floor() as u64;
          Some(FastaStats { min_len: min_len,
                            average_len: average_len, 
@@ -88,6 +98,7 @@ fn parse_options() -> Options {
            "Input FASTA files");
        ap.add_option(&["--version"],
           Print(env!("CARGO_PKG_VERSION").to_string()), "Show version");
+       // XXX ideally we should be able to use our own exit status here. Currently uses 2.
        ap.parse_args_or_exit();
    }
    return options;
@@ -116,9 +127,8 @@ fn main() {
             Ok(file) => {
                compute_print_stats(&options, filename, file);
             },
-            Err(e) => {
-               // XXX handle errors properly
-               println!("{}", e);
+            Err(error) => {
+               exit_with_error(EXIT_FILE_IO_ERROR, &format!("{}", error))
             }
          }
       }

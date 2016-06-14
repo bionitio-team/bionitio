@@ -18,7 +18,7 @@ fn exit_with_error(status :i32, message: &String) -> () {
    std::process::exit(status);
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct FastaStats {
    min_len: u64,
    average_len: u64,
@@ -35,7 +35,7 @@ pub enum StatsResult {
 }
 
 impl FastaStats {
-   pub fn new<R: io::Read>(minlen: u64, reader: R) -> StatsResult {
+   pub fn new<R: io::Read>(minlen: u64, reader: R) -> Result<Option<FastaStats>, io::Error> {
       let fasta_reader = fasta::Reader::new(reader);
       let mut num_seqs:u64 = 0;
       let mut total:u64 = 0;
@@ -60,19 +60,20 @@ impl FastaStats {
                   }
                }
             }, 
-            Err(error) => return StatsResult::StatsError(error)
+            //Err(error) => return StatsResult::StatsError(error)
+            Err(error) => return Err(error)
          }
       }
       if num_seqs > 0 {
          let average_len = ((total as f64) / (num_seqs as f64)).floor() as u64;
-         StatsResult::StatsSome(FastaStats { min_len: min_len,
-                           average_len: average_len, 
-                           max_len: max_len, 
-                           total: total, 
-                           num_seqs: num_seqs })
+         Ok(Some(FastaStats { min_len: min_len,
+            average_len: average_len, 
+            max_len: max_len, 
+            total: total, 
+            num_seqs: num_seqs }))
       } 
       else {
-         StatsResult::StatsNone
+         Ok(None)
       }
    }
 }
@@ -122,13 +123,14 @@ fn parse_options() -> Options {
 
 fn compute_print_stats<R: io::Read>(options: &Options, filename: &String, reader: R) -> () {
    match FastaStats::new(options.minlen, reader) {
-      StatsResult::StatsSome(stats) => {
+      //StatsResult::StatsSome(stats) => {
+      Ok(Some(stats)) => {
          println!("{}\t{}", filename, stats);
       },
-      StatsResult::StatsNone => {
+      Ok(None) => {
          println!("{}\t0\t0\t-\t-\t-", filename);
       }
-      StatsResult::StatsError(error) => {
+      Err(error) => {
          exit_with_error(EXIT_FASTA_PARSE_ERROR, &format!("{}", error))
       }
    }
@@ -158,75 +160,78 @@ fn main() {
 mod tests {
    use super::*;
 
+   fn test_fastastats_ok(minlen: u64, input: &String, expected :Option<FastaStats>) -> () {
+      match FastaStats::new(minlen, input.as_bytes()) {
+         Ok(result) => {
+            if result != expected {
+               panic!(format!("expected {:?} got {:?}", expected, result))
+            }
+         },
+         Err(_error) => {
+            panic!(format!("expected {:?} got Err(..)", expected))
+         }
+      }
+   }
+
+   // io::Error does not currently implement PartialEq, so we resort to
+   // just checking for the existence of an error, not its actual content.
+   // Hopefully this will be fixed in Rust soon:
+   // https://github.com/rust-lang/rust/issues/34158
+   fn test_fastastats_err(minlen: u64, input: &String) -> () {
+      let comp = FastaStats::new(minlen, input.as_bytes());
+      match comp {
+         Ok(result) => panic!(format!("expected Err(..) got {:?}", result)),
+         Err(_error) => ()
+      }
+   }
+
    #[test]
    fn test_zero_byte_input() {
-      match FastaStats::new(0, "".as_bytes()) {
-         StatsResult::StatsNone => (),
-         other => panic!(format!("expected StatsNone, got {:?}", other))
-      }
+      test_fastastats_ok(0, &String::from(""), None)
    }
 
    #[test]
    fn test_single_newline_input() {
-      match FastaStats::new(0, "\n".as_bytes()) {
-         StatsResult::StatsError(_error) => (),
-         other => panic!(format!("expected StatsError, got {:?}", other))  
-      }
+      test_fastastats_err(0, &String::from("\n"))
    }
 
    #[test]
    fn test_single_greater_than_input() {
-      match FastaStats::new(0, ">".as_bytes()) {
-         StatsResult::StatsSome(FastaStats{min_len :0, average_len :0, max_len :0, total :0, num_seqs :1}) => (),
-         other => panic!(format!("expected FastaStats(0,0,0,0,1), got {:?}", other))  
-      }
+      test_fastastats_ok(0, &String::from(">"),
+         Some(FastaStats{min_len :0, average_len :0, max_len :0, total :0, num_seqs :1}))
    }
 
    #[test]
    fn one_sequence() {
-      match FastaStats::new(0, ">header\nATGC\nA".as_bytes()) {
-         StatsResult::StatsSome(FastaStats{min_len :5, average_len :5, max_len :5, total :5, num_seqs :1}) => (),
-         other => panic!(format!("expected FastaStats(5,5,5,5,1), got {:?}", other))  
-      }
+      test_fastastats_ok(0, &String::from(">header\nATGC\nA"),
+         Some(FastaStats{min_len :5, average_len :5, max_len :5, total :5, num_seqs :1}))
    }
 
    #[test]
    fn two_sequence() {
-      match FastaStats::new(0, ">header1\nATGC\nAGG\n>header2\nTT\n".as_bytes()) {
-         StatsResult::StatsSome(FastaStats{min_len :2, average_len :4, max_len :7, total :9, num_seqs :2}) => (),
-         other => panic!(format!("expected FastaStats(2,4,7,9,2), got {:?}", other))  
-      }
+      test_fastastats_ok(0, &String::from(">header1\nATGC\nAGG\n>header2\nTT\n"),
+         Some(FastaStats{min_len :2, average_len :4, max_len :7, total :9, num_seqs :2}))
    }
 
    #[test]
    fn no_header() {
-      match FastaStats::new(0, "no header\n".as_bytes()) {
-         StatsResult::StatsError(_error) => (),
-         other => panic!(format!("expected StatsError, got {:?}", other))  
-      }
+      test_fastastats_err(0, &String::from("no header\n"))
    }
 
    #[test]
    fn minlen_less_than_all() {
-      match FastaStats::new(2, ">header1\nATGC\nAGG\n>header2\nTT\n".as_bytes()) {
-         StatsResult::StatsSome(FastaStats{min_len :2, average_len :4, max_len :7, total :9, num_seqs :2}) => (),
-         other => panic!(format!("expected FastaStats(2,4,7,9,2), got {:?}", other))  
-      }
+      test_fastastats_ok(2, &String::from(">header1\nATGC\nAGG\n>header2\nTT\n"),
+         Some(FastaStats{min_len :2, average_len :4, max_len :7, total :9, num_seqs :2}))
    }
 
    #[test]
    fn minlen_greater_than_one() {
-      match FastaStats::new(3, ">header1\nATGC\nAGG\n>header2\nTT\n".as_bytes()) {
-         StatsResult::StatsSome(FastaStats{min_len :7, average_len :7, max_len :7, total :7, num_seqs :1}) => (),
-         other => panic!(format!("expected FastaStats(2,4,7,9,2), got {:?}", other))  
-      }
+      test_fastastats_ok(3, &String::from(">header1\nATGC\nAGG\n>header2\nTT\n"),
+         Some(FastaStats{min_len :7, average_len :7, max_len :7, total :7, num_seqs :1}))
    }
 
    #[test]
    fn minlen_greater_than_all() {
-      match FastaStats::new(8, ">header1\nATGC\nAGG\n>header2\nTT\n".as_bytes()) {
-         StatsResult::StatsNone => (),
-         other => panic!(format!("expected StatsNone, got {:?}", other))  
-      }
+      test_fastastats_ok(8, &String::from(">header1\nATGC\nAGG\n>header2\nTT\n"), None)
    }
 }

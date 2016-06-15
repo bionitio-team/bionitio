@@ -3,6 +3,7 @@ from version import program_version
 from Bio import SeqIO
 from math import floor
 from sys import stdin
+import unittest
 
 
 DEFAULT_MIN_LEN = 0
@@ -26,15 +27,7 @@ def parseArgs():
 
 
 class FastaStats(object):
-    def __init__(self, minlen_threshold=DEFAULT_MIN_LEN, fasta_filename=None):
-
-        # If no filename is specified then use stdin as input
-        if fasta_filename is None:
-            self.fasta_filename = "stdin"
-            fasta_file = stdin 
-        else:
-            self.fasta_filename = fasta_filename
-            fasta_file = fasta_filename 
+    def __init__(self, fasta_file, minlen_threshold=DEFAULT_MIN_LEN):
 
         num_seqs = num_bases = 0
         min_len = max_len = None
@@ -59,7 +52,7 @@ class FastaStats(object):
         self.max_len = max_len
 
 
-    def __str__(self):
+    def pretty(self, filename):
         if self.num_seqs > 0:
             num_seqs = str(self.num_seqs)
             num_bases = str(self.num_bases)
@@ -69,7 +62,7 @@ class FastaStats(object):
         else:
             num_seqs = num_bases = "0"
             min_len = average = max_len = "-"
-        return "\t".join([self.fasta_filename, num_seqs, num_bases, min_len, average,
+        return "\t".join([filename, num_seqs, num_bases, min_len, average,
            max_len])
 
 
@@ -77,9 +70,13 @@ def process_files(options):
     print(HEADER)
     if options.fasta_files:
         for fasta_filename in options.fasta_files:
-            print(FastaStats(options.minlen, fasta_filename))
+            # XXX catch file IO issues here and handle gracefully
+            with open(fasta_filename) as fasta_file:
+               stats = FastaStats(fasta_file, options.minlen)
+               print(stats.pretty(fasta_filename))
     else:
-        print(FastaStats(options.minlen))
+        stats = FastaStats(stdin, options.minlen)
+        print(stats.pretty("stdin"))
 
 
 def main():

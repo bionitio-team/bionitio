@@ -195,17 +195,17 @@ mod tests {
     }
 
     #[test]
-    fn test_zero_byte_input() {
+    fn zero_byte_input() {
         test_fastastats_ok(0, &String::from(""), None)
     }
 
     #[test]
-    fn test_single_newline_input() {
+    fn single_newline_input() {
         test_fastastats_err(0, &String::from("\n"))
     }
 
     #[test]
-    fn test_single_greater_than_input() {
+    fn single_greater_than_input() {
         test_fastastats_ok(0,
                            &String::from(">"),
                            Some(FastaStats {

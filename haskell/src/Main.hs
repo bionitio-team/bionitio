@@ -1,6 +1,7 @@
 {-# LANGUAGE RecordWildCards #-}
 module Main where
 
+import Stats (sequenceStats, Stats(..))
 import Bio.Sequence.Fasta
    ( readFasta, hReadFasta, seqlength, Sequence )
 import System.IO ( stdin )
@@ -49,24 +50,16 @@ processFastaFiles :: Options -> [FilePath] -> IO ()
 processFastaFiles options [] = do
    sequences <- hReadFasta stdin
    putStrLn header
-   putStrLn $ prettyOutput "stdin" $ sequenceStats options sequences 
+   putStrLn $ prettyOutput "stdin" $ 
+      sequenceStats (minLengthThreshold options) sequences 
 processFastaFiles options files@(_:_) =
    putStrLn header >> mapM_ (processFile options) files
 
 processFile :: Options -> FilePath -> IO ()
-processFile options@(Options {..}) filePath = do
+processFile options filePath = do
    sequences <- readFasta filePath
-   putStrLn $ prettyOutput filePath $ sequenceStats options sequences 
-
-sequenceStats :: Options -> [Sequence] -> Maybe Stats
-sequenceStats (Options {..}) sequences =
-   case filteredLengths of
-      [] -> Nothing
-      first:rest -> 
-        Just $ foldl' updateStats (initStats first) rest 
-   where
-   filteredLengths =
-      filter (\x -> sequenceLengthInteger x >= minLengthThreshold) sequences
+   putStrLn $ prettyOutput filePath $
+      sequenceStats (minLengthThreshold options) sequences 
 
 prettyOutput :: FilePath -> Maybe Stats -> String
 prettyOutput filePath Nothing =
@@ -80,38 +73,3 @@ prettyOutput filePath (Just stats@(Stats {..})) =
       | otherwise = "-"
    numbers = [ show numSequences, show numBases, show minSequenceLength
              , average, show maxSequenceLength ]
-
-data Stats =
-   Stats 
-   { numSequences :: !Integer
-   , numBases :: !Integer
-   , minSequenceLength :: !Integer
-   , maxSequenceLength :: !Integer
-   }
-   deriving (Eq, Ord, Show)
-
-initStats :: Sequence -> Stats
-initStats sequence = Stats
-   { numSequences = 1
-   , numBases = thisLength 
-   , minSequenceLength = thisLength 
-   , maxSequenceLength = thisLength 
-   }
-   where
-   thisLength = sequenceLengthInteger sequence
-
-updateStats :: Stats -> Sequence -> Stats
-updateStats oldStats@(Stats {..}) sequence =
-   Stats newNumSequences newNumBases
-         newMinSequenceLength newMaxSequenceLength 
-   where
-   newNumSequences = numSequences + 1
-   thisLength = sequenceLengthInteger sequence
-   newNumBases = numBases + thisLength 
-   newMinSequenceLength
-      = min thisLength minSequenceLength
-   newMaxSequenceLength
-      = max thisLength maxSequenceLength 
-
-sequenceLengthInteger :: Sequence -> Integer
-sequenceLengthInteger = fromIntegral . seqlength

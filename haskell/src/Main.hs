@@ -1,7 +1,7 @@
 {-# LANGUAGE RecordWildCards #-}
 module Main where
 
-import Stats (sequenceStats, Stats(..))
+import Stats (sequenceStats, Stats(..), average)
 import Bio.Sequence.Fasta
    ( readFasta, hReadFasta, seqlength, Sequence )
 import System.IO ( stdin )
@@ -67,9 +67,6 @@ prettyOutput filePath Nothing =
 prettyOutput filePath (Just stats@(Stats {..})) =
    concat $ intersperse "\t" (filePath : numbers)
    where
-   average
-      | numSequences > 0 =
-           show $ floor (fromIntegral numBases / fromIntegral numSequences)
-      | otherwise = "-"
+   averageStr = maybe "-" show (average stats)
    numbers = [ show numSequences, show numBases, show minSequenceLength
-             , average, show maxSequenceLength ]
+             , averageStr, show maxSequenceLength ]

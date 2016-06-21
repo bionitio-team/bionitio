@@ -1,5 +1,5 @@
 {-# LANGUAGE RecordWildCards #-}
-module Stats (sequenceStats, Stats(..)) where
+module Stats (sequenceStats, Stats(..), average) where
 
 import Bio.Sequence.Fasta
    ( seqlength, Sequence )
@@ -14,6 +14,12 @@ data Stats =
    , maxSequenceLength :: !Integer
    }
    deriving (Eq, Ord, Show)
+
+average :: Stats -> Maybe Integer
+average (Stats {..}) 
+   | numSequences > 0 =
+        Just $ floor (fromIntegral numBases / fromIntegral numSequences)
+   | otherwise = Nothing
 
 sequenceStats :: Integer -> [Sequence] -> Maybe Stats
 sequenceStats minLength sequences =

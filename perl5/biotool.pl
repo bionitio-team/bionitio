@@ -89,7 +89,7 @@ sub tsv {
 sub usage {
   my($errcode) = 0;
   print <<"EOF";
-Synposis:
+Synopsis:
   Print fasta stats
 Usage:
   $EXE [options] contigs.fasta [another.fa ...]

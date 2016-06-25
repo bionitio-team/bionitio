@@ -14,7 +14,7 @@ setup(
     },
     url='https://github.com/bjpop/biotool',
     license='LICENSE',
-    description=('This program FIXME'),
+    description=('XXX FIXME'),
     long_description=('FIXME'),
     install_requires=["biopython"],
 )

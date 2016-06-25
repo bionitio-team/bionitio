@@ -52,7 +52,7 @@ If there are zero sequences counted in a file, the values of MIN, AVERAGE and MA
 
 Installation and usage instructions are provided separately for each of the implementations of biotool. Please see the README.md files in the corresponding sub-folders for each implementation.
 
-Each implementation of biotool conforms to a standard command line interface, illustrated below. There may be small cosmetic differences in help messages due to programming language idiosyncrasies, but otherwise the behaviour of all implementations should be the same.
+Each implementation of biotool conforms to a standard command line interface, illustrated below. There may be small cosmetic differences in help messages due to programming language idiosyncrasies, but otherwise the behaviour of all implementations should be the same. The name of the executable program for each version is different, for example, the Python version is called `biotool-py`.
 
 In the examples below, `%` indicates the command line prompt.
 
@@ -129,6 +129,7 @@ It is possible that the input FASTA file contains zero sequences, or, when the `
 
 The example below illustrates biotool applied to a single FASTA file called `empty`.fa` which contains zero sequences:
 ```
+% biotool empty.fa
 FILENAME	NUMSEQ	TOTAL	MIN	AVG	MAX
 empty.fa	0	0	-	-	-
 ```

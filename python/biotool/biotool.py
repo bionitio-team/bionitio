@@ -1,14 +1,18 @@
 from argparse import ArgumentParser
-from version import program_version
 from Bio import SeqIO
 from math import floor
 from sys import stdin
 import unittest
 from StringIO import StringIO
+import pkg_resources 
+
 
 DEFAULT_MIN_LEN = 0
 DEFAULT_VERBOSE = False
 HEADER = 'FILENAME\tTOTAL\tNUMSEQ\tMIN\tAVG\tMAX'
+
+
+program_version = pkg_resources.require("biotool-py")[0].version
 
 
 def parseArgs():

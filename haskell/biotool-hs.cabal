@@ -3,17 +3,17 @@ version:             0.1.0.0
 synopsis:            Demonstration bioinformatics tool 
 description:         Please see README.md
 homepage:            https://github.com/bjpop/biotool-hs#readme
-license:             BSD3
+license:             MIT 
 license-file:        LICENSE
 author:              Bernie Pope 
 maintainer:          bjpope@unimelb.edu.au
 copyright:           2016 Bernie Pope 
-category:            Web
+category:            Web -- XXX fixme
 build-type:          Simple
 -- extra-source-files:
 cabal-version:       >=1.10
 
-executable biotool-hs-exe
+executable biotool-hs
   hs-source-dirs:      src 
   main-is:             Main.hs
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N

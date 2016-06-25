@@ -159,9 +159,9 @@ Biotool returns the following exit status values:
 
 A set of sample test input files is provided in the `test_data` folder.
 ```
-% biotool-py biotool/test_data/two_sequence.fasta 
+% biotool-py two_sequence.fasta 
 FILENAME	TOTAL	NUMSEQ	MIN	AVG	MAX
-/Users/bjpop/code/biotool/test_data/two_sequence.fasta	2	357	120	179	237
+two_sequence.fasta	2	357	120	179	237
 ```
 
 # Bugs

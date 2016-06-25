@@ -10,7 +10,7 @@ The goal is to provide a solid foundation for new bioinformatics command line to
 
 This program is released as open source software under the terms of [MIT License](https://raw.githubusercontent.com/biotool-paper/biotool/master/LICENSE)
 
-## Installing
+# Installing
 
 We recommend using the `stack` tool to install biotool. You will need to install `stack` on your system first.
 
@@ -146,8 +146,6 @@ Biotool returns the following exit status values:
 ## Memory limits and other resource restrictions
 
 # Testing
-
-# How to test
 
 ```
 % cd biotool/haskell

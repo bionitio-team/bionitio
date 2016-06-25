@@ -10,7 +10,7 @@ The goal is to provide a solid foundation for new bioinformatics command line to
 
 This program is released as open source software under the terms of [MIT License](https://raw.githubusercontent.com/biotool-paper/biotool/master/LICENSE)
 
-## Installing
+# Installing
 
 Biotool can be installed using `pip` in a variety of ways (`%` indicates the command line prompt):
 

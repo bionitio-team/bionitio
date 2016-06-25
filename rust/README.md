@@ -19,12 +19,12 @@ We recommend using the `cargo` tool to install biotool. You will need to install
 
 Once you have `cargo` installed you can use it to build biotool like so:
 ```
-cargo build
+% cargo build
 ```
 
 You can test that the program works by running it on some test data:
 ```
-cargo run < ../test_data/two_sequence.fasta
+% cargo run < ../test_data/two_sequence.fasta
 ```
 
 XXX Explain how to do local and global install. 

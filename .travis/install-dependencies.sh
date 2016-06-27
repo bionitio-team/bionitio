@@ -17,5 +17,6 @@ echo 'deb http://download.fpcomplete.com/ubuntu precise main'|sudo tee /etc/apt/
 sudo apt-get update && sudo apt-get install stack -y
 (cd haskell; stack setup ; stack install)
 
-
-
+############
+# Python 
+(sudo pip install ./python)

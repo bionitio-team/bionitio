@@ -31,7 +31,7 @@ sudo curl -sSf https://static.rust-lang.org/rustup.sh | sh
 cd cpp
 BIOTOOL_CPP_PATH=`pwd`
 wget --no-check-certificate http://www.cmake.org/files/v3.4/cmake-3.4.1.tar.gz
-tar -xvzf cmake-3.4.1.tar.gz 
+tar -xzf cmake-3.4.1.tar.gz 
 cd cmake-3.4.1/ 
 ./configure
 make

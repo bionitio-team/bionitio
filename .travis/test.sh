@@ -5,7 +5,7 @@ errors=0
 
 exe="$1"
 
-$exe -h | grep -q 'Usage:'|| {
+$exe -h | grep -q -i 'Usage:' || {
     echo "Test Failed.  Expected 'Usage:'"
     let errors+=1
 }

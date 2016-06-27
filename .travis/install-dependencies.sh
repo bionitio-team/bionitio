@@ -20,8 +20,3 @@ sudo apt-get update && sudo apt-get install stack -y
 ############
 # Python 
 (sudo pip install ./python)
-
-############
-# Rust 
-sudo curl -sSf https://static.rust-lang.org/rustup.sh | sh
-(cd rust; cargo install)

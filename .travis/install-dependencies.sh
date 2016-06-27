@@ -30,6 +30,12 @@ sudo curl -sSf https://static.rust-lang.org/rustup.sh | sh
 # C++
 cd cpp
 BIOTOOL_CPP_PATH=`pwd`
+wget http://www.cmake.org/files/v3.4/cmake-3.4.1.tar.gz
+tar -xvzf cmake-3.4.1.tar.gz 
+cd cmake-3.4.1/ 
+./configure
+make
+sudo make install
 wget http://packages.seqan.de/seqan-library/seqan-library-2.1.1.tar.xz 
 tar xvf seqan-library-2.1.1.tar.xz
 mkdir biotool-build

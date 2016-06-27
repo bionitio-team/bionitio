@@ -155,10 +155,6 @@ Biotool returns the following exit status values:
 
 A set of sample test input files is provided in the `test_data` folder. Additionally, each implementation of biotool comes with its own testing facilities which utilise features and libraries of the particular programming language. Instructions for language-specific testing are provided in the README.md files for each implementation.
 
-# Continuous integration
-
-Status of travis CI tests ![travis-ci status badge](https://travis-ci.org/biotool-paper/biotool.svg?branch=master)
-
 # Programming languages used to implement biotool
 
 * BASH

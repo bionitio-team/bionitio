@@ -34,7 +34,6 @@ wget --no-check-certificate http://www.cmake.org/files/v3.4/cmake-3.4.1.tar.gz
 tar -xzf cmake-3.4.1.tar.gz 
 cd cmake-3.4.1/ 
 ./configure
-make
 sudo make install
 wget http://packages.seqan.de/seqan-library/seqan-library-2.1.1.tar.xz 
 tar xvf seqan-library-2.1.1.tar.xz

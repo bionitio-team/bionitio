@@ -1,5 +1,6 @@
 
 sudo: true
+dist: trusty
 
 # Choose a lightweight base image
 language: c

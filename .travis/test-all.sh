@@ -6,5 +6,6 @@ set -e
 ./.travis/test.sh ~/.local/bin/biotool-hs
 ./.travis/test.sh ruby/biotool.rb
 ./.travis/test.sh biotool-py 
+./.travis/test.sh java/biotool.bash 
 ./.travis/test.sh ~/.cargo/bin/biotool-rs
 ./.travis/test.sh cpp/biotool-build/biotool-cpp 

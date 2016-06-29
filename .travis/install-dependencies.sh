@@ -22,6 +22,10 @@ sudo apt-get update && sudo apt-get install stack -y
 (sudo pip install ./python)
 
 ############
+# Java
+(cd java/biotool; mvn compile; mvn test; mvn package)
+
+############
 # Rust 
 sudo curl -sSf https://static.rust-lang.org/rustup.sh | sh
 (cd rust; cargo install)

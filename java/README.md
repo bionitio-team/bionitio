@@ -24,5 +24,5 @@ Distributing
 
 Running
 =======
-Direclty with `java -jar target/biotool-1.0-jar-with-dependencies.jar` or via `biotool.bash` wrapper script.
+Directly with `java -jar target/biotool-1.0-jar-with-dependencies.jar` or via `biotool.bash` wrapper script.
 

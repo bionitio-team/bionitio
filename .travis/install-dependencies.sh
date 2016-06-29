@@ -23,7 +23,7 @@ sudo apt-get update && sudo apt-get install stack -y
 
 ############
 # Java
-(cd java; mvn compile; mvn compile-test; mvn test; mvn package)
+(cd java/biotool; mvn compile; mvn compile-test; mvn test; mvn package)
 
 ############
 # Rust 

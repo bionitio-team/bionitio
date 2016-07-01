@@ -5,7 +5,7 @@ errors=0
 
 exe="$1"
 
-# Allow output message to contain "Usage" or "Synopsis"
+# Allow output message to contain "Usage" or "Synopsis" in any case
 $exe -h | grep -q -i -e 'Usage' -e 'Synopsis' || {
     echo "Test Failed.  Expected 'Usage:'"
     let errors+=1

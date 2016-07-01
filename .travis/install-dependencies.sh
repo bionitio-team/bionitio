@@ -39,6 +39,7 @@ tar -xzf cmake-3.4.1.tar.gz
 cd cmake-3.4.1/ 
 ./configure
 sudo make install
+cd $BIOTOOL_CPP_PATH
 wget http://packages.seqan.de/seqan-library/seqan-library-2.1.1.tar.xz 
 tar xvf seqan-library-2.1.1.tar.xz
 mkdir biotool-build

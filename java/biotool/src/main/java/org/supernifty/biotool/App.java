@@ -15,7 +15,7 @@ public class App
 
     private static void printHelp() {
         System.err.println(
-            "Synposis:\n" +
+            "Synopsis:\n" +
             "  Print fasta stats\n" +
             "Usage:\n" +
             "  biotool [options] contigs.fasta [another.fa ...]\n" +

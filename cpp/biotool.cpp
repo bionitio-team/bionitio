@@ -110,7 +110,7 @@ void process_files(BiotoolOptions options)
 	if (num_seqs > 0)
         {
             average = (unsigned int) floor((double) total_len / (double) num_seqs);
-	    cout << filename << '\t' << num_seqs << '\t' \
+	    cout << filename << '\t' << num_seqs << '\t' << total_len << '\t' \
 		 << min_len << '\t' << average << '\t' << max_len << endl;
         }
 	else

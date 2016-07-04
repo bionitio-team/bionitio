@@ -14,7 +14,7 @@ public class App
 {
 
     private static void printHelp() {
-        System.err.println(
+        System.out.println(
             "Synopsis:\n" +
             "  Print fasta stats\n" +
             "Usage:\n" +
@@ -28,7 +28,7 @@ public class App
     }
 
     private static void printVersion() {
-        System.err.println( "biotool version " + Package.getPackage("org.supernifty.biotool").getImplementationVersion() );
+        System.out.println( "biotool version " + Package.getPackage("org.supernifty.biotool").getImplementationVersion() );
     }
 
     public static void main( String[] args )

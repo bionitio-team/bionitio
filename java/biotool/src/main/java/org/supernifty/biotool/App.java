@@ -40,7 +40,7 @@ public class App
                                 .withDescription( "Print version and exit" )
                                 .create() );
         options.addOption( "v", "verbose", false, "Print more stuff about what's happening" );
-        options.addOption( "m", "minlength", true, "Minimum length sequence to include in stats (default=0)" );
+        options.addOption( "m", "minlen", true, "Minimum length sequence to include in stats (default=0)" );
 
         CommandLineParser parser = new DefaultParser();
         try {
@@ -53,14 +53,14 @@ public class App
                 printVersion();
                 System.exit(0);
             }
-            // minlength param
+            // minlen param
             int minlength = 0;
-            if ( cmd.hasOption( "minlength" ) ) {
+            if ( cmd.hasOption( "minlen" ) ) {
                 try {
-                    minlength = Integer.parseInt(cmd.getOptionValue("minlength", "0"));
+                    minlength = Integer.parseInt(cmd.getOptionValue("minlen", "0"));
                 }
                 catch (NumberFormatException e) {
-                    System.err.println( "\n*** Invalid minlength option. Expected number, got '" + cmd.getOptionValue("minlength", "0") + "' ***\n" );
+                    System.err.println( "\n*** Invalid minlen option. Expected number, got '" + cmd.getOptionValue("minlen", "0") + "' ***\n" );
                     printHelp();
                     System.exit(0);
                 }

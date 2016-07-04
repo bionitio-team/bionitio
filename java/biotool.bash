@@ -9,6 +9,6 @@ if [ $# -eq 0 ]
  then
 java -Xmx512m -jar $JAR_LOC </dev/stdin
  else
-java -Xmx512m -jar $JAR_LOC "$*"
+java -Xmx512m -jar $JAR_LOC "$@"
 fi
 

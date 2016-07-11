@@ -24,7 +24,7 @@ public final class App {
     /**
      * private constructor prevents instantiation.
      */
-    private FilePathHelper() {
+    private App() {
     }
 
     /**

@@ -5,24 +5,45 @@ The program reads one or more input FASTA files. For each file it computes a
 variety of statistics, and then prints a summary of the statistics as output.
 '''
 
+from __future__ import print_function
 from argparse import ArgumentParser
-from Bio import SeqIO
 from math import floor
-from sys import stdin
+import sys
 import unittest
 from StringIO import StringIO
-import pkg_resources 
+from Bio import SeqIO
+import pkg_resources
 
 
+EXIT_FILE_IO_ERROR = 1
+EXIT_COMMAND_LINE_ERROR = 2
+EXIT_FASTA_FILE_ERROR = 3
 DEFAULT_MIN_LEN = 0
 DEFAULT_VERBOSE = False
 HEADER = 'FILENAME\tTOTAL\tNUMSEQ\tMIN\tAVG\tMAX'
+PROGRAM_NAME = "biotool-py"
 
 
-program_version = pkg_resources.require("biotool-py")[0].version
+try:
+    PROGRAM_VERSION = pkg_resources.require(PROGRAM_NAME)[0].version
+except pkg_resources.DistributionNotFound:
+    PROGRAM_VERSION = "undefined_version"
 
 
-def parseArgs():
+def exit_with_error(message, exit_status):
+    '''Print an error message to stderr, prefixed by the program name and 'ERROR'.
+    Then exit program with supplied exit status.
+
+    Arguments:
+        message: an error message as a string.
+        exit_status: a positive integer representing the exit status of the
+            program.
+    '''
+    print("{} ERROR: {}, exiting".format(PROGRAM_NAME, message), file=sys.stderr)
+    sys.exit(exit_status)
+
+
+def parse_args():
     '''Parse command line arguments.
     Returns Options object with command line argument values as attributes.
     Will exit the program on a command line error.
@@ -37,7 +58,7 @@ def parseArgs():
             DEFAULT_MIN_LEN))
     parser.add_argument('--version',
                         action='version',
-                        version='%(prog)s ' + program_version)
+                        version='%(prog)s ' + PROGRAM_VERSION)
     parser.add_argument('--verbose',
                         action='store_true',
                         default=DEFAULT_VERBOSE,
@@ -61,6 +82,7 @@ class FastaStats(object):
     average: the average length of the counted sequences rounded down
        to an integer.
     '''
+    #pylint: disable=too-many-arguments
     def __init__(self,
                  num_seqs=None,
                  num_bases=None,
@@ -102,7 +124,6 @@ class FastaStats(object):
         '''
         num_seqs = num_bases = 0
         min_len = max_len = None
-        # XXX should handle FASTA parsing errors here
         for seq in SeqIO.parse(fasta_file, "fasta"):
             this_len = len(seq)
             if this_len >= minlen_threshold:
@@ -161,18 +182,22 @@ def process_files(options):
     '''
     if options.fasta_files:
         for fasta_filename in options.fasta_files:
-            # XXX catch file IO issues here and handle gracefully
-            with open(fasta_filename) as fasta_file:
-                stats = FastaStats().from_file(fasta_file, options.minlen)
-                print(stats.pretty(fasta_filename))
+            try:
+                fasta_file = open(fasta_filename)
+            except IOError as exception:
+                exit_with_error(str(exception), EXIT_FILE_IO_ERROR)
+            else:
+                with fasta_file:
+                    stats = FastaStats().from_file(fasta_file, options.minlen)
+                    print(stats.pretty(fasta_filename))
     else:
-        stats = FastaStats().from_file(stdin, options.minlen)
+        stats = FastaStats().from_file(sys.stdin, options.minlen)
         print(stats.pretty("stdin"))
 
 
 def main():
     "Orchestrate the execution of the program"
-    options = parseArgs()
+    options = parse_args()
     print(HEADER)
     process_files(options)
 
@@ -185,9 +210,9 @@ if __name__ == '__main__':
 
 class TestFastaStats(unittest.TestCase):
     '''Unit tests for FastaStats'''
-    def do_test(self, input, minlen, expected):
+    def do_test(self, input_str, minlen, expected):
         "Wrapper function for testing FastaStats"
-        result = FastaStats().from_file(StringIO(input), minlen)
+        result = FastaStats().from_file(StringIO(input_str), minlen)
         self.assertEqual(expected, result)
 
     def test_zero_byte_input(self):

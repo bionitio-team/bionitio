@@ -1,6 +1,7 @@
 #include <iostream>
 #include <seqan/arg_parse.h>
 #include <seqan/seq_io.h>
+#include "options.h"
 
 using namespace seqan;
 using namespace std;
@@ -11,54 +12,9 @@ const unsigned DEFAULT_MIN_LEN = 0;
 
 typedef enum {Success=0, Error_command_line=1, Error_open_file=2, Error_parse_file=3} exit_status;
 
-struct BiotoolOptions
-{
-    unsigned minlen;
-    bool verbose;
-    bool version;
-    vector<string> fasta_files;
-
-    BiotoolOptions() :
-    minlen(DEFAULT_MIN_LEN), verbose(false), version(false), fasta_files({})
-    {}
-};
-
 void print_error(const char *message)
 {
     cerr << PROGRAM_NAME << " ERROR: " << message << endl;
-}
-
-BiotoolOptions parse_options(int argc, char const **argv)
-{
-    ArgumentParser parser(PROGRAM_NAME);
-    addOption(parser, ArgParseOption(
-        "m", "minlen", "Minimum length sequence to include in stats (default " + to_string(DEFAULT_MIN_LEN) + ")",
-        ArgParseArgument::INTEGER, "INT"));
-    addOption(parser, ArgParseOption(
-        "v", "version", "Display program version and exit"));
-    addOption(parser, ArgParseOption(
-        "b", "verbose", "Print more stuff about what's happening"));
-    addArgument(parser, ArgParseArgument(
-        ArgParseArgument::STRING, "FASTA_FILE", true));
-
-    ArgumentParser::ParseResult res = parse(parser, argc, argv);
-
-    if (res != ArgumentParser::PARSE_OK)
-    {
-	if (res == ArgumentParser::PARSE_ERROR) { 
-           exit(Error_command_line);
-	}
-	else {
-           exit(Success);
-        }
-    }
-
-    BiotoolOptions options;
-    getOptionValue(options.minlen, parser, "minlen");
-    options.verbose = isSet(parser, "verbose");
-    options.version = isSet(parser, "version");
-    options.fasta_files = getArgumentValues(parser, 0);
-    return options;
 }
 
 class FastaStats {
@@ -147,7 +103,7 @@ void FastaStats::from_file(SeqFileIn &seq_file_in, unsigned minlen_threshold)
    }
 }
 
-void process_files(BiotoolOptions options)
+void process_files(Options options)
 {
    cout << HEADER << endl;
    FastaStats fasta_stats;
@@ -174,9 +130,10 @@ void process_files(BiotoolOptions options)
    }
 }
 
-int main(int argc, char const **argv)
+int main(int argc, const char **argv)
 {
-    BiotoolOptions options = parse_options(argc, argv);
+    // Read user options
+    Options options(argc, argv);
     process_files(options);
 
     return 0;

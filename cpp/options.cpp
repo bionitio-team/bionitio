@@ -51,7 +51,7 @@ Options::Options(int argc, const char** argv)
 
     if (vm.count("help"))
     {
-        cout << desc << "\n";
+        cout << "Usage:\n\n" << desc << "\n";
         exit(0);
     }
     if (vm.count("minlen"))

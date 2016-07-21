@@ -1,3 +1,5 @@
+#include <string>
+
 // Name of the program
 const std::string PROGRAM_NAME = "biotool-cpp";
 // Tab separated header for the output 

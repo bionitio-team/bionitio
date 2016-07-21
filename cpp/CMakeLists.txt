@@ -17,12 +17,18 @@ find_package (SeqAn REQUIRED)
 # Load the SeqAn module and fail if not found.
 find_package(Boost COMPONENTS program_options REQUIRED)
 
+add_library(Catch INTERFACE)
+target_include_directories(Catch INTERFACE catch)
+add_executable(biotool-test test.cpp)
+target_link_libraries(biotool-test Catch)
+
 # ----------------------------------------------------------------------------
 # Build Setup
 # ----------------------------------------------------------------------------
 
 # Add include directories.
 include_directories (${SEQAN_INCLUDE_DIRS})
+
 
 # Add definitions set by find_package (SeqAn).
 add_definitions (${SEQAN_DEFINITIONS})
@@ -35,5 +41,8 @@ endif()
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SEQAN_CXX_FLAGS}")
 
 # Add executable and link against SeqAn dependencies.
-add_executable (biotool-cpp biotool.cpp options.cpp)
+add_executable (biotool-cpp biotool.cpp options.cpp fasta_stats.cpp error.cpp)
 target_link_libraries (biotool-cpp ${SEQAN_LIBRARIES} ${Boost_LIBRARIES})
+
+enable_testing()
+add_test(NAME biotool-unit-tests COMMAND biotool-test)

@@ -48,6 +48,7 @@ echo 'Java install'
    cd java/biotool
    mvn compile
    mvn test
+   mvn checkstyle:check
    mvn package
 
 ) > /dev/null 2>&1

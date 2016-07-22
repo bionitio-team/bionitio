@@ -49,8 +49,9 @@ public final class App {
      * write version information to stdout.
      */
     private static void printVersion() {
-        System.out.println("biotool version "
-            + Package.getPackage("org.supernifty.biotool").getImplementationVersion());
+        Package pkg = Package.getPackage("org.supernifty.biotool");
+        String version = pkg.getImplementationVersion();
+        System.out.println("biotool version " + version);
     }
 
     /**
@@ -87,7 +88,8 @@ public final class App {
                     minlength = Integer.parseInt(
                         cmd.getOptionValue("minlen", "0"));
                 } catch (NumberFormatException e) {
-                    System.err.println("\n*** Invalid minlen option. Expected number, got '"
+                    System.err.println("\n*** Invalid minlen option. "
+                        + "Expected number, got '"
                         + cmd.getOptionValue("minlen", "0") + "' ***\n");
                     printHelp();
                     System.exit(0);
@@ -105,13 +107,16 @@ public final class App {
                         stats.getAverage(),
                         stats.getMax());
                 } catch (java.io.IOException e) {
-                    System.err.println("Failed to read stdin: " + e.getMessage());
+                    System.err.println("Failed to read stdin: "
+                        + e.getMessage());
                 }
             } else {
                 // process files
                 for (String filename: cmd.getArgs()) {
                     try {
-                        FastaStats stats = new FastaStats(filename, cmd.hasOption("verbose"), minlength);
+                        FastaStats stats = new FastaStats(filename,
+                            cmd.hasOption("verbose"),
+                            minlength);
                         System.out.printf("%s\t%d\t%d\t%d\t%d\t%d\n",
                             filename,
                             stats.getTotal(),
@@ -119,12 +124,16 @@ public final class App {
                             stats.getMin(),
                             stats.getAverage(), stats.getMax());
                     } catch (java.io.IOException e) {
-                        System.err.println("Failed to open '" + filename + "': " + e.getMessage());
+                        System.err.println("Failed to open '"
+                            + filename
+                            + "': " + e.getMessage());
                     }
                 }
             }
         } catch (ParseException e) {
-            System.err.println("\n*** Invalid command line arguments: " + e.getMessage() + " ***\n");
+            System.err.println("\n*** Invalid command line arguments: "
+                + e.getMessage()
+                + " ***\n");
             printHelp();
         }
     }

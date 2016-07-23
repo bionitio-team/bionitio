@@ -68,8 +68,8 @@ public class FastaStats {
         for (ProteinSequence sequence: result.values()) {
             int sequenceSize = sequence.getLength();
             if (sequenceSize >= minlength) {
-                total += 1;
-                numseq += sequenceSize;
+                total += sequenceSize;
+                numseq += 1;
                 min = Math.min(min, sequenceSize);
                 max = Math.max(max, sequenceSize);
             }

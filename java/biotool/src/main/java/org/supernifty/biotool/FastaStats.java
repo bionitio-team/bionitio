@@ -77,14 +77,14 @@ public class FastaStats {
     }
 
     /**
-     * @return total number of bases found
+     * @return total number of sequences found
      */
     public final int getTotal() {
         return total;
     }
 
     /**
-     * @return number of sequences found
+     * @return number of bases found
      */
     public final int getNumSeq() {
         return numseq;

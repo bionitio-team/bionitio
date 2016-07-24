@@ -1,14 +1,15 @@
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 #include "fasta_stats.h"
+#include <seqan/seq_io.h>
+#include <sstream>
 
-unsigned int Factorial( unsigned int number ) {
-    return number <= 1 ? number : Factorial(number-1)*number;
-}
-
-TEST_CASE( "Factorials are computed", "[factorial]" ) {
-    REQUIRE( Factorial(1) == 1 );
-    REQUIRE( Factorial(2) == 2 );
-    REQUIRE( Factorial(3) == 6 );
-    REQUIRE( Factorial(10) == 3628800 );
+TEST_CASE( "one sequence", "[FastaStats]" ) {
+    istringstream stream;
+    stream.str(">header\nATGC\nA");
+    SeqFileIn seq_file(stream);
+    FastaStats result = FastaStats();
+    result.from_file(seq_file, 0);
+    FastaStats expected = FastaStats(1, 5, 5, 5);
+    REQUIRE( result == expected );
 }

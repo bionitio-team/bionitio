@@ -41,8 +41,6 @@ If you want to use a specific compiler, such as clang++ on OSX then add a flag l
 -DCMAKE_CXX_COMPILER=clang++
 ```
 
-XXX Also explain how to install using cabal. Mention how to do local versus global install.
-
 # General behaviour
 
 Biotool accepts zero or more FASTA filenames on the command line. If zero filenames are specified it reads a single FASTA file from the standard input device (stdin). Otherwise it reads each named FASTA file in the order specified on the command line. Biotool reads each input FASTA file, computes various statistics about the contents of the file, and then displays a tab-delimited summary of the statistics as output. Each input file produces at most one output line of statistics. Each line of output is prefixed by the input filename or by the text "`stdin`" if the standard input device was used.
@@ -161,6 +159,11 @@ Biotool returns the following exit status values:
 ## Memory limits and other resource restrictions
 
 # Testing
+
+You can run the unit tests for biotool with the following command:
+```
+% biotool-test
+```
 
 A set of sample test input files is provided in the `test_data` folder.
 ```

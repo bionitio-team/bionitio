@@ -10,13 +10,27 @@ FastaStats::FastaStats(void)
 {
     num_seqs = 0;
     num_bases = 0;
+    min_len = 0;
+    max_len = 0;
+}
+
+FastaStats::FastaStats (unsigned int ns, unsigned int nb, unsigned int mnl, unsigned int mxl):
+    num_seqs(ns), num_bases(nb), min_len(mnl), max_len(mxl) {}
+
+bool operator== (const FastaStats &stats1, const FastaStats &stats2)
+{
+    return (stats1.num_seqs == stats2.num_seqs &&
+            stats1.num_bases == stats2.num_bases &&
+            stats1.min_len == stats2.min_len &&
+            stats1.max_len == stats2.max_len
+    );
 }
 
 ostream& operator<< (ostream &out, const FastaStats &stats)
 {
     out << "FastaStats(" << stats.num_seqs << ", " 
                          << stats.num_bases << ", " 
-                         << stats.min_len << "," 
+                         << stats.min_len << ", " 
                          << stats.max_len << ")";
     return out;
 }

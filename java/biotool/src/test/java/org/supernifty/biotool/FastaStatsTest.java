@@ -33,7 +33,7 @@ public class FastaStatsTest
      * single sequence
      */
     public void testOneSequence() 
-        throws java.io.IOException {
+        throws java.io.IOException, FastaException {
         InputStream stream = new ByteArrayInputStream(">header\nATGC\nA".getBytes("UTF-8"));
         FastaStats stats = new FastaStats(stream, false, 0);
         assertTrue(stats.getTotal() == 1);
@@ -46,7 +46,7 @@ public class FastaStatsTest
      * two sequences
      */
     public void testTwoSequences() 
-        throws java.io.IOException {
+        throws java.io.IOException, FastaException {
         InputStream stream = new ByteArrayInputStream(">header1\nATGC\nAGG\n>header2\nTT\n".getBytes("UTF-8"));
         FastaStats stats = new FastaStats(stream, false, 0);
         assertTrue(stats.getTotal() == 2);
@@ -59,7 +59,7 @@ public class FastaStatsTest
      * two sequences
      */
     public void testMinLen() 
-        throws java.io.IOException {
+        throws java.io.IOException, FastaException {
         InputStream stream = new ByteArrayInputStream(">header1\nATGC\nAGG\n>header2\nTT\n".getBytes("UTF-8"));
         FastaStats stats = new FastaStats(stream, false, 3);
         assertTrue(stats.getTotal() == 1);

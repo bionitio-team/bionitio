@@ -21,6 +21,16 @@ import org.apache.commons.cli.ParseException;
  * The class also handles printing help and version information.
  */
 public final class App {
+
+    /** success. */
+    private static final int EXIT_OK = 0;
+    /** io error. */
+    private static final int EXIT_IO = 1;
+    /** invalid command line. */
+    private static final int EXIT_CMD_LINE = 2;
+    /** invalid fasta format. */
+    private static final int EXIT_FORMAT = 3;
+
     /**
      * private constructor prevents instantiation.
      */
@@ -75,11 +85,11 @@ public final class App {
             CommandLine cmd = parser.parse(options, args);
             if (cmd.hasOption("help")) {
                 printHelp();
-                System.exit(0); // success
+                System.exit(EXIT_OK); // success
             }
             if (cmd.hasOption("version")) {
                 printVersion();
-                System.exit(0); // success
+                System.exit(EXIT_OK); // success
             }
             // minlen param
             int minlength = 0;
@@ -92,7 +102,7 @@ public final class App {
                         + "Expected number, got '"
                         + cmd.getOptionValue("minlen", "0") + "' ***\n");
                     printHelp();
-                    System.exit(2); // cmd line error
+                    System.exit(EXIT_CMD_LINE); // cmd line error
                 }
             }
             System.out.println("FILENAME\tTOTAL\tNUMSEQ\tMIN\tAVG\tMAX");
@@ -109,7 +119,7 @@ public final class App {
                 } catch (java.io.IOException e) {
                     System.err.println("Failed to read stdin: "
                         + e.getMessage());
-                    System.exit(1); // io error
+                    System.exit(EXIT_IO); // io error
                 }
             } else {
                 // process files
@@ -128,7 +138,7 @@ public final class App {
                         System.err.println("Failed to open '"
                             + filename
                             + "': " + e.getMessage());
-                        System.exit(1); // io error
+                        System.exit(EXIT_IO); // io error
                     }
                 }
             }
@@ -136,13 +146,13 @@ public final class App {
             System.err.println("\n*** Invalid input file: "
                 + e.getMessage()
                 + " ***\n");
-            System.exit(3); // invalid fasta
+            System.exit(EXIT_FORMAT); // invalid fasta
         } catch (ParseException e) {
             System.err.println("\n*** Invalid command line arguments: "
                 + e.getMessage()
                 + " ***\n");
             printHelp();
-            System.exit(2); // cmd line error
+            System.exit(EXIT_CMD_LINE); // cmd line error
         }
     }
 }

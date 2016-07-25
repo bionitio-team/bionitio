@@ -51,7 +51,8 @@ echo 'Java install'
    mvn checkstyle:check || exit 1
    mvn package
 
-) > /dev/null 2>&1
+)
+# > /dev/null 2>&1
 
 ############
 # Rust 

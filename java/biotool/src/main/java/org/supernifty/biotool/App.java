@@ -75,11 +75,11 @@ public final class App {
             CommandLine cmd = parser.parse(options, args);
             if (cmd.hasOption("help")) {
                 printHelp();
-                System.exit(0);
+                System.exit(0); // success
             }
             if (cmd.hasOption("version")) {
                 printVersion();
-                System.exit(0);
+                System.exit(0); // success
             }
             // minlen param
             int minlength = 0;
@@ -92,7 +92,7 @@ public final class App {
                         + "Expected number, got '"
                         + cmd.getOptionValue("minlen", "0") + "' ***\n");
                     printHelp();
-                    System.exit(0);
+                    System.exit(2); // cmd line error
                 }
             }
             System.out.println("FILENAME\tTOTAL\tNUMSEQ\tMIN\tAVG\tMAX");
@@ -109,6 +109,7 @@ public final class App {
                 } catch (java.io.IOException e) {
                     System.err.println("Failed to read stdin: "
                         + e.getMessage());
+                    System.exit(1); // io error
                 }
             } else {
                 // process files
@@ -127,14 +128,21 @@ public final class App {
                         System.err.println("Failed to open '"
                             + filename
                             + "': " + e.getMessage());
+                        System.exit(1); // io error
                     }
                 }
             }
+        } catch (FastaException e) {
+            System.err.println("\n*** Invalid input file: "
+                + e.getMessage()
+                + " ***\n");
+            System.exit(3); // invalid fasta
         } catch (ParseException e) {
             System.err.println("\n*** Invalid command line arguments: "
                 + e.getMessage()
                 + " ***\n");
             printHelp();
+            System.exit(2); // cmd line error
         }
     }
 }

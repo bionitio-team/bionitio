@@ -22,11 +22,12 @@ public class FastaStats {
      * @param verbose write additional details of progress to stderr
      * @param minlength include stats for sequences that are at least this long
      * @throws java.io.IOException if an error occurs while reading the input
+     * @throws FastaException if an error occurs while processing the file
      */
     public FastaStats(final InputStream input,
         final boolean verbose,
         final int minlength)
-        throws java.io.IOException {
+        throws java.io.IOException, FastaException {
         log("Reading from stdin...", verbose);
         process(input, verbose, minlength);
         log("Reading from stdin: done", verbose);
@@ -38,11 +39,12 @@ public class FastaStats {
      * @param verbose write additional details of progress to stderr
      * @param minlength include stats for sequences that are at least this long
      * @throws java.io.IOException if an error occurs while reading the file
+     * @throws FastaException if an error occurs while processing the file
      */
     public FastaStats(final String filename,
         final boolean verbose,
         final int minlength)
-        throws java.io.IOException {
+        throws java.io.IOException, FastaException {
         log("Reading " + filename + "...", verbose);
         process(new FileInputStream(filename), verbose, minlength);
         log("Reading " + filename + ": done", verbose);
@@ -54,13 +56,18 @@ public class FastaStats {
      * @param verbose write additional details of progress to stderr
      * @param minlength include stats for sequences that are at least this long
      * @throws java.io.IOException if an error occurs while reading the input
+     * @throws FastaException if an error occurs while processing the file
      */
     private void process(final InputStream input,
         final boolean verbose,
         final int minlength)
-        throws java.io.IOException {
-        LinkedHashMap<String, ProteinSequence> result =
-            FastaReaderHelper.readFastaProteinSequence(input);
+        throws java.io.IOException, FastaException {
+        LinkedHashMap<String, ProteinSequence> result;
+        try {
+            result = FastaReaderHelper.readFastaProteinSequence(input);
+        } catch (java.lang.ArrayIndexOutOfBoundsException e) {
+            throw new FastaException("Failed to process fasta file");
+        }
         total = 0;
         min = Integer.MAX_VALUE;
         max = 0;

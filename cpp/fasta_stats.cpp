@@ -75,7 +75,7 @@ void FastaStats::from_file(SeqFileIn &seq_file_in, unsigned minlen_threshold)
 	   exit_with_error(e.what(), Error_parse_file);
        }
        this_len = length(seq);
-       if (this_len > minlen_threshold)
+       if (this_len >= minlen_threshold)
        {
            if (num_seqs == 0)
            {

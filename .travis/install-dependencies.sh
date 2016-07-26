@@ -84,5 +84,4 @@ echo 'C++ install'
    cmake $BIOTOOL_CPP_PATH -DCMAKE_MODULE_PATH=$BIOTOOL_CPP_PATH/seqan-library-2.1.1/share/cmake/Modules/ -DSEQAN_INCLUDE_PATH=$BIOTOOL_CPP_PATH/seqan-library-2.1.1/include/ -DCMAKE_CXX_FLAGS=-std=c++11
    make
 
-# ) > /dev/null 2>&1
-)
+) > /dev/null 2>&1

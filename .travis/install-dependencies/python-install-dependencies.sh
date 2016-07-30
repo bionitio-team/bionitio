@@ -5,7 +5,7 @@
 echo 'Python install'
 (
    sudo pip install biopython
-   sudo pip install ./python
    sudo pip install pylint
+   sudo pip install ./python
    
 ) > /dev/null 2>&1

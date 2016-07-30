@@ -3,17 +3,17 @@
 set -e
 errors=0
 
+TOP_DIR=`pwd`
 cd python
 
-(
-   cd biotool
-   # Run unit tests
-   python -m unittest -v biotool || {
-       echo "'python -m unittest -v biotool' failed"
-       let errors+=1
-   }
-)
+# Run unit tests
+cd biotool
+python -m unittest -v biotool || {
+    echo "'python -m unittest -v biotool' failed"
+    let errors+=1
+}
 
+cd $TOP_DIR
 # Check program style
 pylint -E biotool || {
     echo "'pylint -E biotool' failed"

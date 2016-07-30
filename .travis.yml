@@ -12,6 +12,12 @@ addons:
 
 
 before_install:
-  - ./.travis/install-dependencies.sh
+  - ./.travis/cpp-install-dependencies.sh
+  - ./.travis/haskell-install-dependencies.sh
+  - ./.travis/java-install-dependencies.sh
+  - ./.travis/js-install-dependencies.sh
+  - ./.travis/python-install-dependencies.sh
+  - ./.travis/ruby-install-dependencies.sh
+  - ./.travis/rust-install-dependencies.sh
 
 script: ./.travis/test-all.sh

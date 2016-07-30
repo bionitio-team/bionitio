@@ -4,7 +4,7 @@ set -e
 errors=0
 
 echo "Java specific tests"
-cd java
+cd java/biotool
 
 # Run unit tests
 mvn test || {

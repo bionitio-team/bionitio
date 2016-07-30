@@ -1,4 +1,3 @@
-
 sudo: true
 dist: trusty
 
@@ -10,14 +9,13 @@ addons:
     packages:
       npm
 
-
 before_install:
-  - ./.travis/cpp-install-dependencies.sh
-  - ./.travis/haskell-install-dependencies.sh
-  - ./.travis/java-install-dependencies.sh
-  - ./.travis/js-install-dependencies.sh
-  - ./.travis/python-install-dependencies.sh
-  - ./.travis/ruby-install-dependencies.sh
-  - ./.travis/rust-install-dependencies.sh
+  - ./.travis/install-dependencies/cpp-install-dependencies.sh
+  - ./.travis/install-dependencies/haskell-install-dependencies.sh
+  - ./.travis/install-dependencies/java-install-dependencies.sh
+  - ./.travis/install-dependencies/js-install-dependencies.sh
+  - ./.travis/install-dependencies/python-install-dependencies.sh
+  - ./.travis/install-dependencies/ruby-install-dependencies.sh
+  - ./.travis/install-dependencies/rust-install-dependencies.sh
 
 script: ./.travis/test-all.sh

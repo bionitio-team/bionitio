@@ -5,9 +5,7 @@
 echo 'Java install'
 (
    cd java/biotool
-   mvn compile
-#   mvn test || exit 1
-#   mvn checkstyle:check || exit 1
-   mvn package
+   mvn --quiet compile
+   mvn --quiet package
 
 ) > /dev/null 2>&1

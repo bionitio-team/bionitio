@@ -7,13 +7,13 @@ echo "Java specific tests"
 cd java/biotool
 
 # Run unit tests
-mvn test || {
+mvn --quiet test || {
     echo "mvn test failed"
     let errors+=1
 }
 
 # Check program style
-mvn checkstyle:check || {
+mvn --quiet checkstyle:check || {
     echo "mvn checkstyle:check failed"
     let errors+=1
 }

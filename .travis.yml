@@ -18,4 +18,6 @@ before_install:
   - ./.travis/install-dependencies/ruby-install-dependencies.sh
   - ./.travis/install-dependencies/rust-install-dependencies.sh
 
-script: ./.travis/test-all.sh
+script:
+  - ./.travis/test-all.sh
+  - ./.travis/test-java.sh

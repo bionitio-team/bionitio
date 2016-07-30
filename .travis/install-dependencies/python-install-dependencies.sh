@@ -5,5 +5,6 @@
 echo 'Python install'
 (
    sudo pip install ./python
+   sudo pip install pylint
    
 ) > /dev/null 2>&1

@@ -21,3 +21,4 @@ before_install:
 script:
   - ./.travis/test-all.sh
   - ./.travis/test-java.sh
+  - ./.travis/test-python.sh

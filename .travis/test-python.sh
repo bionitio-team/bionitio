@@ -7,7 +7,7 @@ TOP_DIR=`pwd`
 cd python
 
 # Run unit tests
-cd biotool/python/biotool
+cd biotool
 python biotool_test -v || {
     echo "'python -m unittest -v biotool' failed"
     let errors+=1

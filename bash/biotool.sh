@@ -79,13 +79,19 @@ for FASTA in $@ ; do
   msg "Need to process $FASTA here"
   NSEQ=0
   BP=0
-  MIN=0
+  MIN=""
   AVG=0
-  MAX=999999999
+  MAX=""
   for SEQ in $(awk 'BEGIN{RS=">"} NR>1 { sub("\n","\t"); gsub("\n",""); print $0 }' $FASTA | cut -f2); do
     L=${#SEQ}
     let "BP += L"
     let "NSEQ += 1"
+    if [ -z $MIN ] || [ $L -lt $MIN ]; then 
+       MIN=$L 
+    fi
+    if [ -z $MAX ] || [ $L -gt  $MAX ]; then
+       MAX=$L 
+    fi
   done
   let "AVG = BP / NSEQ"
   echo -e "$FASTA\t$NSEQ\t$BP\t$MIN\t$AVG\t$MAX"

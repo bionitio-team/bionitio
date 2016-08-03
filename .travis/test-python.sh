@@ -7,14 +7,14 @@ TOP_DIR=`pwd`
 cd python
 
 # Run unit tests
-python biotool/biotool_test.py || {
+python biotool/biotool_test.py > /dev/null 2>&1 || {
     echo "'python biotool_test.py' failed"
     let errors+=1
 }
 
 cd $TOP_DIR
 # Check program style
-pylint -E biotool || {
+pylint -E biotool > /dev/null 2>&1 || {
     echo "'pylint -E biotool' failed"
     let errors+=1
 }

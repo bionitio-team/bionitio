@@ -6,13 +6,13 @@ errors=0
 cd java/biotool
 
 # Run unit tests
-mvn --quiet test > /dev/null || {
+mvn --quiet test > /dev/null 2>&1 || {
     echo "'mvn --quiet test' failed"
     let errors+=1
 }
 
 # Check program style
-mvn --quiet checkstyle:check > /dev/null || {
+mvn --quiet checkstyle:check > /dev/null 2>&1 || {
     echo "'mvn --quiet checkstyle:check' failed"
     let errors+=1
 }

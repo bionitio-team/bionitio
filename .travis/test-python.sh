@@ -6,12 +6,14 @@ errors=0
 TOP_DIR=`pwd`
 cd python
 
+echo `python --version`
+
 # Run unit tests
-#cd biotool
-#python biotool_test -v || {
-#    echo "'python biotool_test.py -v' failed"
-#    let errors+=1
-#}
+cd biotool
+python biotool_test.py -v || {
+    echo "'python biotool_test.py -v' failed"
+    let errors+=1
+}
 
 cd $TOP_DIR
 # Check program style

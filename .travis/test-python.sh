@@ -7,11 +7,11 @@ TOP_DIR=`pwd`
 cd python
 
 # Run unit tests
-#cd biotool
-#python -m unittest -v biotool || {
-#    echo "'python -m unittest -v biotool' failed"
-#    let errors+=1
-#}
+cd biotool/python/biotool
+python biotool_test -v || {
+    echo "'python -m unittest -v biotool' failed"
+    let errors+=1
+}
 
 cd $TOP_DIR
 # Check program style

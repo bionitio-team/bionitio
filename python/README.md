@@ -154,7 +154,7 @@ Biotool returns the following exit status values:
 
 ```
 % cd biotool/python/biotool
-% python -m unittest -v biotool
+% python -m unittest -v biotool_test
 ```
 
 A set of sample test input files is provided in the `test_data` folder.

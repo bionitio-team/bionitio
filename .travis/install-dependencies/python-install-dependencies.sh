@@ -9,4 +9,5 @@ echo 'Python install'
    sudo pip install pylint
    sudo pip install ./python
    
-) > /dev/null 2>&1
+#) > /dev/null 2>&1
+) 

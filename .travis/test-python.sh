@@ -7,6 +7,7 @@ TOP_DIR=`pwd`
 cd python
 
 echo `python --version`
+pip freeze
 
 # Run unit tests
 cd biotool

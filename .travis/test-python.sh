@@ -6,13 +6,9 @@ errors=0
 TOP_DIR=`pwd`
 cd python
 
-echo `python --version`
-pip freeze
-
 # Run unit tests
-cd biotool
-python biotool_test.py -v || {
-    echo "'python biotool_test.py -v' failed"
+python biotool/biotool_test.py || {
+    echo "'python biotool_test.py' failed"
     let errors+=1
 }
 

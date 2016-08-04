@@ -4,7 +4,6 @@
 
 echo 'Python install'
 (
-   pip install --user biopython
    pip install --user pylint
    pip install --user ./python
   

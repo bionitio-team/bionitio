@@ -2,7 +2,7 @@
 
 version <- "1.0"
 
-suppressWarnings({
+suppressPackageStartupMessages({
   library(argparse, quietly=TRUE)
   library(seqinr, quietly=TRUE)
 })

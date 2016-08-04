@@ -1,8 +1,9 @@
 #include <boost/program_options.hpp>
 #include <iostream>
-//#include <iterator>
 #include "constants.h"
 #include "options.h"
+#include "error.h"
+#include "exit_status.h"
 
 namespace po = boost::program_options;
 using namespace std;
@@ -26,7 +27,6 @@ Options::Options(int argc, const char** argv)
         ("version", version_str.c_str())
         ("files", po::value<vector<string>>()->multitoken()->zero_tokens()->composing(), "FASTA FILES");
 
-
     po::positional_options_description pos_desc;
     pos_desc.add("files", -1);
     po::command_line_parser parser{argc, argv};
@@ -40,19 +40,17 @@ Options::Options(int argc, const char** argv)
     }
     catch(boost::program_options::required_option& e)
     {
-         std::cerr << PROGRAM_NAME << " ERROR: " << e.what() << std::endl << std::endl;
-         exit(-1);
+	 exit_with_error(e.what(), Error_command_line);
     }
     catch(boost::program_options::error& e)
     {
-         std::cerr << PROGRAM_NAME << " ERROR: " << e.what() << std::endl << std::endl;
-         exit(-1);
+	 exit_with_error(e.what(), Error_command_line);
     }
 
     if (vm.count("help"))
     {
         cout << "Usage:\n\n" << desc << "\n";
-        exit(0);
+        exit(Success);
     }
     if (vm.count("minlen"))
     {

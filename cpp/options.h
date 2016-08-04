@@ -1,3 +1,5 @@
+#ifndef BIOTOOL_OPTIONS_H
+#define BIOTOOL_OPTIONS_H
 using namespace std;
 
 class Options
@@ -10,3 +12,4 @@ class Options
 
         Options(int argc, const char **argv);
 };
+#endif

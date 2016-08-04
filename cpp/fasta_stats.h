@@ -1,3 +1,6 @@
+#ifndef BIOTOOL_FASTA_STATS_H
+#define BIOTOOL_FASTA_STATS_H
+
 #include <seqan/seq_io.h>
 
 using namespace seqan;
@@ -17,3 +20,4 @@ class FastaStats {
       friend bool operator== (const FastaStats &stats1, const FastaStats &stats2);
       string pretty (string filename);
 };
+#endif

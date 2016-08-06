@@ -7,8 +7,9 @@ TOP_DIR=`pwd`
 cd haskell 
 
 # Run unit tests
-runhaskell -isrc -itest test/Test.hs > /dev/null 2>&1 || {
-    echo "'python biotool_test.py' failed"
+#runhaskell -isrc -itest test/Test.hs > /dev/null 2>&1 || {
+runhaskell -isrc -itest test/Test.hs || {
+    echo "'runhaskell -isrc -itest test/Test.hs' failed"
     let errors+=1
 }
 

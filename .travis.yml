@@ -22,4 +22,4 @@ script:
   - ./.travis/test-all.sh
   - ./.travis/test-java.sh
   - ./.travis/test-python.sh
-  - ./.travis/test-haskell.sh
+#  - ./.travis/test-haskell.sh

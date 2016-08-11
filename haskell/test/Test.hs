@@ -1,10 +1,10 @@
-module Test where
+module Main where
 
 import Test.Hspec (hspec, describe, it, shouldBe, SpecWith)
-import Stats (sequenceStats, Stats(..))
 import Bio.Sequence.Fasta (mkSeqs)
 import Data.ByteString.Lazy (ByteString)
 import Data.String (fromString)
+import Stats (sequenceStats, Stats(..))
 
 testSequenceStats :: String -> Integer -> String -> (Maybe Stats) -> SpecWith ()
 testSequenceStats description minlen fastaContents expected =

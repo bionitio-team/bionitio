@@ -8,10 +8,17 @@ license-file:        LICENSE
 author:              Bernie Pope 
 maintainer:          bjpope@unimelb.edu.au
 copyright:           2016 Bernie Pope 
-category:            Web -- XXX fixme
+category:            Bioinformatics 
 build-type:          Simple
--- extra-source-files:
 cabal-version:       >=1.10
+
+library
+  hs-source-dirs:      src 
+  exposed-modules:     Stats 
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
+  build-depends:       base
+                     , biofasta
+  default-language:    Haskell2010
 
 executable biotool-hs
   hs-source-dirs:      src 
@@ -20,6 +27,7 @@ executable biotool-hs
   build-depends:       base
                      , biofasta
                      , optparse-applicative
+                     , biotool-hs
   default-language:    Haskell2010
 
 test-suite biotool-hs-test
@@ -27,8 +35,10 @@ test-suite biotool-hs-test
   hs-source-dirs:      test 
   main-is:             Test.hs
   build-depends:       base
-                     , biofasta
+                     , biotool-hs
                      , hspec
+                     , biofasta
+                     , bytestring
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
   default-language:    Haskell2010
 

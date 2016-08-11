@@ -7,7 +7,7 @@ TOP_DIR=`pwd`
 cd haskell 
 
 # Run unit tests
-stack test || {
+stack test > /dev/null 2>&1 || {
     echo "'stack test' failed"
     let errors+=1
 }

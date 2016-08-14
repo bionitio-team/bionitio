@@ -28,7 +28,7 @@ import Options.Applicative
    many, argument, str, info, execParser, switch,
    fullDesc, (<*>), (<$>), (<>), helper, progDesc)
 import Data.List
-   (intersperse)
+   (intercalate)
 
 -- | Default value for the --minlen command line argument. Setting it to
 -- zero means that, by default, no sequences will be skipped.
@@ -102,7 +102,7 @@ processFile :: Options    -- ^ Command line options
             -> String     -- ^ Label for the output (typically filename)
             -> [Sequence] -- ^ Contents of FASTA file
             -> IO ()
-processFile options label sequences = do
+processFile options label sequences =
    putStrLn $ prettyOutput label $
       sequenceStats (minLengthThreshold options) sequences 
 
@@ -116,8 +116,8 @@ prettyOutput :: String      -- ^ A label for the input file. Normally the file n
              -> String      -- ^ Rendered output, tab separated.
 prettyOutput label Nothing =
    label ++ "\t0\t0\t-\t-\t-"
-prettyOutput label (Just stats@(Stats {..})) =
-   concat $ intersperse "\t" (label : numbers)
+prettyOutput label (Just stats@Stats {..}) =
+   intercalate "\t" (label : numbers)
    where
    -- If we cannot compute an average, show a dash.
    averageStr = maybe "-" show (average stats)

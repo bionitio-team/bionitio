@@ -96,11 +96,11 @@ public final class App {
         try {
             CommandLine cmd = parser.parse(options, args);
             if (cmd.hasOption("help")) {
-                printHelp(err);
+                printHelp(out);
                 return EXIT_OK; // success
             }
             if (cmd.hasOption("version")) {
-                printVersion(err);
+                printVersion(out);
                 return EXIT_OK; // success
             }
             // minlen param

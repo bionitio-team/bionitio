@@ -21,7 +21,7 @@ module Main where
 import Stats
    (sequenceStats, Stats(..), average)
 import Bio.Sequence.Fasta
-   (readFasta, hReadFasta)
+   (readFasta, hReadFasta, Sequence)
 import System.IO (stdin)
 import Options.Applicative 
    (Parser, option, auto, long, short, metavar, help, value,
@@ -90,23 +90,20 @@ processFastaFiles :: Options    -- ^ Command line options
                   -> [FilePath] -- ^ Possibly empty list of FASTA file paths
                   -> IO ()
 -- No files specified on command line, so read from stdin
--- XXX reduce code duplication here
-processFastaFiles options [] = do
-   sequences <- hReadFasta stdin
-   putStrLn $ prettyOutput "stdin" $ 
-      sequenceStats (minLengthThreshold options) sequences 
+processFastaFiles options [] =
+   hReadFasta stdin >>= processFile options "stdin"
 -- One or more files specified on command line, process
 -- each one in sequence.
 processFastaFiles options files@(_:_) =
-   mapM_ (processFile options) files
+   mapM_ (\file -> readFasta file >>= processFile options file) files
 
--- | Compute statistics for a single FASTA file
-processFile :: Options  -- ^ Command line options
-            -> FilePath -- ^ File path of FASTA file
+-- | Compute statistics for the contents of a single FASTA file
+processFile :: Options    -- ^ Command line options
+            -> String     -- ^ Label for the output (typically filename)
+            -> [Sequence] -- ^ Contents of FASTA file
             -> IO ()
-processFile options filePath = do
-   sequences <- readFasta filePath
-   putStrLn $ prettyOutput filePath $
+processFile options label sequences = do
+   putStrLn $ prettyOutput label $
       sequenceStats (minLengthThreshold options) sequences 
 
 -- | Render program outout as a String. If no statistics are available it means
@@ -126,7 +123,6 @@ prettyOutput label (Just stats@(Stats {..})) =
    averageStr = maybe "-" show (average stats)
    numbers = [ show numSequences, show numBases, show minSequenceLength
              , averageStr, show maxSequenceLength ]
-
 
 -- | The entry point for the program.
 --  * Parse the command line arguments.

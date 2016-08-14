@@ -3,18 +3,19 @@
 set -e
 errors=0
 
-TOP_DIR=`pwd`
-cd python
+#TOP_DIR=`pwd`
+#cd python
 
 # Run unit tests
-python biotool/biotool_test.py > /dev/null 2>&1 || {
+python python/biotool/biotool_test.py > /dev/null 2>&1 || {
     echo "'python biotool_test.py' failed"
     let errors+=1
 }
 
-cd $TOP_DIR
+#cd $TOP_DIR
 # Check program style
-pylint -E biotool > /dev/null 2>&1 || {
+# pylint -E python/biotool > /dev/null 2>&1 || {
+pylint -E python/biotool || {
     echo "'pylint -E biotool' failed"
     let errors+=1
 }

@@ -6,6 +6,9 @@
 */
 package org.supernifty.biotool;
 
+import java.io.PrintStream;
+import java.io.InputStream;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -23,13 +26,13 @@ import org.apache.commons.cli.ParseException;
 public final class App {
 
     /** success. */
-    private static final int EXIT_OK = 0;
+    public static final int EXIT_OK = 0;
     /** io error. */
-    private static final int EXIT_IO = 1;
+    public static final int EXIT_IO = 1;
     /** invalid command line. */
-    private static final int EXIT_CMD_LINE = 2;
+    public static final int EXIT_CMD_LINE = 2;
     /** invalid fasta format. */
-    private static final int EXIT_FORMAT = 3;
+    public static final int EXIT_FORMAT = 3;
 
     /**
      * private constructor prevents instantiation.
@@ -39,9 +42,10 @@ public final class App {
 
     /**
      * write help message to stdout.
+     * @param target where to write help
      */
-    private static void printHelp() {
-        System.out.println(
+    private static void printHelp(final PrintStream target) {
+        target.println(
             "Synopsis:\n"
             + "  Print fasta stats\n"
             + "Usage:\n"
@@ -57,18 +61,26 @@ public final class App {
 
     /**
      * write version information to stdout.
+     * @param target where to write version
      */
-    private static void printVersion() {
+    private static void printVersion(final PrintStream target) {
         Package pkg = Package.getPackage("org.supernifty.biotool");
         String version = pkg.getImplementationVersion();
-        System.out.println("biotool version " + version);
+        target.println("biotool version " + version);
     }
 
     /**
-     * command line entry point.
+     * process request based on incoming arguments.
      * @param args command line arguments
+     * @param in where to read input from
+     * @param out where to send output to
+     * @param err where to send logging and errors
+     * @return exit code indicating result of processing
      */
-    public static void main(final String[] args) {
+    public static int process(final String[] args,
+                              final InputStream in,
+                              final PrintStream out,
+                              final PrintStream err) {
         // parse args
         Options options = new Options();
         options.addOption("h", "help", false, "Show this help");
@@ -84,12 +96,12 @@ public final class App {
         try {
             CommandLine cmd = parser.parse(options, args);
             if (cmd.hasOption("help")) {
-                printHelp();
-                System.exit(EXIT_OK); // success
+                printHelp(err);
+                return EXIT_OK; // success
             }
             if (cmd.hasOption("version")) {
-                printVersion();
-                System.exit(EXIT_OK); // success
+                printVersion(err);
+                return EXIT_OK; // success
             }
             // minlen param
             int minlength = 0;
@@ -98,28 +110,28 @@ public final class App {
                     minlength = Integer.parseInt(
                         cmd.getOptionValue("minlen", "0"));
                 } catch (NumberFormatException e) {
-                    System.err.println("\n*** Invalid minlen option. "
+                    err.println("\n*** Invalid minlen option. "
                         + "Expected number, got '"
                         + cmd.getOptionValue("minlen", "0") + "' ***\n");
-                    printHelp();
-                    System.exit(EXIT_CMD_LINE); // cmd line error
+                    printHelp(err);
+                    return EXIT_CMD_LINE; // cmd line error
                 }
             }
-            System.out.println("FILENAME\tTOTAL\tNUMSEQ\tMIN\tAVG\tMAX");
+            out.println("FILENAME\tTOTAL\tNUMSEQ\tMIN\tAVG\tMAX");
             if (cmd.getArgs().length == 0) {
                 try {
                     FastaStats stats = new FastaStats(
-                        System.in, cmd.hasOption("verbose"), minlength);
-                    System.out.printf("%s\t%d\t%d\t%d\t%d\t%d\n", "stdin",
+                        in, cmd.hasOption("verbose"), minlength);
+                    out.printf("%s\t%d\t%d\t%d\t%d\t%d\n", "stdin",
                         stats.getTotal(),
                         stats.getNumSeq(),
                         stats.getMin(),
                         stats.getAverage(),
                         stats.getMax());
                 } catch (java.io.IOException e) {
-                    System.err.println("Failed to read stdin: "
+                    err.println("Failed to read stdin: "
                         + e.getMessage());
-                    System.exit(EXIT_IO); // io error
+                    return EXIT_IO; // io error
                 }
             } else {
                 // process files
@@ -128,31 +140,41 @@ public final class App {
                         FastaStats stats = new FastaStats(filename,
                             cmd.hasOption("verbose"),
                             minlength);
-                        System.out.printf("%s\t%d\t%d\t%d\t%d\t%d\n",
+                        out.printf("%s\t%d\t%d\t%d\t%d\t%d\n",
                             filename,
                             stats.getTotal(),
                             stats.getNumSeq(),
                             stats.getMin(),
                             stats.getAverage(), stats.getMax());
                     } catch (java.io.IOException e) {
-                        System.err.println("Failed to open '"
+                        err.println("Failed to open '"
                             + filename
                             + "': " + e.getMessage());
-                        System.exit(EXIT_IO); // io error
+                        return EXIT_IO; // io error
                     }
                 }
             }
         } catch (FastaException e) {
-            System.err.println("\n*** Invalid input file: "
+            err.println("\n*** Invalid input file: "
                 + e.getMessage()
                 + " ***\n");
-            System.exit(EXIT_FORMAT); // invalid fasta
+            return EXIT_FORMAT; // invalid fasta
         } catch (ParseException e) {
-            System.err.println("\n*** Invalid command line arguments: "
+            err.println("\n*** Invalid command line arguments: "
                 + e.getMessage()
                 + " ***\n");
-            printHelp();
-            System.exit(EXIT_CMD_LINE); // cmd line error
+            printHelp(err);
+            return EXIT_CMD_LINE; // cmd line error
         }
+        return EXIT_OK;
+    }
+
+    /**
+     * command line entry point.
+     * @param args command line arguments
+     */
+    public static void main(final String[] args) {
+        int result = process(args, System.in, System.out, System.err);
+        System.exit(result);
     }
 }

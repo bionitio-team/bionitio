@@ -1,8 +1,10 @@
 name:                biotool-hs
 version:             0.1.0.0
 synopsis:            Demonstration bioinformatics tool 
-description:         Please see README.md
-homepage:            https://github.com/bjpop/biotool-hs#readme
+description:         The program reads one or more input FASTA files. For
+                     each file it computes a variety of statistics, and then
+                     prints a summary of the statistics as output. 
+homepage:            https://github.com/bjpop/biotool
 license:             MIT 
 license-file:        LICENSE
 author:              Bernie Pope 
@@ -44,4 +46,4 @@ test-suite biotool-hs-test
 
 source-repository head
   type:     git
-  location: https://github.com/bjpop/biotool-hs
+  location: https://github.com/bjpop/biotool

@@ -13,10 +13,10 @@ stack test > /dev/null 2>&1 || {
 }
 
 # Run hlint static analysis 
-~/.local/bin/hlint src || {
-    echo "'~/.local/bin/hlint src' failed"
-    let errors+=1
-}
+#~/.local/bin/hlint src || {
+#    echo "'~/.local/bin/hlint src' failed"
+#    let errors+=1
+#}
 
 [ "$errors" -gt 0 ] && {
     echo "There were $errors errors found"

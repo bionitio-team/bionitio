@@ -37,9 +37,14 @@ import System.Exit
 import System.IO
    (stdin, hPutStrLn, stderr)
 
--- | An error occurred reading the input FASTA file
+-- | File I/O error. This can occur if at least one of the input FASTA
+-- files cannot be opened for reading. This can occur because the file
+-- does not exist at the specified path, or biotool does not have permission
+-- to read from the file.  
 exitFileError = 1
--- | The command line arguments were not correctly specified
+-- | A command line error occurred. This can happen if the user specifies
+-- an incorrect command line argument. In this circumstance biotool will
+-- also print a usage message to the standard error device (stderr).  
 exitCommandLineError = 2
 
 -- | Exit the program, printing an error message on stderr, and returning

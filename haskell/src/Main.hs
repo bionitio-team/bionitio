@@ -22,7 +22,6 @@ import Stats
    (sequenceStats, Stats(..), average)
 import Bio.Sequence.Fasta
    (readFasta, hReadFasta, Sequence)
-import System.IO (stdin)
 import Options.Applicative 
    (Parser, ParserInfo (infoFailureCode), option, auto, long, short,
    metavar, help, value, many, argument, str, info, execParser, switch,
@@ -36,7 +35,7 @@ import System.Environment
 import System.Exit
    (exitWith, ExitCode(..))
 import System.IO
-   (hPutStrLn, stderr)
+   (stdin, hPutStrLn, stderr)
 
 -- | An error occurred reading the input FASTA file
 exitFileError = 1

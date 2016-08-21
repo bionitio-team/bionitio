@@ -24,11 +24,36 @@ import Bio.Sequence.Fasta
    (readFasta, hReadFasta, Sequence)
 import System.IO (stdin)
 import Options.Applicative 
-   (Parser, option, auto, long, short, metavar, help, value,
-   many, argument, str, info, execParser, switch,
+   (Parser, ParserInfo (infoFailureCode), option, auto, long, short,
+   metavar, help, value, many, argument, str, info, execParser, switch,
    fullDesc, (<*>), (<$>), (<>), helper, progDesc)
 import Data.List
    (intercalate)
+import Control.Exception
+   (catch, IOException)
+import System.Environment
+   (getProgName)
+import System.Exit
+   (exitWith, ExitCode(..))
+import System.IO
+   (hPutStrLn, stderr)
+
+-- | An error occurred reading the input FASTA file
+exitFileError = 1
+-- | The command line arguments were not correctly specified
+exitCommandLineError = 2
+
+-- | Exit the program, printing an error message on stderr, and returning
+-- a specific error code. The program name is prefixed onto the front of 
+-- the error message.
+exitWithError :: String -- ^ Reason for the error. 
+              -> Int    -- ^ The exit code to return from the program.
+              -> IO ()
+exitWithError message exitCode = do
+   programName <- getProgName
+   let errorStr = programName ++ " ERROR: " ++ message
+   hPutStrLn stderr errorStr
+   exitWith (ExitFailure exitCode)
 
 -- | Default value for the --minlen command line argument. Setting it to
 -- zero means that, by default, no sequences will be skipped.
@@ -95,7 +120,16 @@ processFastaFiles options [] =
 -- One or more files specified on command line, process
 -- each one in sequence.
 processFastaFiles options files@(_:_) =
-   mapM_ (\file -> readFasta file >>= processFile options file) files
+   mapM_ tryProcessFile files
+   where
+   -- Catch any IO excpetions raised in the processing of the file
+   tryProcessFile :: FilePath -> IO ()
+   tryProcessFile file =
+      catch
+         (readFasta file >>= processFile options file)
+         (\exception ->
+            exitWithError (show (exception :: IOException))
+               exitFileError)
 
 -- | Compute statistics for the contents of a single FASTA file
 processFile :: Options    -- ^ Command line options
@@ -124,6 +158,16 @@ prettyOutput label (Just stats@Stats {..}) =
    numbers = [ show numSequences, show numBases, show minSequenceLength
              , averageStr, show maxSequenceLength ]
 
+-- | Command line parser.
+-- We require that the program exits with status 2
+-- if the command line argument parsing fails.
+optionParser :: ParserInfo Options
+optionParser = thisParserInfo { infoFailureCode = exitCommandLineError }
+   where
+   thisParserInfo =
+      info (helper <*> defineOptions)
+         (fullDesc <> progDesc programDescription)
+
 -- | The entry point for the program.
 --  * Parse the command line arguments.
 --  * Print the output header.
@@ -134,7 +178,3 @@ main = do
    options <- execParser optionParser 
    putStrLn header
    processFastaFiles options $ fastaFiles options
-   where
-   optionParser =
-      info (helper <*> defineOptions)
-           (fullDesc <> progDesc programDescription)

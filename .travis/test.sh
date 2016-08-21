@@ -30,7 +30,19 @@ $exe --minlen 200 test_data/two_sequence.fasta | grep -q "$res3" || {
     let errors+=1
 }
 
+# Test exit status for a bad command line invocation
+$exe --this_is_not_a_valid_argument
+[ $? -ne 2 ] && {
+    echo "Test Failed $exe. Exit status was $?. Expected 2"
+    let errors+=1
+}
 
+# Test exit status for a non existent input FASTA file 
+$exe this_file_does_not_exist.fasta 
+[ $? -ne 1 ] && {
+    echo "Test Failed $exe. Exit status was $?. Expected 1"
+    let errors+=1
+}
 
 [ "$errors" -gt 0 ] && {
     echo "There were $errors errors found"

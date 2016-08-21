@@ -1,3 +1,31 @@
+/// Module      : Main
+/// Description : The main entry point for the program.
+/// Copyright   : (c) Bernie Pope, 2016
+/// License     : MIT
+/// Maintainer  : bjpope@unimelb.edu.au
+/// Stability   : experimental
+/// Portability : POSIX
+///
+/// Read a single FASTA file as input and compute:
+///  * Num sequences.
+///  * Total number of bases in all sequences.
+///  * Minimum sequence length.
+///  * Maximum sequence length.
+///  * Average sequence length, as an integer, rounded towards zero.
+///
+/// Sequences whose length is less than a specified minimum length are
+/// ignored (skipped) and not included in the calculation of the statistics.
+///
+/// The basic statistics cannot be computed for empty files, and those
+/// with no reads that meet the mimimum length requirement. In such cases
+/// the result is Nothing.
+///
+/// We do not make any assumptions about the type of data stored in the
+/// FASTA file, it could be DNA, proteins or anything else. No checks are
+/// made to ensure that the FASTA file makes sense biologically.
+///
+/// Whitespace within the sequences will be ignored.
+
 extern crate bio;
 extern crate argparse;
 use std::io;
@@ -8,11 +36,27 @@ use std::fmt;
 use std::fs::File;
 use argparse::{ArgumentParser, StoreTrue, Store, Print, Collect};
 
+// File I/O error. This can occur if at least one of the input FASTA
+// files cannot be opened for reading. This can occur because the file
+// does not exist at the specified path, or biotool does not have
+// permission to read from the file.
 const EXIT_FILE_IO_ERROR: i32 = 1;
+
+// A command line error occurred. This can happen if the user specifies
+// an incorrect command line argument. In this circumstance biotool will
+// also print a usage message to the standard error device (stderr).
 const EXIT_COMMAND_LINE_ERROR: i32 = 2;
+
+// Input FASTA file is invalid. This can occur if biotool can read an
+// input file but the file format is invalid.
 const EXIT_FASTA_PARSE_ERROR: i32 = 3;
+
+// Name of the program, to be used in diagnostic messages.
 static PROGRAM_NAME: &'static str = "biotool";
 
+/// Exit the program, printing an error message on stderr, and returning
+/// a specific error code. The program name is prefixed onto the front of
+/// the error message.
 fn exit_with_error(status: i32, message: &String) -> () {
     writeln!(&mut std::io::stderr(),
              "{} ERROR: {}!",
@@ -22,22 +66,31 @@ fn exit_with_error(status: i32, message: &String) -> () {
     std::process::exit(status);
 }
 
+/// Basic statistics computed for a FASTA file.
+/// Note that all values are with respect to only those reads whose
+/// length is at least as long as the minimum.
 #[derive(Debug, PartialEq)]
 pub struct FastaStats {
+    /// Minimum length of all sequences in the file.
     min_len: u64,
+    /// Average length of all sequences in the file rounded towards zero.
     average_len: u64,
+    /// Maximum length of all sequences in the file.
     max_len: u64,
+    /// Total number of bases from all the sequences in the file.
     total: u64,
+    /// Total number of sequences in the file.
     num_seqs: u64,
 }
 
-#[derive(Debug)]
-pub enum StatsResult {
-    StatsNone,
-    StatsSome(FastaStats),
-    StatsError(io::Error),
-}
-
+/// Construct a FastaStats value from an input FASTA file. Sequences
+/// of length < `minlen` are ignored.
+/// The input FASTA file is represented as an `io::Read` reader.
+/// The result is of type `Result<Option<FastaStats>, io::Error>`
+///  * `Err(error)` if an error occurred while reading the FASTA file.
+///  * `Ok(Nothing)` if the FASTA file had no sequences of length >= `minlen`.
+///  * `Ok(Some(stats))` if there were no errors reading the file and there was
+///     at least one sequence in the file whose length was >= `minlen`.
 impl FastaStats {
     pub fn new<R: io::Read>(minlen: u64, reader: R) -> Result<Option<FastaStats>, io::Error> {
         let fasta_reader = fasta::Reader::new(reader);
@@ -47,27 +100,36 @@ impl FastaStats {
         let mut min_len: u64 = 0;
         let mut this_len: u64;
 
+        // Read each sequence in the input FASTA file.
         for next in fasta_reader.records() {
             match next {
+                // The sequence was parsed correctly.
                 Ok(record) => {
+                    // Filter out sequences whose length is too short.
                     this_len = record.seq().len() as u64;
                     if this_len >= minlen {
                         num_seqs += 1;
                         total += this_len;
                         if num_seqs == 1 {
+                            // This is the first sequence we have
+                            // encountered, set max and min to the
+                            // length of this sequence.
                             max_len = this_len;
                             min_len = this_len;
                         } else {
+                            // Update max and min.
                             max_len = cmp::max(max_len, this_len);
                             min_len = cmp::min(min_len, this_len);
                         }
                     }
                 }
-                // Err(error) => return StatsResult::StatsError(error)
+                // There was an error parsing the sequence.
                 Err(error) => return Err(error),
             }
         }
         if num_seqs > 0 {
+            // We encountered at least one sequence, so we can
+            // compute statistics for this file.
             let average_len = ((total as f64) / (num_seqs as f64)).floor() as u64;
             Ok(Some(FastaStats {
                 min_len: min_len,
@@ -77,11 +139,15 @@ impl FastaStats {
                 num_seqs: num_seqs,
             }))
         } else {
+            // We did not encounter any sequences (satisfying the length
+            // requirement). So we cannot compute statistics for this file.
             Ok(None)
         }
     }
 }
 
+/// Format the FastaStats for output.
+/// Use a tab as a delimiter.
 impl fmt::Display for FastaStats {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f,
@@ -94,12 +160,20 @@ impl fmt::Display for FastaStats {
     }
 }
 
+/// Command line arguments supplied to the program.
 struct Options {
+    /// If True, make the program produce more detailed output
+    /// about its progress.
     verbose: bool,
+    /// Minimum length sequence considered by the program. Sequences
+    /// shorter than this length are ignored.
     minlen: u64,
+    /// Possibly empty vector of input FASTA file paths.
     fasta_files: Vec<String>,
 }
 
+/// Parse the command line options.
+/// Program exits with status 2 on parsing failure.
 fn parse_options() -> Options {
     let mut options = Options {
         verbose: false,
@@ -137,25 +211,44 @@ fn parse_options() -> Options {
     return options;
 }
 
+/// Compute basic statistics for the input FASTA files,
+/// and pretty print the results to standard output.
+/// Program exits if a parse error occurs when reading an
+/// input FASTA file.
 fn compute_print_stats<R: io::Read>(options: &Options, filename: &String, reader: R) -> () {
     match FastaStats::new(options.minlen, reader) {
-        // StatsResult::StatsSome(stats) => {
         Ok(Some(stats)) => {
+            // Prefix the FASTA filename onto the front of the statistics
             println!("{}\t{}", filename, stats);
         }
         Ok(None) => {
+            // We could not compute any statistics for the file because
+            // it contained no sequences at least as long as the minimum
+            // length. In this case we just print dashes.
             println!("{}\t0\t0\t-\t-\t-", filename);
         }
+        // There was a parse error when reading a FASTA file.
+        // Exit the program.
         Err(error) => exit_with_error(EXIT_FASTA_PARSE_ERROR, &format!("{}", error)),
     }
 }
 
+/// The entry point for the program.
+///  * Parse the command line arguments.
+///  * Print the output header.
+///  * Process each input FASTA file, compute stats and display
+///    results.
 fn main() {
     let options = parse_options();
+    // Display the output header.
     println!("FILENAME\tTOTAL\tNUMSEQ\tMIN\tAVG\tMAX");
     if options.fasta_files.len() == 0 {
+        // No FASTA files were specified on the command line, so
+        // read from stdin instead.
         compute_print_stats(&options, &String::from("stdin"), io::stdin());
     } else {
+        // Process each FASTA file specified on the command line.
+        // Exit the program if a file I/O error occurs.
         for filename in &options.fasta_files {
             match File::open(filename) {
                 Ok(file) => {
@@ -167,10 +260,23 @@ fn main() {
     }
 }
 
+/// Unit testing.
 #[cfg(test)]
 mod tests {
     use super::*;
 
+    /// Helper function for running test cases.
+    /// Arguments are:
+    ///  * `minlen`: minimum length of sequences in the FASTA file to be
+    ///     considered by the program.
+    ///  * `input`: a string containing the contents of the input FASTA file.
+    ///  * `expected`: the expected result of computing statistics for the input
+    ///     FASTA file. `None` means that we do not expect any statistics to be
+    ///     computed because there are no sequences in the input which meet the
+    ///     minimum length requirements. `Some(stats)` means that we expect some
+    ///     particular statistics to be computed.
+    /// We compute the `FastaStats` for the input FASTA file and then compare against
+    /// the expected result. If they are different we `panic` with a error message.
     fn test_fastastats_ok(minlen: u64, input: &String, expected: Option<FastaStats>) -> () {
         match FastaStats::new(minlen, input.as_bytes()) {
             Ok(result) => {
@@ -182,10 +288,11 @@ mod tests {
         }
     }
 
-    // io::Error does not currently implement PartialEq, so we resort to
-    // just checking for the existence of an error, not its actual content.
-    // Hopefully this will be fixed in Rust soon:
-    // https://github.com/rust-lang/rust/issues/34158
+    /// Test for computations which are expected to fail.
+    /// NB io::Error does not currently implement PartialEq, so we resort to
+    /// just checking for the existence of an error, not its actual content.
+    /// Hopefully this will be fixed in Rust soon:
+    /// https://github.com/rust-lang/rust/issues/34158
     fn test_fastastats_err(minlen: u64, input: &String) -> () {
         let comp = FastaStats::new(minlen, input.as_bytes());
         match comp {
@@ -194,16 +301,22 @@ mod tests {
         }
     }
 
+    /// Empty input FASTA file. Should not produce any statistics.
     #[test]
     fn zero_byte_input() {
         test_fastastats_ok(0, &String::from(""), None)
     }
 
+    /// Input FASTA file consisting of just a newline character.
+    /// Result is expected to be an error, as the input is not considered
+    /// a valid FASTA file.
     #[test]
     fn single_newline_input() {
         test_fastastats_err(0, &String::from("\n"))
     }
 
+    /// Input FASTA file consisting of a single greater than sign,
+    /// which is the minimal requirement for the FASTA header.
     #[test]
     fn single_greater_than_input() {
         test_fastastats_ok(0,
@@ -217,6 +330,8 @@ mod tests {
                            }))
     }
 
+    /// Input FASTA file consisting of a single sequence.
+    /// The sequence is split over two lines.
     #[test]
     fn one_sequence() {
         test_fastastats_ok(0,
@@ -230,6 +345,8 @@ mod tests {
                            }))
     }
 
+    /// Input FASTA file consisting of two sequences.
+    /// The sequences are split over multiple lines.
     #[test]
     fn two_sequence() {
         test_fastastats_ok(0,
@@ -243,11 +360,16 @@ mod tests {
                            }))
     }
 
+    /// Input FASTA file without a sequence header. This is considered an
+    /// error, because it is not a valid FASTA file.
     #[test]
     fn no_header() {
         test_fastastats_err(0, &String::from("no header\n"))
     }
 
+    /// Input FASTA file with 2 sequences, and minlen less than the lengths
+    /// of all the sequences in the file. None of the sequences should be
+    /// filtered out.
     #[test]
     fn minlen_less_than_all() {
         test_fastastats_ok(2,
@@ -261,6 +383,10 @@ mod tests {
                            }))
     }
 
+    /// Input FASTA file with 2 sequences, and minlen greater than
+    /// the length of one of the sequences. This sequence should be
+    /// filtered out, and not considered in the calculation of the
+    /// statistics.
     #[test]
     fn minlen_greater_than_one() {
         test_fastastats_ok(3,
@@ -274,6 +400,9 @@ mod tests {
                            }))
     }
 
+    /// Input FASTA file with 2 sequences, and minlen greater than
+    /// the length of all the sequences. All sequences should be filtered
+    /// out, and thus there are no statistics to compute.
     #[test]
     fn minlen_greater_than_all() {
         test_fastastats_ok(8,

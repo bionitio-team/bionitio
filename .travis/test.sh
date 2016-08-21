@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+#set -e
 errors=0
 
 exe="$1"

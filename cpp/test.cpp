@@ -28,3 +28,13 @@ TEST_CASE( "--minlen is less than 2 out of 2 sequences", "[FastaStats]" ) {
     FastaStats expected = FastaStats(2, 9, 2, 7);
     run_test(">header1\nATGC\nAGG\n>header2\nTT\n", 2, expected);
 }
+
+TEST_CASE( "--minlen is less than 1 out of 2 sequences", "[FastaStats]" ) {
+    FastaStats expected = FastaStats(1, 7, 7, 7);
+    run_test(">header1\nATGC\nAGG\n>header2\nTT\n", 3, expected);
+}
+
+TEST_CASE( "--minlen is greater than 2 out of 2 sequences", "[FastaStats]" ) {
+    FastaStats expected = FastaStats(0, 0, 0, 0);
+    run_test(">header1\nATGC\nAGG\n>header2\nTT\n", 8, expected);
+}

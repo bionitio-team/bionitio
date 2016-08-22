@@ -39,7 +39,7 @@ int processFiles(int verbose, int minlen, char **files, int fileCount) {
     if (fileCount == 0) {
         biotool_log(verbose, "reading stdin...");
         struct FastaStats result = processFasta(stdin, verbose, minlen);
-        fprintf(stdout, "stdin\t%lu\t%lu\t%lu\t%.0f\t%lu\n", result.bases, result.sequences, result.min, result.average, result.max);
+        fprintf(stdout, "stdin\t%lu\t%lu\t%lu\t%.0f\t%lu\n", result.sequences, result.bases, result.min, result.average, result.max);
         biotool_log(verbose, "reading stdin: done");
     }
     else {
@@ -47,7 +47,7 @@ int processFiles(int verbose, int minlen, char **files, int fileCount) {
         for (int current = 0; current < fileCount; current++) {
             verbose && fprintf(stderr, "reading %s...\n", files[current]);
             struct FastaStats result = processFasta(fopen(files[current], "r"), verbose, minlen);
-            fprintf(stdout, "%s\t%lu\t%lu\t%lu\t%.0f\t%lu\n", files[current], result.bases, result.sequences, result.min, result.average, result.max);
+            fprintf(stdout, "%s\t%lu\t%lu\t%lu\t%.0f\t%lu\n", files[current], result.sequences, result.bases, result.min, result.average, result.max);
             verbose && fprintf(stderr, "reading %s: done\n", files[current]);
         }
         verbose && fprintf(stderr, "reading %i files: done\n", fileCount);

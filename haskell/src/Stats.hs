@@ -58,7 +58,7 @@ data Stats =
 -- Returns Nothing if the number of counted sequences is zero.
 -- Average is rounded to an integer towards zero.
 average :: Stats -> Maybe Integer
-average (Stats {..}) 
+average Stats{..}
    | numSequences > 0 =
         Just $ floor (fromIntegral numBases / fromIntegral numSequences)
    | otherwise = Nothing
@@ -99,7 +99,7 @@ initStats sequence = Stats
 updateStats :: Stats    -- ^ Current value of stats.
             -> Sequence -- ^ Next sequence from the FASTA file.
             -> Stats    -- ^ New, updated stats.
-updateStats oldStats@(Stats {..}) sequence =
+updateStats oldStats@Stats{..} sequence =
    Stats newNumSequences newNumBases
          newMinSequenceLength newMaxSequenceLength 
    where

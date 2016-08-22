@@ -11,5 +11,5 @@ echo 'Haskell install'
    cd haskell
    stack setup
    stack install
-
+   sudo apt-get install hlint
 ) > /dev/null 2>&1

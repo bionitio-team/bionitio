@@ -21,14 +21,43 @@ module Main where
 import Stats
    (sequenceStats, Stats(..), average)
 import Bio.Sequence.Fasta
-   (readFasta, hReadFasta)
-import System.IO (stdin)
+   (readFasta, hReadFasta, Sequence)
 import Options.Applicative 
-   (Parser, option, auto, long, short, metavar, help, value,
-   many, argument, str, info, execParser, switch,
+   (Parser, ParserInfo (infoFailureCode), option, auto, long, short,
+   metavar, help, value, many, argument, str, info, execParser, switch,
    fullDesc, (<*>), (<$>), (<>), helper, progDesc)
 import Data.List
-   (intersperse)
+   (intercalate)
+import Control.Exception
+   (catch, IOException)
+import System.Environment
+   (getProgName)
+import System.Exit
+   (exitWith, ExitCode(..))
+import System.IO
+   (stdin, hPutStrLn, stderr)
+
+-- | File I/O error. This can occur if at least one of the input FASTA
+-- files cannot be opened for reading. This can occur because the file
+-- does not exist at the specified path, or biotool does not have permission
+-- to read from the file.  
+exitFileError = 1
+-- | A command line error occurred. This can happen if the user specifies
+-- an incorrect command line argument. In this circumstance biotool will
+-- also print a usage message to the standard error device (stderr).  
+exitCommandLineError = 2
+
+-- | Exit the program, printing an error message on stderr, and returning
+-- a specific error code. The program name is prefixed onto the front of 
+-- the error message.
+exitWithError :: String -- ^ Reason for the error. 
+              -> Int    -- ^ The exit code to return from the program.
+              -> IO ()
+exitWithError message exitCode = do
+   programName <- getProgName
+   let errorStr = programName ++ " ERROR: " ++ message
+   hPutStrLn stderr errorStr
+   exitWith (ExitFailure exitCode)
 
 -- | Default value for the --minlen command line argument. Setting it to
 -- zero means that, by default, no sequences will be skipped.
@@ -90,23 +119,29 @@ processFastaFiles :: Options    -- ^ Command line options
                   -> [FilePath] -- ^ Possibly empty list of FASTA file paths
                   -> IO ()
 -- No files specified on command line, so read from stdin
--- XXX reduce code duplication here
-processFastaFiles options [] = do
-   sequences <- hReadFasta stdin
-   putStrLn $ prettyOutput "stdin" $ 
-      sequenceStats (minLengthThreshold options) sequences 
+processFastaFiles options [] =
+   hReadFasta stdin >>= processFile options "stdin"
 -- One or more files specified on command line, process
 -- each one in sequence.
 processFastaFiles options files@(_:_) =
-   mapM_ (processFile options) files
+   mapM_ tryProcessFile files
+   where
+   -- Catch any IO excpetions raised in the processing of the file
+   tryProcessFile :: FilePath -> IO ()
+   tryProcessFile file =
+      catch
+         (readFasta file >>= processFile options file)
+         (\exception ->
+            exitWithError (show (exception :: IOException))
+               exitFileError)
 
--- | Compute statistics for a single FASTA file
-processFile :: Options  -- ^ Command line options
-            -> FilePath -- ^ File path of FASTA file
+-- | Compute statistics for the contents of a single FASTA file
+processFile :: Options    -- ^ Command line options
+            -> String     -- ^ Label for the output (typically filename)
+            -> [Sequence] -- ^ Contents of FASTA file
             -> IO ()
-processFile options filePath = do
-   sequences <- readFasta filePath
-   putStrLn $ prettyOutput filePath $
+processFile options label sequences =
+   putStrLn $ prettyOutput label $
       sequenceStats (minLengthThreshold options) sequences 
 
 -- | Render program outout as a String. If no statistics are available it means
@@ -119,14 +154,23 @@ prettyOutput :: String      -- ^ A label for the input file. Normally the file n
              -> String      -- ^ Rendered output, tab separated.
 prettyOutput label Nothing =
    label ++ "\t0\t0\t-\t-\t-"
-prettyOutput label (Just stats@(Stats {..})) =
-   concat $ intersperse "\t" (label : numbers)
+prettyOutput label (Just stats@Stats {..}) =
+   intercalate "\t" (label : numbers)
    where
    -- If we cannot compute an average, show a dash.
    averageStr = maybe "-" show (average stats)
    numbers = [ show numSequences, show numBases, show minSequenceLength
              , averageStr, show maxSequenceLength ]
 
+-- | Command line parser.
+-- We require that the program exits with status 2
+-- if the command line argument parsing fails.
+optionParser :: ParserInfo Options
+optionParser = thisParserInfo { infoFailureCode = exitCommandLineError }
+   where
+   thisParserInfo =
+      info (helper <*> defineOptions)
+         (fullDesc <> progDesc programDescription)
 
 -- | The entry point for the program.
 --  * Parse the command line arguments.
@@ -138,7 +182,3 @@ main = do
    options <- execParser optionParser 
    putStrLn header
    processFastaFiles options $ fastaFiles options
-   where
-   optionParser =
-      info (helper <*> defineOptions)
-           (fullDesc <> progDesc programDescription)

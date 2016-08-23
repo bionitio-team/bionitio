@@ -36,7 +36,8 @@ void printVersion() {
 }
 
 int processFiles(int verbose, int minlen, char **files, int fileCount) {
-    verbose && fprintf(stderr, "processing %i files with minlen %i...\n", fileCount, minlen);
+    if (verbose) 
+        fprintf(stderr, "processing %i files with minlen %i...\n", fileCount, minlen);
     puts(HEADER);
     if (fileCount == 0) {
         biotool_log(verbose, "reading stdin...");
@@ -50,9 +51,11 @@ int processFiles(int verbose, int minlen, char **files, int fileCount) {
         biotool_log(verbose, "reading stdin: done");
     }
     else {
-        verbose && fprintf(stderr, "reading %i files...\n", fileCount);
+        if (verbose)
+            fprintf(stderr, "reading %i files...\n", fileCount);
         for (int current = 0; current < fileCount; current++) {
-            verbose && fprintf(stderr, "reading %s...\n", files[current]);
+            if (verbose)
+                fprintf(stderr, "reading %s...\n", files[current]);
             FILE *fh = fopen(files[current], "r");
             if (!fh) {
                 fprintf(stderr, "Failed to open '%s'\n", files[current]);
@@ -65,9 +68,11 @@ int processFiles(int verbose, int minlen, char **files, int fileCount) {
             else {
                 fprintf(stdout, "%s\t%lu\t%lu\t%lu\t%.0f\t%lu\n", files[current], result.sequences, result.bases, result.min, result.average, result.max);
             }
-            verbose && fprintf(stderr, "reading %s: done\n", files[current]);
+            if (verbose)
+                fprintf(stderr, "reading %s: done\n", files[current]);
         }
-        verbose && fprintf(stderr, "reading %i files: done\n", fileCount);
+        if (verbose)
+            fprintf(stderr, "reading %i files: done\n", fileCount);
     }
     return EXIT_OK;
 }

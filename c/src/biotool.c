@@ -11,7 +11,9 @@
 const char *VERSION="0.1";
 
 const int EXIT_OK=0;
+const int EXIT_FILE_IO_ERROR=1;
 const int EXIT_INVALID_COMMAND=2;
+const int EXIT_FASTA_FILE_ERROR=3;
 
 const int DEFAULT_MIN_LEN = 0;
 const char *HEADER="FILENAME\tTOTAL\tNUMSEQ\tMIN\tAVG\tMAX";
@@ -34,20 +36,35 @@ void printVersion() {
 }
 
 int processFiles(int verbose, int minlen, char **files, int fileCount) {
-    biotool_log(verbose, "processing...");
+    verbose && fprintf(stderr, "processing %i files with minlen %i...\n", fileCount, minlen);
     puts(HEADER);
     if (fileCount == 0) {
         biotool_log(verbose, "reading stdin...");
         struct FastaStats result = processFasta(stdin, verbose, minlen);
-        fprintf(stdout, "stdin\t%lu\t%lu\t%lu\t%.0f\t%lu\n", result.sequences, result.bases, result.min, result.average, result.max);
+        if (result.sequences == 0) {
+            fprintf(stdout, "stdin\t0\t0\t-\t-\t-\n");
+        }
+        else {
+            fprintf(stdout, "stdin\t%lu\t%lu\t%lu\t%.0f\t%lu\n", result.sequences, result.bases, result.min, result.average, result.max);
+        }
         biotool_log(verbose, "reading stdin: done");
     }
     else {
         verbose && fprintf(stderr, "reading %i files...\n", fileCount);
         for (int current = 0; current < fileCount; current++) {
             verbose && fprintf(stderr, "reading %s...\n", files[current]);
-            struct FastaStats result = processFasta(fopen(files[current], "r"), verbose, minlen);
-            fprintf(stdout, "%s\t%lu\t%lu\t%lu\t%.0f\t%lu\n", files[current], result.sequences, result.bases, result.min, result.average, result.max);
+            FILE *fh = fopen(files[current], "r");
+            if (!fh) {
+                fprintf(stderr, "Failed to open '%s'\n", files[current]);
+                return EXIT_FILE_IO_ERROR;
+            }
+            struct FastaStats result = processFasta(fh, verbose, minlen);
+            if (result.sequences == 0) {
+                fprintf(stdout, "%s\t0\t0\t-\t-\t-\n", files[current]);
+            }
+            else {
+                fprintf(stdout, "%s\t%lu\t%lu\t%lu\t%.0f\t%lu\n", files[current], result.sequences, result.bases, result.min, result.average, result.max);
+            }
             verbose && fprintf(stderr, "reading %s: done\n", files[current]);
         }
         verbose && fprintf(stderr, "reading %i files: done\n", fileCount);
@@ -95,7 +112,8 @@ int main(int argc, char** argv) {
                         exit(EXIT_OK);
                     }
                 }
-                if (option_index == 2) { // minlen
+                if (option_index == 3) { // minlen
+                    //printf("got minlen %s\n", optarg);
                     sscanf(optarg, "%i", &minlen);
                 }
                 break;

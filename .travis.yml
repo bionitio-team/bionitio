@@ -10,6 +10,7 @@ addons:
       npm
 
 before_install:
+  - ./.travis/install-dependencies/c-install-dependencies.sh
   - ./.travis/install-dependencies/cpp-install-dependencies.sh
   - ./.travis/install-dependencies/haskell-install-dependencies.sh
   - ./.travis/install-dependencies/java-install-dependencies.sh

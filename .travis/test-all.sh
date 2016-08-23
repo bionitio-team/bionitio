@@ -2,6 +2,7 @@
 
 set -e
 
+./.travis/test.sh c/biotool-c
 ./.travis/test.sh js/biotool.js
 ./.travis/test.sh ~/.local/bin/biotool-hs
 ./.travis/test.sh ruby/biotool.rb

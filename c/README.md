@@ -12,33 +12,14 @@ This program is released as open source software under the terms of [MIT License
 
 # Installing
 
-Biotool uses the `cmake` tool to build an executable. You will need to have `cmake` installed on your system.
-
-On OS X you can install `cmake` via Homebrew like so (you might need to run `brew update` first`):
+To build biotool, run the command:
 ```
-% brew install cmake
-```
-
-The instructions below show you how to build biotool. They assume that you set the shell variable `BIOTOOL_CPP_PATH` to refer to the source directory of biotool. For example, you might set it like so:
-
-```
-% export BIOTOOL_CPP_PATH=$HOME/code/biotool/cpp
-```
-
-Execute the commands below to build biotool. Note that biotool depends on the `Seqan` library.
-```
-% cd $BIOTOOL_CPP_PATH 
-% wget http://packages.seqan.de/seqan-library/seqan-library-2.1.1.tar.xz 
-% tar xvf seqan-library-2.1.1.tar.xz
-% mkdir biotool-build
-% cd biotool-build
-% cmake $BIOTOOL_CPP_PATH -DCMAKE_MODULE_PATH=$BIOTOOL_CPP_PATH/seqan-library-2.1.1/share/cmake/Modules/ -DSEQAN_INCLUDE_PATH=$BIOTOOL_CPP_PATH/seqan-library-2.1.1/include/ -DCMAKE_CXX_FLAGS=-std=c++11
 % make
 ```
 
-If you want to use a specific compiler, such as clang++ on OSX then add a flag like so to the `cmake` command above:
+To install the tool, run the command:
 ```
--DCMAKE_CXX_COMPILER=clang++
+% make install
 ```
 
 # General behaviour

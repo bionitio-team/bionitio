@@ -16,17 +16,17 @@ struct FastaStats processFasta(FILE *fh, int verbose, int minlength) {
     result.min = 1e9;
     result.max = 0;
 
-    biotool_log(verbose, "opening...");
     gzFile fp = gzdopen(fileno(fh), "r");
     kseq_t *seq = kseq_init(fp);
-    biotool_log(verbose, "reading...");
     while(kseq_read(seq) >= 0) {
        // process and/or store the sequences
-       result.sequences += 1;
        int bases = strlen(seq->seq.s);
-       result.bases += bases;
-       result.min = result.min < bases ? result.min : bases;
-       result.max = result.max > bases ? result.max : bases;
+       if (bases >= minlength) {
+           result.sequences += 1;
+           result.bases += bases;
+           result.min = result.min < bases ? result.min : bases;
+           result.max = result.max > bases ? result.max : bases;
+       }
     }
     if (result.sequences > 0) {
         result.average = (float)result.bases / result.sequences;
@@ -35,7 +35,6 @@ struct FastaStats processFasta(FILE *fh, int verbose, int minlength) {
         result.average = 0;
     }
     kseq_destroy(seq);
-    biotool_log(verbose, "closing...");
     gzclose(fp);
 
     return result;

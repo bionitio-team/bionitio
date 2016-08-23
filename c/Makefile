@@ -6,7 +6,7 @@ LIBS=-lm -lz
 OPT=-O3
 
 # mac
-CFLAGS=-Wall -m64
+CFLAGS=-Wall -m64 -std=c99
 
 INSTALL_DIR=/usr/local/bin
 OBJ=obj/biotool.o obj/fasta.o obj/log.o

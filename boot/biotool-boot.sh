@@ -108,7 +108,7 @@ git clone https://github.com/biotool-paper/biotool ${new_project_name}/${git_tmp
 }
 
 # 4. Recursively copy source tree from new_project_name/tmp/language into new_project_name
-cp -R ${new_project_name}/${git_tmp_dir}/$language/ ${new_project_name} || {
+cp -R ${new_project_name}/${git_tmp_dir}/${language}/* ${new_project_name} || {
     echo ${program_name}: ERROR: copy command failed: 'cp -R {new_project_name}/${git_tmp_dir}/$language/ ${new_project_name}'
     exit 1
 }

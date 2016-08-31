@@ -65,7 +65,6 @@ function parse_args {
     shift $((OPTIND-1))
 
     [ "$1" = "--" ] && shift
-    #echo "language=$language, new_project_name='$new_project_name', Leftovers: $@"
 
     if [[ -z ${language} ]]; then
         echo "${program_name}: ERROR: missing command line argument: -l language, use -h for help"
@@ -74,7 +73,7 @@ function parse_args {
 
     case ${language} in
         bash|c|cpp|haskell|java|js|perl5|python|r|ruby|rust)
-           # this is an allowed language
+            # this is an allowed language
             ;;
         *)
             echo "${program_name}: ERROR: ${language} is not one of the valid languages, use -h to see the list"
@@ -92,7 +91,7 @@ parse_args $@
 
 # 2. Try to create new directory new_project_name
 if [[ -d ${new_project_name} ]]; then
-    echo "${program_name}: ERROR: directory ${new_project_name} already exists, try another name or another location"
+    echo "${program_name}: ERROR: directory ${new_project_name} already exists, try another name or location, or rename the existing directory"
     exit 1
 else
     mkdir ${new_project_name} || {
@@ -100,9 +99,6 @@ else
         exit 1
     }
 fi
-
-#cd $new_project_name
-#basedir=`pwd`
 
 # 3. Clone biotool git repository into new_project_name/tmp
 # XXX check if git is executable, catch output from git in case we need to report an error
@@ -121,8 +117,29 @@ cp -R ${new_project_name}/${git_tmp_dir}/$language/ ${new_project_name} || {
 /bin/rm -fr "${new_project_name}/${git_tmp_dir}"
 
 # 6. Recursively rename s/biotool/new_project_name in every file in new_project_name
-# XXX need to make this case insensitive, and to also rename directory and file names
-find ${new_project_name} -type f -print0 | xargs -0 sed -i '' "s/biotool/$new_project_name/g"
+# Annoyingly BSD sed and GNU sed differ in handling the -i option (update in place).
+# So we opt for a portable approach which creates backups of the original ending in .temporary,
+# which we then later delete. It is ugly, but it is portable.
+# See: http://stackoverflow.com/questions/5694228/sed-in-place-flag-that-works-both-on-mac-bsd-and-linux
+# BSD sed does not support case insensitive matching, so we have to repeat for each
+# style of capitalisation.
+
+# XXX need to rename directory and file names
+
+# project name with first character upper case
+first_upper_project_name="$(tr '[:lower:]' '[:upper:]' <<< ${new_project_name:0:1})${new_project_name:1}"
+
+# project name with all characters upper case
+all_upper_project_name="$(tr '[:lower:]' '[:upper:]' <<< ${new_project_name})"
+
+find ${new_project_name} -type f -print0 | xargs -0 sed -i.temporary  "s/biotool/${new_project_name}/g"
+find ${new_project_name} -name "*.temporary" -type f -delete
+
+find ${new_project_name} -type f -print0 | xargs -0 sed -i.temporary  "s/Biotool/${first_upper_project_name}/g"
+find ${new_project_name} -name "*.temporary" -type f -delete
+
+find ${new_project_name} -type f -print0 | xargs -0 sed -i.temporary  "s/BIOTOOL/${all_upper_project_name}/g"
+find ${new_project_name} -name "*.temporary" -type f -delete
 
 # 7. git init; git add everything in new_project_name; git commmit -m "Initial commit of new_project_name; starting from biotool"
 (

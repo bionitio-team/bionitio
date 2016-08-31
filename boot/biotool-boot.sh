@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -x
+#set -x
 
 # 1. Parse command line arguments: language, new_project_name
 # 2. Try to create new directory new_project_name

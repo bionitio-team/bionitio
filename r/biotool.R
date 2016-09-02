@@ -75,18 +75,22 @@ pretty_output <- function(stats) {
   return(stats)
 }
 
-# Check if FASTA files exist
+# Check if all FASTA files exist
 exists <- sapply(args$fasta_files, file.exists)
-if (args$verbose & any(! exists)) {
-  warning("Files do not exist:\n\t", paste(names(exists)[! exists], collapse="\n\t"))
+if (any(! exists)) {
+  stop("Files do not exist:\n\t",
+       paste(names(exists)[! exists], collapse="\n\t"))
 }
-fasta_files <- names(exists)[exists]
 
-# Error if no files
-if (length(fasta_files) == 0) stop("FASTA files do not exist")
+# Check if all FASTA files have read permission
+can_read <- file.access(args$fasta_files, mode=4)
+if (any(can_read == -1)) {
+  stop("Files cannot be read:\n\t",
+       paste(names(can_read)[can_read == -1], collapse="\n\t"))
+}
 
 # Process each FASTA file
-results <- lapply(fasta_files, FUN=function(x) {
+results <- lapply(args$fasta_files, FUN=function(x) {
   pretty_output(get_fasta_stats(x, args$min_len))
 })
 

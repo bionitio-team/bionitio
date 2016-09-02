@@ -8,7 +8,7 @@ suppressWarnings({
 })
 
 parser <- ArgumentParser(description="Print FASTA stats")
-parser$add_argument("fasta_files", metavar="FASTA_FILE", type="character", nargs="+",
+parser$add_argument("fasta_files", metavar="FASTA_FILE", type="character", nargs="?", default="stdin",
                     help="Input FASTA files")
 parser$add_argument("--minlen", metavar="N", type="integer", dest="min_len", default=0,
                     help="Minimum length sequence to include in stats [default: %(default)s]")
@@ -32,8 +32,9 @@ get_fasta_stats <- function(filename, min_len) {
   max_seq <- 0
   num_seq <- 0
   num_bases <- 0
+
   sequences <- tryCatch(
-    read.fasta(file=filename, seqtype="AA", seqonly=TRUE), 
+    read.fasta(file=filename, seqtype="AA", seqonly=TRUE),
     error=function(e) {
       if (args$verbose) warning(e, filename, " has no sequences.", call.=FALSE)
       return(NULL)
@@ -53,15 +54,14 @@ get_fasta_stats <- function(filename, min_len) {
               avg=round(num_bases/num_seq), max=max_seq))
 }
 
+
 # Check if FASTA files exist
 exists <- sapply(args$fasta_files, file.exists)
-if (args$verbose & any(! exists)) {
-  warning("Files do not exist:\n\t", paste(names(exists)[! exists], collapse="\n\t"))
+exists <- args$fasta_files == 'stdin'
+if (any(! exists)) {
+  stop("File does not exist:\n\t", paste(args$fasta_files[! exists], collapse="\n\t"))
 }
-fasta_files <- names(exists)[exists]
-
-# Error if no files
-if (length(fasta_files) == 0) stop("FASTA files do not exist")
+fasta_files <- args$fasta_files[exists]
 
 # Process each FASTA file
 results <- lapply(fasta_files, FUN=function(x){get_fasta_stats(x, args$min_len)})

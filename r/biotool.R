@@ -1,26 +1,41 @@
 #!/usr/bin/env Rscript
 
-version <- "1.0"
+VERSION <- "1.0"
+DEFAULT_MIN_LEN <- 0
+DEFAULT_VERBOSE <- FALSE
 
 suppressPackageStartupMessages({
-  library(argparse, quietly=TRUE)
-  library(seqinr, quietly=TRUE)
+  library(argparse, quietly = TRUE)
+  library(seqinr, quietly = TRUE)
 })
 
-parser <- ArgumentParser(description="Print FASTA stats")
-parser$add_argument("fasta_files", metavar="FASTA_FILE", type="character", nargs="+",
-                    help="Input FASTA files")
-parser$add_argument("--minlen", metavar="N", type="integer", dest="min_len", default=0,
-                    help="Minimum length sequence to include in stats [default: %(default)s]")
-parser$add_argument("--verbose", dest="verbose", action="store_true",
-                    help="Print more stuff about what's happening")
-parser$add_argument("--version", dest="print_version", action="store_true",
-                    help="Print version and exit")
+parser <- ArgumentParser(description = "Print FASTA stats")
+parser$add_argument("fasta_files",
+                    metavar = "FASTA_FILE",
+                    type = "character",
+                    nargs = "+",
+                    help = "Input FASTA files")
+parser$add_argument("--minlen",
+                    metavar = "N",
+                    type = "integer",
+                    dest = "min_len",
+                    default = DEFAULT_MIN_LEN,
+                    help = paste0("Minimum length sequence to include in stats",
+                                  " [default: %(default)s]"))
+parser$add_argument("--verbose",
+                    dest = "verbose",
+                    action = "store_true",
+                    default = DEFAULT_VERBOSE,
+                    help = "Print more stuff about what's happening")
+parser$add_argument("--version",
+                    dest = "print_version",
+                    action = "store_true",
+                    help = "Print version and exit")
 
 # Print version
 if ("--version" %in% commandArgs()) {
-  cat(basename(commandArgs()[4]), version, "\n")
-  quit(save="no")
+  cat(basename(commandArgs()[4]), VERSION, "\n")
+  quit(save = "no")
 }
 
 # Process command line arguments
@@ -40,12 +55,12 @@ get_fasta_stats <- function(filename, min_len) {
   num_seq <- 0
   num_bases <- 0
   sequences <- tryCatch(
-    read.fasta(file=filename, seqtype="AA", seqonly=TRUE),
-    error=function(e) {
-      if (args$verbose) warning(e, filename, " has no sequences.", call.=FALSE)
+    read.fasta(file = filename, seqtype = "AA", seqonly = TRUE),
+    error = function(e) {
+      if (args$verbose) warning(filename, " has no sequences.", call. = FALSE)
       return(NULL)
-      }
-    )
+    }
+  )
   for (seq in sequences) {
     this_len <- nchar(seq[1])
     if (this_len >= min_len) {
@@ -56,8 +71,8 @@ get_fasta_stats <- function(filename, min_len) {
     }
   }
   min_seq <- ifelse(num_seq == 0, 0, min_seq)
-  return(list(filename=filename, numseq=num_seq, total=num_bases, min=min_seq,
-              avg=round(num_bases/num_seq), max=max_seq))
+  return(list(filename = filename, numseq = num_seq, total = num_bases,
+              min = min_seq, avg = round(num_bases / num_seq), max = max_seq))
 }
 
 pretty_output <- function(stats) {
@@ -79,18 +94,18 @@ pretty_output <- function(stats) {
 exists <- sapply(args$fasta_files, file.exists)
 if (any(! exists)) {
   stop("Files do not exist:\n\t",
-       paste(names(exists)[! exists], collapse="\n\t"))
+       paste(names(exists)[! exists], collapse = "\n\t"))
 }
 
 # Check if all FASTA files have read permission
-can_read <- file.access(args$fasta_files, mode=4)
+can_read <- file.access(args$fasta_files, mode = 4)
 if (any(can_read == -1)) {
   stop("Files cannot be read:\n\t",
-       paste(names(can_read)[can_read == -1], collapse="\n\t"))
+       paste(names(can_read)[can_read == -1], collapse = "\n\t"))
 }
 
 # Process each FASTA file
-results <- lapply(args$fasta_files, FUN=function(x) {
+results <- lapply(args$fasta_files, FUN = function(x) {
   pretty_output(get_fasta_stats(x, args$min_len))
 })
 
@@ -99,4 +114,4 @@ results <- do.call(rbind, results)
 colnames(results) <- toupper(colnames(results))
 
 # Write to stdout
-write.table(results, stdout(), sep="\t", row.names=FALSE, quote=FALSE)
+write.table(results, stdout(), sep = "\t", row.names = FALSE, quote = FALSE)

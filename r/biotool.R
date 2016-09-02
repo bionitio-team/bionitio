@@ -26,8 +26,15 @@ if ("--version" %in% commandArgs()) {
 # Process command line arguments
 args <- parser$parse_args()
 
-# Get statistics of a FASTA file
 get_fasta_stats <- function(filename, min_len) {
+  # Calculate statistics of a FASTA file.
+  #
+  # Args:
+  #   filename: The name of the input FASTA file.
+  #   min_len: The minimum length of the sequence to include when calculating
+  #            statistics.
+  # Returns:
+  #   A list containing FASTA stats.
   min_seq <- Inf
   max_seq <- 0
   num_seq <- 0
@@ -53,6 +60,21 @@ get_fasta_stats <- function(filename, min_len) {
               avg=round(num_bases/num_seq), max=max_seq))
 }
 
+pretty_output <- function(stats) {
+  # Use a dash (-) in place of min, avg, and max if numseq is zero.
+  #
+  # Args:
+  #   stats: The list containing FASTA stats.
+  # Returns:
+  #   A list containing FASTA stats suitable for output.
+  if (stats[["numseq"]] == 0) {
+    stats[["min"]] <- "-"
+    stats[["avg"]] <- "-"
+    stats[["max"]] <- "-"
+  }
+  return(stats)
+}
+
 # Check if FASTA files exist
 exists <- sapply(args$fasta_files, file.exists)
 if (args$verbose & any(! exists)) {
@@ -64,7 +86,11 @@ fasta_files <- names(exists)[exists]
 if (length(fasta_files) == 0) stop("FASTA files do not exist")
 
 # Process each FASTA file
-results <- lapply(fasta_files, FUN=function(x){get_fasta_stats(x, args$min_len)})
+results <- lapply(fasta_files, FUN=function(x) {
+  pretty_output(get_fasta_stats(x, args$min_len))
+})
+
+# Convert into table
 results <- do.call(rbind, results)
 colnames(results) <- toupper(colnames(results))
 

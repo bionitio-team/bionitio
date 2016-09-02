@@ -33,7 +33,7 @@ get_fasta_stats <- function(filename, min_len) {
   num_seq <- 0
   num_bases <- 0
   sequences <- tryCatch(
-    read.fasta(file=filename, seqtype="AA", seqonly=TRUE), 
+    read.fasta(file=filename, seqtype="AA", seqonly=TRUE),
     error=function(e) {
       if (args$verbose) warning(e, filename, " has no sequences.", call.=FALSE)
       return(NULL)
@@ -49,7 +49,7 @@ get_fasta_stats <- function(filename, min_len) {
     }
   }
   min_seq <- ifelse(num_seq == 0, 0, min_seq)
-  return(list(filename=filename, total=num_bases, numseq=num_seq, min=min_seq,
+  return(list(filename=filename, numseq=num_seq, total=num_bases, min=min_seq,
               avg=round(num_bases/num_seq), max=max_seq))
 }
 

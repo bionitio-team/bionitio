@@ -16,6 +16,7 @@ before_install:
   - ./.travis/install-dependencies/java-install-dependencies.sh
   - ./.travis/install-dependencies/js-install-dependencies.sh
   - ./.travis/install-dependencies/python-install-dependencies.sh
+  - ./.travis/install-dependencies/r-install-dependencies.sh
   - ./.travis/install-dependencies/ruby-install-dependencies.sh
   - ./.travis/install-dependencies/rust-install-dependencies.sh
 

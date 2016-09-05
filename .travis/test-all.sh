@@ -10,3 +10,4 @@ set -e
 ./.travis/test.sh java/biotool-java
 ./.travis/test.sh ~/.cargo/bin/biotool-rs
 ./.travis/test.sh cpp/biotool-build/biotool-cpp 
+./.travis/test.sh r/biotool.R

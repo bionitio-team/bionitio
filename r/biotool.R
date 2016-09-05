@@ -8,8 +8,8 @@ suppressWarnings({
 })
 
 parser <- ArgumentParser(description="Print FASTA stats")
-parser$add_argument("fasta_files", metavar="FASTA_FILE", type="character", nargs="?", default="stdin",
-                    help="Input FASTA files")
+parser$add_argument("fasta_files", metavar="FASTA_FILE", type="character", nargs="+",
+                    help="Input FASTA files. Use - to read from stdin")
 parser$add_argument("--minlen", metavar="N", type="integer", dest="min_len", default=0,
                     help="Minimum length sequence to include in stats [default: %(default)s]")
 parser$add_argument("--verbose", dest="verbose", action="store_true",
@@ -25,6 +25,9 @@ if ("--version" %in% commandArgs()) {
 
 # Process command line arguments
 args <- parser$parse_args()
+
+# Read from stdin if file is '-'
+args$fasta_files[args$fasta_files == '-'] <- 'stdin'
 
 # Get statistics of a FASTA file
 get_fasta_stats <- function(filename, min_len) {
@@ -57,7 +60,7 @@ get_fasta_stats <- function(filename, min_len) {
 
 # Check if FASTA files exist
 exists <- sapply(args$fasta_files, file.exists)
-exists <- args$fasta_files == 'stdin'
+exists[args$fasta_files == 'stdin'] <- TRUE
 if (any(! exists)) {
   stop("File does not exist:\n\t", paste(args$fasta_files[! exists], collapse="\n\t"))
 }

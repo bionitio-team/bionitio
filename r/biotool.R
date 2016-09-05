@@ -14,7 +14,7 @@ parser$add_argument("fasta_files",
                     metavar = "FASTA_FILE",
                     type = "character",
                     nargs = "+",
-                    help = "Input FASTA files")
+                    help = "Input FASTA files. Use - to read from stdin")
 parser$add_argument("--minlen",
                     metavar = "N",
                     type = "integer",
@@ -41,6 +41,10 @@ if ("--version" %in% commandArgs()) {
 # Process command line arguments
 args <- parser$parse_args()
 
+# Read from stdin if file is '-'
+args$fasta_files[args$fasta_files == '-'] <- 'stdin'
+
+# Get statistics of a FASTA file
 get_fasta_stats <- function(filename, min_len) {
   # Calculate statistics of a FASTA file.
   #
@@ -54,6 +58,7 @@ get_fasta_stats <- function(filename, min_len) {
   max_seq <- 0
   num_seq <- 0
   num_bases <- 0
+
   sequences <- tryCatch(
     read.fasta(file = filename, seqtype = "AA", seqonly = TRUE),
     error = function(e) {
@@ -92,6 +97,7 @@ pretty_output <- function(stats) {
 
 # Check if all FASTA files exist
 exists <- sapply(args$fasta_files, file.exists)
+exists[args$fasta_files == 'stdin'] <- TRUE
 if (any(! exists)) {
   stop("Files do not exist:\n\t",
        paste(names(exists)[! exists], collapse = "\n\t"))

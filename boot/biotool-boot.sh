@@ -4,9 +4,10 @@
 # 2. Try to create new directory for the project.
 # 3. Clone biotool git repository into the newly created directory.
 # 4. Recursively copy source tree from the git repository into the project directory.
-# 5. Remove the cloned git repository.
-# 6. Rename biotool to the new project name.
-# 7. Create repository for new project.
+# 5. Recursively copy test_data directory from the git repository into the project directory.
+# 6. Remove the cloned git repository.
+# 7. Rename biotool to the new project name.
+# 8. Create repository for new project.
 
 #set -x
 
@@ -119,6 +120,13 @@ function copy_biotool_language {
     }
 }
 
+function copy_test_data {
+    cp -R ${new_project_name}/${git_tmp_dir}/test_data/ ${new_project_name}/test_data/ || {
+        echo ${program_name}: ERROR: copy command failed: 'cp -R ${new_project_name}/${git_tmp_dir}/test_data/ ${new_project_name}/test_data/'
+        exit 1
+    }
+}
+
 function remove_biotool_repository {
     /bin/rm -fr "${new_project_name}/${git_tmp_dir}"
 }
@@ -175,12 +183,15 @@ clone_biotool_repository
 # 4. Recursively copy source tree from the git repository into the project directory.
 verbose_message "copying ${language} source tree into ${new_project_name}"
 copy_biotool_language
-# 5. remove the cloned git repository.
+# 5. Recursively copy test_data directory from the git repository into the project directory.
+verbose_message "copying test_data into ${new_project_name}"
+copy_test_data
+# 6. remove the cloned git repository.
 verbose_message "removing ${new_project_name}/${git_tmp_dir}"
 remove_biotool_repository
-# 6. Rename biotool to the new project name.
+# 7. Rename biotool to the new project name.
 verbose_message "renaming references to biotool to new project name ${new_project_name}" 
 rename_project
-# 7. Create repository for new project.
+# 8. Create repository for new project.
 verbose_message "initialising new git repository for ${new_project_name}"
 create_project_repository

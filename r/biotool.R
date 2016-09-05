@@ -9,7 +9,7 @@ suppressPackageStartupMessages({
   library(seqinr, quietly = TRUE)
 })
 
-parser <- ArgumentParser(description = "Print FASTA stats")
+parser <- ArgumentParser(description = "Print FASTA stats")  # nolint
 parser$add_argument("fasta_files",
                     metavar = "FASTA_FILE",
                     type = "character",
@@ -42,7 +42,7 @@ if ("--version" %in% commandArgs()) {
 args <- parser$parse_args()
 
 # Read from stdin if file is '-'
-args$fasta_files[args$fasta_files == '-'] <- 'stdin'
+args$fasta_files[args$fasta_files == "-"] <- "stdin"
 
 # Get statistics of a FASTA file
 get_fasta_stats <- function(filename, min_len) {
@@ -97,7 +97,7 @@ pretty_output <- function(stats) {
 
 # Check if all FASTA files exist
 exists <- sapply(args$fasta_files, file.exists)
-exists[args$fasta_files == 'stdin'] <- TRUE
+exists[args$fasta_files == "stdin"] <- TRUE
 if (any(! exists)) {
   stop("Files do not exist:\n\t",
        paste(names(exists)[! exists], collapse = "\n\t"))

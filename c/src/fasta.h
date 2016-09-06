@@ -5,10 +5,11 @@
 #include <stdio.h>
 
 struct FastaStats {
-    unsigned long sequences;
-    unsigned long bases;
-    unsigned long min;
-    unsigned long max;
+    unsigned long total_sequences; // total number of sequences
+    unsigned long sequences; // number of sequences of minlength
+    unsigned long bases; // total number of bases
+    unsigned long min; // min length of sequences
+    unsigned long max; // max length of sequences
     double average;
 };
 

@@ -32,3 +32,13 @@ obj: objdir $(OBJ)
 obj/%.o: src/%.c
 	$(CC) $(CFLAGS) $(OPT) -c $? -o $@ 
 
+### tests
+
+# compile and link
+test-build: $(TARGET) src/test.c
+	$(CC) $(CFLAGS) $(OPT) -c src/test.c -o obj/test.o
+	$(CC) $(CFLAGS) $(OPT) $(LDFLAGS) -o biotool-test obj/fasta.o obj/test.o $(LIBS)
+
+# run
+test: test-build
+	./biotool-test

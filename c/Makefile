@@ -1,12 +1,9 @@
 
 CC=gcc
-CFLAGS=-Wall
 DEBUG=-g
 LIBS=-lm -lz
 OPT=-O3
-
-# mac
-CFLAGS=-Wall -m64 -std=gnu99
+CFLAGS=-Wall -m64 -std=gnu99 -pedantic
 
 INSTALL_DIR=/usr/local/bin
 OBJ=obj/biotool.o obj/fasta.o obj/log.o

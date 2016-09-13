@@ -22,7 +22,7 @@ On OS X you can install `cmake` via Homebrew like so (you might need to run `bre
 The instructions below show you how to build biotool. They assume that you set the shell variable `BIOTOOL_CPP_PATH` to refer to the source directory of biotool. For example, you might set it like so:
 
 ```
-% export BIOTOOL_CPP_PATH=$HOME/code/biotool/cpp
+% export BIOTOOL_CPP_PATH=$HOME/code/biotool/cpp/src
 ```
 
 Execute the commands below to build biotool. Note that biotool depends on the `Seqan` library.

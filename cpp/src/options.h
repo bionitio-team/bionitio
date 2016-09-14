@@ -9,7 +9,6 @@ class Options
         bool verbose;
         bool version;
         vector<string> fasta_files;
-
         Options(int argc, const char **argv);
 };
 #endif

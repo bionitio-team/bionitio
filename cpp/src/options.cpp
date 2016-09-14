@@ -15,7 +15,9 @@ Options::Options(int argc, const char** argv)
     version = false;
     fasta_files = {};
 
-    string minlen_str = "Minimum length sequence to include in stats (default " + to_string(DEFAULT_MIN_LEN) + ")";
+    string minlen_str =
+        "Minimum length sequence to include in stats (default " +
+        to_string(DEFAULT_MIN_LEN) + ")";
     string version_str = "Display program version and exit";
     string verbose_str = "Print more stuff about what's happening";
 
@@ -25,7 +27,9 @@ Options::Options(int argc, const char** argv)
         ("minlen,m", po::value<unsigned int>(), minlen_str.c_str())
         ("verbose", verbose_str.c_str())
         ("version", version_str.c_str())
-        ("files", po::value<vector<string>>()->multitoken()->zero_tokens()->composing(), "FASTA FILES");
+        ("files",
+            po::value<vector<string>>()->multitoken()->zero_tokens()->composing(),
+            "FASTA FILES");
 
     po::positional_options_description pos_desc;
     pos_desc.add("files", -1);
@@ -40,11 +44,11 @@ Options::Options(int argc, const char** argv)
     }
     catch(boost::program_options::required_option& e)
     {
-	 exit_with_error(e.what(), Error_command_line);
+        exit_with_error(e.what(), Error_command_line);
     }
     catch(boost::program_options::error& e)
     {
-	 exit_with_error(e.what(), Error_command_line);
+        exit_with_error(e.what(), Error_command_line);
     }
 
     if (vm.count("help"))

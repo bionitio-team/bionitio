@@ -22,25 +22,42 @@ $exe test_data/two_sequence.fasta | grep -q "$res2" || {
     let errors+=1
 }
 
+# Test filtering
 res3='test_data/two_sequence.fasta	1	237	237	237	237'
 $exe --minlen 200 test_data/two_sequence.fasta | grep -q "$res3" || {
     echo "Test Failed: $exe --minlen 200 test_data/two_sequence.fasta. Expected '$res3'"
     let errors+=1
 }
 
+# Test reading stdin
+res4='	1	237	237	237	237'
+$exe --minlen 200 < test_data/two_sequence.fasta | grep -q "$res4" || {
+    echo "Test Failed: $exe --minlen 200 < test_data/two_sequence.fasta. Expected '$res4'"
+    let errors+=1
+}
+
 # Test exit status for a bad command line invocation
-#$exe --this_is_not_a_valid_argument > /dev/null 2>&1
-#[ $? -ne 2 ] && {
-#    echo "Test Failed '$exe --this_is_not_a_valid_argument'. Exit status was $?. Expected 2"
-#    let errors+=1
-#}
+$exe --this_is_not_a_valid_argument > /dev/null 2>&1
+ex=$?
+[ $ex -ne 2 ] && {
+    echo "Test Failed '$exe --this_is_not_a_valid_argument'. Exit status was $ex. Expected 2"
+    let errors+=1
+}
 
 # Test exit status for a non existent input FASTA file 
-#$exe this_file_does_not_exist.fasta > /dev/null 2>&1
-#[ $? -ne 1 ] && {
-#    echo "Test Failed '$exe this_file_does_not_exist.fasta'. Exit status was $?. Expected 1"
-#    let errors+=1
-#}
+$exe this_file_does_not_exist.fasta > /dev/null 2>&1
+ex=$?
+[ $ex -ne 1 ] && {
+    echo "Test Failed '$exe this_file_does_not_exist.fasta'. Exit status was $ex. Expected 1"
+    let errors+=1
+}
+
+# Test empty file
+res='test_data/empty_file	0	0	-	-	-'
+$exe test_data/empty_file | grep -q "$res" || {
+    echo "Test Failed: $exe test_data/empty. Expected '$res'"
+    let errors+=1
+}
 
 [ "$errors" -gt 0 ] && {
     echo "There were $errors errors found"

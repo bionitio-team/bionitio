@@ -40,16 +40,14 @@ print tsv(\@COLUMNS);
 
 for my $file (@ARGV) {
   print STDERR "Processing: $file\n" if $verbose >= 1;
+  unless (-r $file) {
+    print STDERR "ERROR: Unable to read file: $file\n";
+    exit(1);
+  }
   my $res = process_file($file);
-  if ($res) {
-    print tsv($res);
-  }
-  else {
-    print STDERR "Skipping $file - doesn't seem to be FASTA?\n";
-    $badfiles++;
-  }
+  print tsv($res) if $res;
 }
-exit(3) if $badfiles;
+exit(0);
 
 #.........................................................................
 
@@ -59,7 +57,7 @@ sub process_file {
   # to collect stats
   my $bp=0;
   my $n=0;
-  my $min=1E9;
+  my $min=1E12;
   my $max=0;
 
   # loop over each sequence
@@ -74,9 +72,10 @@ sub process_file {
     $max = $L if $L > $max;
   }
   
-  return if $n <= 0;
   # FILENAME TOTAL NUMSEQ MIN AVG MAX
-  return [ $fname, $n, $bp, $min, int($bp/$n), $max ];
+  return $n <= 0 ? [ $fname, $n, $bp, '-', '-', '-' ]
+                 : [ $fname, $n, $bp, $min, int($bp/$n), $max ]
+                 ;
 }
 
 #.........................................................................

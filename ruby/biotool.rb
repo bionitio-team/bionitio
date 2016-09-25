@@ -53,10 +53,13 @@ class FastaSummary
         %w(FILENAME TOTAL NUMSEQ MIN AVG MAX).join("\t")
     end
 
-    # String format for stats on this fasta file.  Return nil if no sequences found
+    # String format for stats on this fasta file.  Use "-" for invalid numbers when no sequences
     def pretty
-        return nil if @n==0
-        [@file, @n, @bp, @min, @bp/@n, @max].join("\t")
+        if @n>0
+            [@file, @n, @bp, @min, @bp/@n, @max].join("\t")
+        else
+            [@file,0,0,'-','-','-'].join("\t")
+        end
     end
 
   private
@@ -82,11 +85,7 @@ files.each do |file|
     $stderr.puts "Processing: #{file}" if opts[:verbose]>=1
     begin
         summary = FastaSummary.new(file, opts).pretty
-        if summary
-            puts summary
-        else
-            $stderr.puts "Skipping #{file} - doesn't seem to be FASTA?";
-        end
+        puts summary
     rescue Errno::ENOENT
         exit 1            # Exit code 1 on missing file
     end

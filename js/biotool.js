@@ -62,7 +62,10 @@ function process_fasta(file) {
     }
 
     function done() {
-        this.push([n, bp, min, Math.floor(bp/n), max]);
+        if (n>0)
+            this.push([n, bp, min, Math.floor(bp/n), max]);
+        else
+            this.push([n, bp, '-', '-', '-']);
         this.push(null);
     }
 }

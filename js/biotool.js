@@ -8,10 +8,21 @@ var fasta = require('bionode-fasta');
 var fs = require('fs');
 var through = require('through2')
 
+
+// Helper function to verbose option
 function increaseVerbosity(v, total) {
   return total + 1;
 }
 
+// Override handling of unknown options - someone decided exit code 2 was better than the default 1
+opts.unknownOption = function(flag) {
+    console.error();
+    console.error("  error: unknown option `%s'", flag);
+    console.error();
+    process.exit(2);
+}
+
+// Option parsing
 opts
   .version('1.0.0')
   .usage('[options] contigs.fasta [contigs2.fasta ...]')
@@ -20,8 +31,13 @@ opts
   .option('-v, --verbose', "Print more stuff about what's happening", increaseVerbosity, 0)
   .parse(process.argv);
 
+// Default to reading stdin if there are no files specified
 if (opts.args == 0)
     opts.args = ["/dev/stdin"];
+
+
+
+////////////////////////////////////////////////////////////
 
 // Stream to process a fasta file for stats
 function process_fasta(file) {
@@ -31,6 +47,7 @@ function process_fasta(file) {
     var stream = through.obj(next_seq, done)
     return stream
 
+    // Filter, and collect stats on each sequence
     function next_seq(data, enc, next) {
         var l = data.seq.length
         if (l>=opts.minlen) {
@@ -50,13 +67,22 @@ function process_fasta(file) {
     }
 }
 
+// Loop over all the files specified
 function process_files(files) {
+    // Done when we have no files left!
     if (files.length==0)
         return
     var file = files.shift()
+
     if (opts.verbose>=1)
         console.error("Processing: "+file);
+
+    // Read the file, pipe through the fasta parser, then through our filter, then output as appropriate
     fs.createReadStream(file)
+      .on('error', function(err) {
+          console.error("Error reading file", err.path);
+          process.exit(1);
+      })
       .pipe(fasta({objectMode:true}))
       .pipe(process_fasta(file))
       .on('data', function(stats) {
@@ -67,4 +93,3 @@ function process_files(files) {
 
 console.log("FILENAME\tNUMSEQ\tTOTAL\tMIN\tAVG\tMAX");
 process_files(opts.args)
-

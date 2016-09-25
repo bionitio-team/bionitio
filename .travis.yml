@@ -19,6 +19,7 @@ before_install:
   - ./.travis/install-dependencies/r-install-dependencies.sh
   - ./.travis/install-dependencies/ruby-install-dependencies.sh
   - ./.travis/install-dependencies/rust-install-dependencies.sh
+  - ./.travis/install-dependencies/perl5-install-dependencies.sh
 
 script:
   - ./.travis/test-all.sh

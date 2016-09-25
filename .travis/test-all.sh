@@ -11,3 +11,4 @@ set -e
 ./.travis/test.sh ~/.cargo/bin/biotool-rs
 ./.travis/test.sh cpp/src/biotool-build/biotool-cpp 
 ./.travis/test.sh r/biotool.R
+./.travis/test.sh perl5/biotool.pl

@@ -23,16 +23,18 @@ my $minlen = 0;
 
 GetOptions(
   "help"     => sub { usage(0) },
-  "version"  => sub { print "$EXE $VERSION\n"; exit; },
+  "version"  => sub { print "$EXE $VERSION\n"; exit(0); },
   "verbose"  => sub { $verbose++ },
   "minlen=i" => \$minlen,
 )
-or usage(1);
+or usage(2);
 
 push @ARGV, "/dev/stdin" unless @ARGV;
 
 #.........................................................................
 # MAIN
+
+my $badfiles=0;
 
 print tsv(\@COLUMNS);
 
@@ -44,8 +46,10 @@ for my $file (@ARGV) {
   }
   else {
     print STDERR "Skipping $file - doesn't seem to be FASTA?\n";
+    $badfiles++;
   }
 }
+exit(3) if $badfiles;
 
 #.........................................................................
 

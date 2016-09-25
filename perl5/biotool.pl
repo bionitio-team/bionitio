@@ -91,7 +91,7 @@ sub tsv {
 # Usage info to stdout
 
 sub usage {
-  my($errcode) = 0;
+  my($errcode) = @_;
   print <<"EOF";
 Synopsis:
   Print fasta stats

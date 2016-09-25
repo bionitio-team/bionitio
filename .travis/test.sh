@@ -59,6 +59,15 @@ $exe test_data/empty_file | grep -q "$res" || {
     let errors+=1
 }
 
+# Test when --minlen filters out ALL sequences (empty result)
+fasta='test_data/two_sequence.fasta'
+res="$fasta	0	0	-	-	-"
+$exe --minlen 1000 "$fasta" | grep -q "$res" || {
+    echo "Test Failed: $exe --minlen 1000 $fasta. Expected '$res'"
+    let errors+=1
+}
+
+# End of testing - check if any errors occurrred
 [ "$errors" -gt 0 ] && {
     echo "There were $errors errors found"
     exit 1

@@ -87,6 +87,10 @@ function process_files(files) {
           process.exit(1);
       })
       .pipe(fasta({objectMode:true}))
+      .on('error', function(err, x) {
+          console.error("Failed parsing of file", file, err);
+          process.exit(3);
+      })
       .pipe(process_fasta(file))
       .on('data', function(stats) {
            console.log([file].concat(stats).join("\t"))

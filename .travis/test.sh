@@ -28,6 +28,13 @@ $exe --minlen 200 test_data/two_sequence.fasta | grep -q "$res3" || {
     let errors+=1
 }
 
+res4='	1	237	237	237	237'
+$exe --minlen 200 < test_data/two_sequence.fasta | grep -q "$res4" || {
+    echo "Test Failed: $exe --minlen 200 < test_data/two_sequence.fasta. Expected '$res4'"
+    let errors+=1
+}
+
+
 # Test exit status for a bad command line invocation
 #$exe --this_is_not_a_valid_argument > /dev/null 2>&1
 #[ $? -ne 2 ] && {

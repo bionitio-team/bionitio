@@ -56,11 +56,12 @@ void process_files(Options options)
         // Process each file specified on the command line
         for (string filename : options.fasta_files)
         {
-            SeqFileIn seq_file;
-            if (!open(seq_file, toCString(filename)))
+            ifstream input_file(filename);
+            if (!input_file)
             {
                 exit_with_error("Could not open the file.", Error_open_file);
             }
+            SeqFileIn seq_file(input_file);
             // Compute various statistics for the file
             fasta_stats.from_file(seq_file, options.minlen);
             // Pretty print the results

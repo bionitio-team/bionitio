@@ -56,11 +56,11 @@ An optional command line argument `--minlen` can be supplied. Sequences with len
 
 These are the statistics computed by biotool, for all sequences with length greater-than-or-equal-to `--minlen`:
 
-* *NUMSEQ*: the number of sequences in the file satisfying the minimum length requirement.
-* *TOTAL*: the total length of all the counted sequences.
-* *MIN*: the minimum length of the counted sequences.
-* *AVERAGE*: the average length of the counted sequences rounded down to an integer.
-* *MAX*: the maximum length of the counted sequences.
+* NUMSEQ: the number of sequences in the file satisfying the minimum length requirement.
+* TOTAL: the total length of all the counted sequences.
+* MIN: the minimum length of the counted sequences.
+* AVERAGE: the average length of the counted sequences rounded down to an integer.
+* MAX: the maximum length of the counted sequences.
 
 If there are zero sequences counted in a file, the values of MIN, AVERAGE and MAX cannot be computed. In that case biotool will print a dash (`-`) in the place of the numerical value. Note that when `--minlen` is set to a value greater than zero it is possible that an input FASTA file does not contain any sequences with length greater-than-or-equal-to the specified value. If this situation arises biotool acts in the same way as if there are no sequences in the file.
 
@@ -154,10 +154,10 @@ empty.fa	0	0	-	-	-
 
 Biotool returns the following exit status values:
 
-* **0**: The program completed successfully.
-* **1**: File I/O error. This can occur if at least one of the input FASTA files cannot be opened for reading. This can occur because the file does not exist at the specified path, or biotool does not have permission to read from the file. 
-* **2**: A command line error occurred. This can happen if the user specifies an incorrect command line argument. In this circumstance biotool will also print a usage message to the standard error device (stderr).
-* **3**: Input FASTA file is invalid. This can occur if biotool can read an input file but the file format is invalid. 
+* 0: The program completed successfully.
+* 1: File I/O error. This can occur if at least one of the input FASTA files cannot be opened for reading. This can occur because the file does not exist at the specified path, or biotool does not have permission to read from the file. 
+* 2: A command line error occurred. This can happen if the user specifies an incorrect command line argument. In this circumstance biotool will also print a usage message to the standard error device (stderr).
+* 3: Input FASTA file is invalid. This can occur if biotool can read an input file but the file format is invalid. 
 
 # Error handling
 
@@ -174,8 +174,8 @@ A set of sample test input files is provided in the `test_data` folder. Addition
 # Programming languages used to implement biotool
 
 * BASH
-* C++
 * C
+* C++
 * Java
 * Javascript
 * Haskell

@@ -6,6 +6,10 @@ License     : MIT
 Maintainer  : bjpope@unimelb.edu.au
 Stability   : stable 
 Portability : POSIX
+
+Implementation of the FastaStats class, for reading sequences from
+FASTA files, computing statistics about the contents of the file,
+and representing the results.
 */
 
 #include <iostream>

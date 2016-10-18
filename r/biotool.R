@@ -5,47 +5,73 @@ DEFAULT_MIN_LEN <- 0
 DEFAULT_VERBOSE <- FALSE
 
 suppressPackageStartupMessages({
-  library(argparse, quietly = TRUE)
+  library(optparse, quietly = TRUE)
   library(seqinr, quietly = TRUE)
 })
 
-parser <- ArgumentParser(description = "Print FASTA stats")  # nolint
-parser$add_argument("fasta_files",
-                    metavar = "FASTA_FILE",
-                    type = "character",
-                    nargs = "+",
-                    help = "Input FASTA files. Use - to read from stdin")
-parser$add_argument("--minlen",
-                    metavar = "N",
-                    type = "integer",
-                    dest = "min_len",
-                    default = DEFAULT_MIN_LEN,
-                    help = paste0("Minimum length sequence to include in stats",
-                                  " [default: %(default)s]"))
-parser$add_argument("--verbose",
-                    dest = "verbose",
-                    action = "store_true",
-                    default = DEFAULT_VERBOSE,
-                    help = "Print more stuff about what's happening")
-parser$add_argument("--version",
-                    dest = "print_version",
-                    action = "store_true",
-                    help = "Print version and exit")
+option_list <- list(
+  make_option("--minlen",
+              help = paste("Minimum length sequence to include in stats",
+                           "[default: %default]"),
+              type = "integer",
+              default = DEFAULT_MIN_LEN),
+  make_option("--verbose",
+              help = "Print more stuff about what's happening",
+              action = "store_true",
+              default = DEFAULT_VERBOSE),
+  make_option("--version",
+              help = "Print version and exit",
+              action = "store_true",
+              default = FALSE)
+)
+
+parser <- OptionParser(                                             # nolint
+  usage = paste("%prog [OPTIONS] [FASTA_FILE [FASTA_FILE ...]]",
+                "Print FASTA stats.\n",
+                "Positional arguments:",
+                "\tFASTA_FILE: Input FASTA files. Use - to read from stdin.",
+                sep = "\n"),
+  option_list = option_list
+)
+
+# Parse command line arguments
+INVALID_MESSAGE <- "Invalid command line arguments. Use --help for help."
+tryCatch({
+    suppressWarnings(
+      arguments <- parse_args(parser, positional_arguments = TRUE)
+    )},
+  error = function(e) {
+    message(INVALID_MESSAGE)
+    quit(status = 2)
+  }
+)
+opts <- arguments$options
+args <- arguments$args
+
+# Check options are valid
+invalid_options <- sapply(args, function(x) {
+  substr(x, 1, 2) == "--"
+})
+if (any(is.na(opts)) | any(invalid_options)) {
+  message(INVALID_MESSAGE)
+  quit(status = 2)
+}
 
 # Print version
-if ("--version" %in% commandArgs()) {
+if (opts$version) {
   cat(basename(commandArgs()[4]), VERSION, "\n")
   quit(save = "no")
 }
 
-# Process command line arguments
-args <- parser$parse_args()
-
-# Read from stdin if file is '-'
-args$fasta_files[args$fasta_files == "-"] <- "stdin"
+# Read from stdin if argument is '-' or empty
+args[args == "-"] <- "stdin"
+if (length(args) == 0) {
+  args <- "stdin"
+}
+fasta_files <- args
 
 # Get statistics of a FASTA file
-get_fasta_stats <- function(filename, min_len) {
+get_fasta_stats <- function(filename, min_len, verbose = FALSE) {
   # Calculate statistics of a FASTA file.
   #
   # Args:
@@ -62,7 +88,7 @@ get_fasta_stats <- function(filename, min_len) {
   sequences <- tryCatch(
     read.fasta(file = filename, seqtype = "AA", seqonly = TRUE),
     error = function(e) {
-      if (args$verbose) warning(filename, " has no sequences.", call. = FALSE)
+      if (verbose) warning(filename, " has no sequences.", call. = FALSE)
       return(NULL)
     }
   )
@@ -96,23 +122,24 @@ pretty_output <- function(stats) {
 }
 
 # Check if all FASTA files exist
-exists <- sapply(args$fasta_files, file.exists)
-exists[args$fasta_files == "stdin"] <- TRUE
+exists <- sapply(fasta_files, file.exists)
+exists[fasta_files == "stdin"] <- TRUE
 if (any(! exists)) {
   stop("Files do not exist:\n\t",
        paste(names(exists)[! exists], collapse = "\n\t"))
 }
 
 # Check if all FASTA files have read permission
-can_read <- file.access(args$fasta_files, mode = 4)
+can_read <- file.access(fasta_files, mode = 4)
+can_read[fasta_files == "stdin"] <- 0
 if (any(can_read == -1)) {
   stop("Files cannot be read:\n\t",
        paste(names(can_read)[can_read == -1], collapse = "\n\t"))
 }
 
 # Process each FASTA file
-results <- lapply(args$fasta_files, FUN = function(x) {
-  pretty_output(get_fasta_stats(x, args$min_len))
+results <- lapply(fasta_files, FUN = function(x) {
+  pretty_output(get_fasta_stats(x, opts$minlen, opts$verbose))
 })
 
 # Convert into table

@@ -1,0 +1,11 @@
+Package: biotool
+Type: Package
+Title: Calculate FASTA statistics
+Version: 0.1.0
+Author: Jessica Chung
+Maintainer: Jessica Chung <jchung@unimelb.edu.au>
+Description: This package reads in one or more input FASTA files and calculates
+    a variety of statistics.
+License: MIT
+LazyData: TRUE
+Imports: seqinr

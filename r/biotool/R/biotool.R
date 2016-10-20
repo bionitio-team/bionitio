@@ -4,6 +4,7 @@
 #'     get the sequences.
 #'
 #' @param filename The name of the input FASTA file.
+#' @param verbose A logical value indicating whether the function is verbose
 #'
 #' @return A character vector of containing sequenecs as characters. Each
 #'     element in the vector is a sequence in the FASTA file.
@@ -11,14 +12,16 @@
 #' @examples
 #' my_fasta_file <- system.file("extdata", "two_sequence.fasta", package = "biotool")
 #' load_fasta_file(filename = my_fasta_file)
-load_fasta_file <- function(filename) {
+load_fasta_file <- function(filename, verbose) {
   sequences <- tryCatch(
     seqinr::read.fasta(file = filename, seqtype = "AA", seqonly = TRUE),
     error = function(e) {
       # Handle empty files with a message instead of stopping
       if (e$message == "no line starting with a > character found") {
-        message("WARNING: ", filename,
-                " has no lines starting with a > character.")
+        if (verbose) {
+          message("WARNING: ", filename,
+                  " has no lines starting with a > character.")
+        }
       } else {
         stop(e$message)
       }
@@ -107,6 +110,8 @@ pretty_output <- function(stats) {
 #' @param fasta_files Vector of filenames
 #' @param min_len The minimum length of the sequence to include when
 #'     calculating statistics
+#' @param pretty Values in the data frame are converted into characters. A dash
+#'     (-) is used in place of min, avg, and max if numseq is zero.
 #' @param verbose A logical value indicating whether the function is verbose
 #'
 #' @return A data frame with FASTA stats. Each row represents a FASTA file.
@@ -123,7 +128,7 @@ run_biotool <- function(fasta_files, min_len = 0, pretty = TRUE,
   # Process each FASTA file
   results <- lapply(fasta_files, FUN = function(x) {
     if (verbose) message("Processing file: ", x)
-    get_seq_stats(sequences = load_fasta_file(filename = x),
+    get_seq_stats(sequences = load_fasta_file(filename = x, verbose = verbose),
                   filename = x,
                   min_len = min_len)
   })

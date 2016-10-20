@@ -10,4 +10,6 @@ License: MIT
 LazyData: TRUE
 Imports:
     seqinr
+Suggests:
+    testthat
 RoxygenNote: 5.0.1

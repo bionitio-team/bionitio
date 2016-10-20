@@ -11,5 +11,4 @@ echo 'R install'
    sudo Rscript -e "install.packages('seqinr', repos='http://cran.rstudio.org')"
    cd r
    sudo R CMD INSTALL biotool
-)
-# > /dev/null 2>&1
+) > /dev/null 2>&1

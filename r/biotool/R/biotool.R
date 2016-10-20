@@ -1,18 +1,19 @@
 #' Load a FASTA file
 #'
-#' @description Wrapper for seqinr read.fasta() to load in a FASTA file and
-#'     get the sequences.
+#' @description Wrapper for seqinr \code{read.fasta()} to load in a FASTA file
+#'     and get the sequences.
 #'
 #' @param filename The name of the input FASTA file.
 #' @param verbose A logical value indicating whether the function is verbose
 #'
 #' @return A character vector of containing sequenecs as characters. Each
 #'     element in the vector is a sequence in the FASTA file.
+#' @export
 #'
 #' @examples
 #' my_fasta_file <- system.file("extdata", "two_sequence.fasta", package = "biotool")
 #' load_fasta_file(filename = my_fasta_file)
-load_fasta_file <- function(filename, verbose) {
+load_fasta_file <- function(filename, verbose=FALSE) {
   sequences <- tryCatch(
     seqinr::read.fasta(file = filename, seqtype = "AA", seqonly = TRUE),
     error = function(e) {
@@ -55,6 +56,7 @@ load_fasta_file <- function(filename, verbose) {
 #'     calculating statistics
 #'
 #' @return A list containing FASTA stats.
+#' @export
 #'
 #' @examples
 #' my_fasta_file <- system.file("extdata", "two_sequence.fasta", package = "biotool")
@@ -86,6 +88,7 @@ get_seq_stats <- function(sequences, filename = NULL, min_len = 0) {
 #' @param stats The list containing FASTA stats.
 #'
 #' @return A list containing FASTA stats
+#' @export
 #'
 #' @examples
 #' my_fasta_file <- system.file("extdata", "empty_file", package = "biotool")
@@ -115,6 +118,7 @@ pretty_output <- function(stats) {
 #' @param verbose A logical value indicating whether the function is verbose
 #'
 #' @return A data frame with FASTA stats. Each row represents a FASTA file.
+#' @export
 #'
 #' @examples
 #' my_fasta_files <- c(

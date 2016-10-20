@@ -8,4 +8,6 @@ Description: This package reads in one or more input FASTA files and calculates
     a variety of statistics.
 License: MIT
 LazyData: TRUE
-Imports: seqinr
+Imports:
+    seqinr
+RoxygenNote: 5.0.1

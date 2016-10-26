@@ -6,10 +6,11 @@ Author: Jessica Chung
 Maintainer: Jessica Chung <jchung@unimelb.edu.au>
 Description: This package reads in one or more input FASTA files and calculates
     a variety of statistics.
-License: MIT
+License: MIT + file LICENSE
 LazyData: TRUE
 Imports:
     seqinr
 Suggests:
-    testthat
+    testthat,
+    lintr
 RoxygenNote: 5.0.1

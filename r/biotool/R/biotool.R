@@ -5,6 +5,10 @@
 #'
 #' @param filename The name of the input FASTA file.
 #' @param verbose A logical value indicating whether the function is verbose
+#' @param quit_on_error A logical value indicating if an error when reading a
+#'     fasta file will invoke the \code{quit} function to terminate R with an
+#'     exit status of 3. This will only occur if the R session is
+#'     non-interactive.
 #'
 #' @return A character vector of containing sequenecs as characters. Each
 #'     element in the vector is a sequence in the FASTA file.
@@ -13,7 +17,7 @@
 #' @examples
 #' my_fasta_file <- system.file("extdata", "two_sequence.fasta", package = "biotool")
 #' load_fasta_file(filename = my_fasta_file)
-load_fasta_file <- function(filename, verbose=FALSE) {
+load_fasta_file <- function(filename, verbose = FALSE, quit_on_error = TRUE) {
   sequences <- tryCatch(
     seqinr::read.fasta(file = filename, seqtype = "AA", seqonly = TRUE),
     error = function(e) {
@@ -29,7 +33,7 @@ load_fasta_file <- function(filename, verbose=FALSE) {
     },
     warning = function(w) {
       # Handle invalid files by quitting if not an interactive session
-      if (interactive()) {
+      if (interactive() | (! quit_on_error)) {
         stop(w$message)
       } else {
         message("ERROR: ", w$message)
@@ -113,9 +117,13 @@ pretty_output <- function(stats) {
 #' @param fasta_files Vector of filenames
 #' @param min_len The minimum length of the sequence to include when
 #'     calculating statistics
-#' @param pretty Values in the data frame are converted into characters. A dash
-#'     (-) is used in place of min, avg, and max if numseq is zero.
+#' @param pretty A dash (-) is used in place of min, avg, and max if numseq is
+#'     zero.
 #' @param verbose A logical value indicating whether the function is verbose
+#' @param quit_on_error A logical value indicating if an error when reading a
+#'     fasta file will invoke the \code{quit} function to terminate R with an
+#'     exit status of 3. This will only occur if the R session is
+#'     non-interactive.
 #'
 #' @return A data frame with FASTA stats. Each row represents a FASTA file.
 #' @export
@@ -126,13 +134,14 @@ pretty_output <- function(stats) {
 #'     system.file("extdata", "two_sequence.fasta", package = "biotool"))
 #' run_biotool(my_fasta_files)
 run_biotool <- function(fasta_files, min_len = 0, pretty = TRUE,
-                        verbose = FALSE) {
+                        verbose = FALSE, quit_on_error = TRUE) {
   # Check existance and read permission
   stopifnot(fasta_exists(fasta_files) & fasta_permission(fasta_files))
   # Process each FASTA file
   results <- lapply(fasta_files, FUN = function(x) {
     if (verbose) message("Processing file: ", x)
-    get_seq_stats(sequences = load_fasta_file(filename = x, verbose = verbose),
+    get_seq_stats(sequences = load_fasta_file(filename = x, verbose = verbose,
+                                              quit_on_error = quit_on_error),
                   filename = x,
                   min_len = min_len)
   })

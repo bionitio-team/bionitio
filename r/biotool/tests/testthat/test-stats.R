@@ -9,5 +9,10 @@ test_that("get_seq_stats works for valid sequences", {
 
   e3 <- list(filename = NULL, numseq = 3, total = 24, min = 4, avg = 8,
              max = 12)
-  expect_equal(get_seq_stats(c("ACGT", "AAAAAAAA", "CCCCCCCCCCCC")), e3)
+  expect_equal(get_seq_stats(c("ACGT", "ACGTACGT", "ACGTACGTACGT")), e3)
+})
+
+test_that("get_seq_stats works for NULL sequences", {
+  expect_equal(get_seq_stats(NULL), list(filename = NULL, numseq = 0, total = 0,
+                                         min = 0, avg = NaN, max = 0))
 })

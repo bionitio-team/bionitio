@@ -4,12 +4,17 @@
 \alias{load_fasta_file}
 \title{Load a FASTA file}
 \usage{
-load_fasta_file(filename, verbose = FALSE)
+load_fasta_file(filename, verbose = FALSE, quit_on_error = TRUE)
 }
 \arguments{
 \item{filename}{The name of the input FASTA file.}
 
 \item{verbose}{A logical value indicating whether the function is verbose}
+
+\item{quit_on_error}{A logical value indicating if an error when reading a
+fasta file will invoke the \code{quit} function to terminate R with an
+exit status of 3. This will only occur if the R session is
+non-interactive.}
 }
 \value{
 A character vector of containing sequenecs as characters. Each

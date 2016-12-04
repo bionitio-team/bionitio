@@ -1,5 +1,10 @@
 '''
-Biotool.
+Module      : Main 
+Description : The main entry point for the program.
+Copyright   : (c) Bernie Pope, 2016 
+License     : MIT 
+Maintainer  : bjpope@unimelb.edu.au
+Portability : POSIX
 
 The program reads one or more input FASTA files. For each file it computes a
 variety of statistics, and then prints a summary of the statistics as output.

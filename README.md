@@ -150,6 +150,21 @@ FILENAME	NUMSEQ	TOTAL	MIN	AVG	MAX
 empty.fa	0	0	-	-	-
 ```
 
+## Logging
+
+If the ``--log FILE`` command line argument is specified, biotool will output a log file containing information about program progress. The log file includes the command line used to execute the program, and a note indicating which files have been processes so far. Events in the log file are annotated with their date and time of occurrence. 
+
+```
+% biotool-py --log bt.log file1.fasta file2.fasta 
+# normal biotool output appears here
+# contents of log file displayed below
+% cat bt.log
+12/04/2016 19:14:47 program started
+12/04/2016 19:14:47 command line: /usr/local/bin/biotool-py --log bt.log file1.fasta file2.fasta 
+12/04/2016 19:14:47 Processing FASTA file from file1.fasta
+12/04/2016 19:14:47 Processing FASTA file from file2.fasta
+```
+
 # Exit status values
 
 Biotool returns the following exit status values:

@@ -122,6 +122,21 @@ FILENAME	NUMSEQ	TOTAL	MIN	AVG	MAX
 file1.fa	4711	2801855	1021	929	53540
 ```
 
+## Logging
+
+If the ``--log FILE`` command line argument is specified, biotool will output a log file containing information about program progress. The log file includes the command line used to execute the program, and a note indicating which files have been processes so far. Events in the log file are annotated with their date and time of occurrence. 
+
+```
+% biotool-py --log bt.log file1.fasta file2.fasta 
+# normal biotool output appears here
+# contents of log file displayed below
+% cat bt.log
+12/04/2016 19:14:47 program started
+12/04/2016 19:14:47 command line: /usr/local/bin/biotool-py --log bt.log file1.fasta file2.fasta 
+12/04/2016 19:14:47 Processing FASTA file from file1.fasta
+12/04/2016 19:14:47 Processing FASTA file from file2.fasta
+```
+
 ## Empty files
 
 It is possible that the input FASTA file contains zero sequences, or, when the `--minlen` command line argument is used, it is possible that the file contains no sequences of length greater-than-or-equal-to the supplied value. In both of those cases biotool will not be able to compute minimum, maximum or average sequence lengths, and instead it shows output in the following way:
@@ -142,20 +157,6 @@ Biotool returns the following exit status values:
 * 2: A command line error occurred. This can happen if the user specifies an incorrect command line argument. In this circumstance biotool will also print a usage message to the standard error device (stderr).
 * 3: Input FASTA file is invalid. This can occur if biotool can read an input file but the file format is invalid. 
 
-# Logging
-
-If the ``--log FILE`` command line argument is specified, biotool will output a log file containing information about program progress. The log file includes the command line used to execute the program, and a note indicating which files have been processes so far.
-
-```
-% biotool-py --log bt.log file1.fasta file2.fasta 
-# normal biotool output appears here
-# contents of log file displayed below
-% cat bt.log
-12/04/2016 19:14:47 program started
-12/04/2016 19:14:47 command line: /usr/local/bin/biotool-py --log bt.log file1.fasta file2.fasta 
-12/04/2016 19:14:47 Processing FASTA file from file1.fasta
-12/04/2016 19:14:47 Processing FASTA file from file2.fasta
-```
 
 # Error handling
 

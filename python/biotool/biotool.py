@@ -15,6 +15,7 @@ from argparse import ArgumentParser
 from math import floor
 import sys
 from Bio import SeqIO
+import logging
 import pkg_resources
 
 
@@ -60,17 +61,17 @@ def parse_args():
         help='Minimum length sequence to include in stats (default {})'.format(
             DEFAULT_MIN_LEN))
     parser.add_argument('--version',
-                        action='version',
-                        version='%(prog)s ' + PROGRAM_VERSION)
-    parser.add_argument('--verbose',
-                        action='store_true',
-                        default=DEFAULT_VERBOSE,
-                        help="Print more stuff about what's happening")
+        action='version',
+        version='%(prog)s ' + PROGRAM_VERSION)
+    parser.add_argument('--log',
+        metavar='LOG_FILE',
+        type=str,
+        help='record program progress in LOG_FILE')
     parser.add_argument('fasta_files',
-                        nargs='*',
-                        metavar='FASTA_FILE',
-                        type=str,
-                        help='Input FASTA files')
+        nargs='*',
+        metavar='FASTA_FILE',
+        type=str,
+        help='Input FASTA files')
     return parser.parse_args()
 
 
@@ -185,6 +186,7 @@ def process_files(options):
     '''
     if options.fasta_files:
         for fasta_filename in options.fasta_files:
+            logging.info("Processing FASTA file from {}".format(fasta_filename))
             try:
                 fasta_file = open(fasta_filename)
             except IOError as exception:
@@ -194,13 +196,37 @@ def process_files(options):
                     stats = FastaStats().from_file(fasta_file, options.minlen)
                     print(stats.pretty(fasta_filename))
     else:
+        logging.info("Processing FASTA file from stdin")
         stats = FastaStats().from_file(sys.stdin, options.minlen)
         print(stats.pretty("stdin"))
+
+
+def init_logging(log_filename):
+    '''If the log_filename is defined, then
+    initialise the logging facility, and write log statement
+    indicating the program has started, and also write out the
+    command line from sys.argv
+
+    Arguments:
+        log_filename: either None, if logging is not required, or the
+            string name of the log file to write to
+    Result:
+        None
+    '''
+    if log_filename is not None:
+        logging.basicConfig(filename=log_filename,
+            level=logging.DEBUG,
+            filemode='w',
+            format='%(asctime)s %(message)s',
+            datefmt='%m/%d/%Y %H:%M:%S')
+        logging.info('program started')
+        logging.info('command line: {0}'.format(' '.join(sys.argv)))
 
 
 def main():
     "Orchestrate the execution of the program"
     options = parse_args()
+    init_logging(options.log)
     print(HEADER)
     process_files(options)
 

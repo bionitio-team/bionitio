@@ -56,19 +56,19 @@ In the examples below, `%` indicates the command line prompt.
 Biotool can display usage information on the command line via the `-h` or `--help` argument:
 ```
 % biotool-py -h
-usage: biotool-py [-h] [--minlen N] [--version] [--verbose]
-                  FASTA_FILE [FASTA_FILE ...]
+usage: biotool-py [-h] [--minlen N] [--version] [--log LOG_FILE]
+                  [FASTA_FILE [FASTA_FILE ...]]
 
 Print fasta stats
 
 positional arguments:
-  FASTA_FILE  Input FASTA files
+  FASTA_FILE      Input FASTA files
 
 optional arguments:
-  -h, --help  show this help message and exit
-  --minlen N  Minimum length sequence to include in stats (default 0)
-  --version   show program's version number and exit
-  --verbose   Print more stuff about what's happening
+  -h, --help      show this help message and exit
+  --minlen N      Minimum length sequence to include in stats (default 0)
+  --version       show program's version number and exit
+  --log LOG_FILE  record program progress in LOG_FILE
 ```
 
 ## Reading FASTA files named on the command line
@@ -137,10 +137,25 @@ empty.fa	0	0	-	-	-
 
 Biotool returns the following exit status values:
 
-* **0**: The program completed successfully.
-* **1**: File I/O error. This can occur if at least one of the input FASTA files cannot be opened for reading. This can occur because the file does not exist at the specified path, or biotool does not have permission to read from the file. 
-* **2**: A command line error occurred. This can happen if the user specifies an incorrect command line argument. In this circumstance biotool will also print a usage message to the standard error device (stderr).
-* **3**: Input FASTA file is invalid. This can occur if biotool can read an input file but the file format is invalid. 
+* 0: The program completed successfully.
+* 1: File I/O error. This can occur if at least one of the input FASTA files cannot be opened for reading. This can occur because the file does not exist at the specified path, or biotool does not have permission to read from the file. 
+* 2: A command line error occurred. This can happen if the user specifies an incorrect command line argument. In this circumstance biotool will also print a usage message to the standard error device (stderr).
+* 3: Input FASTA file is invalid. This can occur if biotool can read an input file but the file format is invalid. 
+
+# Logging
+
+If the ``--log FILE`` command line argument is specified, biotool will output a log file containing information about program progress. The log file includes the command line used to execute the program, and a note indicating which files have been processes so far.
+
+```
+% biotool-py --log bt.log file1.fasta file2.fasta 
+# normal biotool output appears here
+# contents of log file displayed below
+% cat bt.log
+12/04/2016 19:14:47 program started
+12/04/2016 19:14:47 command line: /usr/local/bin/biotool-py --log bt.log file1.fasta file2.fasta 
+12/04/2016 19:14:47 Processing FASTA file from file1.fasta
+12/04/2016 19:14:47 Processing FASTA file from file2.fasta
+```
 
 # Error handling
 

@@ -30,6 +30,7 @@ executable biotool-hs
                      , biofasta
                      , optparse-applicative
                      , biotool-hs
+                     , hslogger 
   default-language:    Haskell2010
 
 test-suite biotool-hs-test

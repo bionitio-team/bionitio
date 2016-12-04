@@ -25,17 +25,28 @@ import Bio.Sequence.Fasta
 import Options.Applicative 
    (Parser, ParserInfo (infoFailureCode), option, auto, long, short,
    metavar, help, value, many, argument, str, info, execParser, switch,
-   fullDesc, (<*>), (<$>), (<>), helper, progDesc)
+   fullDesc, (<*>), (<$>), (<>), helper, progDesc, optional, strOption)
 import Data.List
    (intercalate)
 import Control.Exception
    (catch, IOException)
 import System.Environment
-   (getProgName)
+   (getProgName, getArgs)
 import System.Exit
    (exitWith, ExitCode(..))
 import System.IO
    (stdin, hPutStrLn, stderr)
+import System.Log.Logger
+   (rootLoggerName, setHandlers, updateGlobalLogger,
+   Priority(INFO), Priority(WARNING), infoM, debugM,
+   warningM, errorM, setLevel)
+import System.Log.Handler.Simple
+   (fileHandler, streamHandler, GenericHandler)
+import System.Log.Handler
+   (setFormatter)
+import System.Log.Formatter
+
+logger = rootLoggerName
 
 -- | File I/O error. This can occur if at least one of the input FASTA
 -- files cannot be opened for reading. This can occur because the file
@@ -77,6 +88,8 @@ data Options = Options
    { -- | Minimum length sequence considered by the program. Sequences
      -- shorter than this length are ignored.
      minLengthThreshold :: Integer
+     -- | Optional log file path
+   , logFilename :: Maybe FilePath
      -- | If True, print the version of the program and exit.
    , version :: Bool
      -- | If True, make the program produce more detailed output
@@ -102,6 +115,12 @@ defineOptions = Options
            <> help ("Minimum length sequence to include in stats (default="
                  ++ show defaultMinLengthThreshold ++ ")")
            <> value defaultMinLengthThreshold)
+   <*> optional
+          (strOption
+              (long "log"
+               <> short 'l'
+               <> metavar "LOG_FILE"
+               <> help ("record program progress in LOG_FILE")))
    <*> switch
           (long "version"
            <> short 'v'
@@ -119,7 +138,8 @@ processFastaFiles :: Options    -- ^ Command line options
                   -> [FilePath] -- ^ Possibly empty list of FASTA file paths
                   -> IO ()
 -- No files specified on command line, so read from stdin
-processFastaFiles options [] =
+processFastaFiles options [] = do
+   infoM logger "processing FASTA file from stdin"
    hReadFasta stdin >>= processFile options "stdin"
 -- One or more files specified on command line, process
 -- each one in sequence.
@@ -128,7 +148,8 @@ processFastaFiles options files@(_:_) =
    where
    -- Catch any IO excpetions raised in the processing of the file
    tryProcessFile :: FilePath -> IO ()
-   tryProcessFile file =
+   tryProcessFile file = do
+      infoM logger $ "processing FASTA file from: " ++ file
       catch
          (readFasta file >>= processFile options file)
          (\exception ->
@@ -172,6 +193,18 @@ optionParser = thisParserInfo { infoFailureCode = exitCommandLineError }
       info (helper <*> defineOptions)
          (fullDesc <> progDesc programDescription)
 
+initialiseLogging :: Maybe FilePath -> IO ()
+intialiseLogging Nothing = return ()
+initialiseLogging (Just logFile) = do 
+    let formatter = simpleLogFormatter "$time $prio $msg"
+    handler <- flip setFormatter formatter <$> fileHandler logFile INFO 
+    updateGlobalLogger logger (setLevel INFO)
+    updateGlobalLogger logger (setHandlers [handler])
+    infoM logger "Program started"
+    commandLine <- getArgs
+    programName <- getProgName
+    infoM logger $ "command line: " ++ unwords (programName:commandLine)
+
 -- | The entry point for the program.
 --  * Parse the command line arguments.
 --  * Print the output header.
@@ -180,5 +213,6 @@ optionParser = thisParserInfo { infoFailureCode = exitCommandLineError }
 main :: IO ()
 main = do
    options <- execParser optionParser 
+   initialiseLogging $ logFilename options
    putStrLn header
    processFastaFiles options $ fastaFiles options

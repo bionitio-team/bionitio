@@ -194,7 +194,7 @@ optionParser = thisParserInfo { infoFailureCode = exitCommandLineError }
          (fullDesc <> progDesc programDescription)
 
 initialiseLogging :: Maybe FilePath -> IO ()
-intialiseLogging Nothing = return ()
+initialiseLogging Nothing = return ()
 initialiseLogging (Just logFile) = do 
     let formatter = simpleLogFormatter "$time $prio $msg"
     handler <- flip setFormatter formatter <$> fileHandler logFile INFO 

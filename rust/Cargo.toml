@@ -6,3 +6,5 @@ authors = ["Bernie Pope <bjpope@unimelb.edu.au>"]
 [dependencies]
 bio = "*"
 argparse = "*"
+log = "*"
+log4rs = "*"

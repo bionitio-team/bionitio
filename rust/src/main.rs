@@ -28,13 +28,20 @@
 
 extern crate bio;
 extern crate argparse;
+#[macro_use]
+extern crate log;
+extern crate log4rs;
 use std::io;
 use std::io::Write;
 use std::cmp;
 use bio::io::fasta;
 use std::fmt;
 use std::fs::File;
-use argparse::{ArgumentParser, StoreTrue, Store, Print, Collect};
+use argparse::{ArgumentParser, StoreTrue, Store, Print, Collect, StoreOption};
+use log4rs::append::file::FileAppender;
+use log4rs::encode::pattern::PatternEncoder;
+use log4rs::config::{Appender, Config, Root, Logger};
+use log::LogLevelFilter;
 
 // File I/O error. This can occur if at least one of the input FASTA
 // files cannot be opened for reading. This can occur because the file
@@ -161,7 +168,7 @@ impl fmt::Display for FastaStats {
 }
 
 /// Command line arguments supplied to the program.
-struct Options {
+struct CmdOptions {
     /// If True, make the program produce more detailed output
     /// about its progress.
     verbose: bool,
@@ -170,15 +177,18 @@ struct Options {
     minlen: u64,
     /// Possibly empty vector of input FASTA file paths.
     fasta_files: Vec<String>,
+    /// Name of log file if requested.
+    log_file: Option<String>
 }
 
 /// Parse the command line options.
 /// Program exits with status 2 on parsing failure.
-fn parse_options() -> Options {
-    let mut options = Options {
+fn parse_options() -> CmdOptions {
+    let mut options = CmdOptions {
         verbose: false,
         minlen: 0,
         fasta_files: Vec::new(),
+        log_file: None
     };
     {
         let mut ap = ArgumentParser::new();
@@ -191,6 +201,8 @@ fn parse_options() -> Options {
             .add_option(&["--minlen"],
                         Store,
                         "Minimum length sequence to include in stats");
+        ap.refer(&mut options.log_file)
+            .add_option(&["--log"], StoreOption, "Log file name");
         ap.refer(&mut options.fasta_files)
             .add_argument(&"fasta_files", Collect, "Input FASTA files");
         ap.add_option(&["--version"],
@@ -215,7 +227,7 @@ fn parse_options() -> Options {
 /// and pretty print the results to standard output.
 /// Program exits if a parse error occurs when reading an
 /// input FASTA file.
-fn compute_print_stats<R: io::Read>(options: &Options, filename: &String, reader: R) -> () {
+fn compute_print_stats<R: io::Read>(options: &CmdOptions, filename: &String, reader: R) -> () {
     match FastaStats::new(options.minlen, reader) {
         Ok(Some(stats)) => {
             // Prefix the FASTA filename onto the front of the statistics
@@ -233,6 +245,30 @@ fn compute_print_stats<R: io::Read>(options: &Options, filename: &String, reader
     }
 }
 
+fn init_logging(options: &CmdOptions) -> () {
+
+    match options.log_file {
+        Some(ref filename) => {
+            let requests = FileAppender::builder()
+                .encoder(Box::new(PatternEncoder::new("{d} - {m}{n}")))
+                .build(filename)
+                .unwrap();
+
+            let config = Config::builder()
+                .appender(Appender::builder().build("requests", Box::new(requests)))
+                .logger(Logger::builder()
+                    .appender("requests")
+                    .additive(false)
+                    .build("app::requests", LogLevelFilter::Info))
+                .build(Root::builder().appender("requests").build(LogLevelFilter::Info))
+                .unwrap();
+
+            log4rs::init_config(config).unwrap(); 
+        },
+        None => ()
+    }
+}
+
 /// The entry point for the program.
 ///  * Parse the command line arguments.
 ///  * Print the output header.
@@ -240,6 +276,12 @@ fn compute_print_stats<R: io::Read>(options: &Options, filename: &String, reader
 ///    results.
 fn main() {
     let options = parse_options();
+
+    init_logging(&options);
+
+    info!(target: "requests", "Here is some info");
+    warn!(target: "requests", "This is a warning");
+    
     // Display the output header.
     println!("FILENAME\tTOTAL\tNUMSEQ\tMIN\tAVG\tMAX");
     if options.fasta_files.len() == 0 {

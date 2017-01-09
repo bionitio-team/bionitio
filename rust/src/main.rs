@@ -31,6 +31,7 @@ extern crate argparse;
 #[macro_use]
 extern crate log;
 extern crate log4rs;
+use std::env;
 use std::io;
 use std::io::Write;
 use std::cmp;
@@ -245,26 +246,39 @@ fn compute_print_stats<R: io::Read>(options: &CmdOptions, filename: &String, rea
     }
 }
 
+/// Initialise the logging infrastructure. If the command line option --log
+/// is specified, we set up logging to write to the filename supplied as
+/// an argument. If it is not supplied then logging will not occur. Log
+/// messages are tagged with their date and time of occurrence.
+/// If logging is initialised, then we write a message to indicate that
+/// the program started, and then we log the command line arguments.
 fn init_logging(options: &CmdOptions) -> () {
-
+    // Check if --log was specified as a command line argument
     match options.log_file {
+        // --log was specified, set logging output to the supplied filename
         Some(ref filename) => {
-            let requests = FileAppender::builder()
+            let log_messages = FileAppender::builder()
                 .encoder(Box::new(PatternEncoder::new("{d} - {m}{n}")))
                 .build(filename)
                 .unwrap();
 
             let config = Config::builder()
-                .appender(Appender::builder().build("requests", Box::new(requests)))
+                .appender(Appender::builder().build("log_messages", Box::new(log_messages)))
                 .logger(Logger::builder()
-                    .appender("requests")
+                    .appender("log_messages")
                     .additive(false)
-                    .build("app::requests", LogLevelFilter::Info))
-                .build(Root::builder().appender("requests").build(LogLevelFilter::Info))
+                    .build("app::log_messages", LogLevelFilter::Info))
+                .build(Root::builder().appender("log_messages").build(LogLevelFilter::Info))
                 .unwrap();
 
             log4rs::init_config(config).unwrap(); 
+            info!(target: "log_messages", "program started");
+            // collect command line arguments of the program
+            let argv: Vec <String> = env::args().collect();
+            // log the command line arguments
+            info!(target: "log_messages", "command line: {}", argv.join(" "));
         },
+        // --log was not specified, do nothing. Log messages will not be written.
         None => ()
     }
 }
@@ -277,16 +291,15 @@ fn init_logging(options: &CmdOptions) -> () {
 fn main() {
     let options = parse_options();
 
+    // Optionally initialise the logging system.
     init_logging(&options);
 
-    info!(target: "requests", "Here is some info");
-    warn!(target: "requests", "This is a warning");
-    
     // Display the output header.
     println!("FILENAME\tTOTAL\tNUMSEQ\tMIN\tAVG\tMAX");
     if options.fasta_files.len() == 0 {
         // No FASTA files were specified on the command line, so
         // read from stdin instead.
+        info!(target: "log_messages", "Processing FASTA file from stdin");
         compute_print_stats(&options, &String::from("stdin"), io::stdin());
     } else {
         // Process each FASTA file specified on the command line.
@@ -294,6 +307,7 @@ fn main() {
         for filename in &options.fasta_files {
             match File::open(filename) {
                 Ok(file) => {
+                    info!(target: "log_messages", "Processing FASTA file from {}", filename);
                     compute_print_stats(&options, filename, file);
                 }
                 Err(error) => exit_with_error(EXIT_FILE_IO_ERROR, &format!("{}", error)),

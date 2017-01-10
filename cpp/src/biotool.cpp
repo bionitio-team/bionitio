@@ -15,7 +15,17 @@ parts are:
 */    
 
 #include <iostream>
+#include <sys/time.h>
 #include <seqan/seq_io.h>
+#include <boost/log/core.hpp>
+#include <boost/log/trivial.hpp>
+#include <boost/log/expressions.hpp>
+#include <boost/log/sinks/text_file_backend.hpp>
+#include <boost/log/utility/setup/file.hpp>
+#include <boost/log/utility/setup/common_attributes.hpp>
+#include <boost/log/sources/severity_logger.hpp>
+#include <boost/log/sources/record_ostream.hpp>
+#include <boost/algorithm/string/join.hpp>
 #include "options.h"
 #include "fasta_stats.h"
 #include "constants.h"
@@ -24,6 +34,10 @@ parts are:
 
 using namespace seqan;
 using namespace std;
+namespace logging = boost::log;
+namespace src = boost::log::sources;
+namespace sinks = boost::log::sinks;
+namespace keywords = boost::log::keywords;
 
 /*
     Process each input FASTA file.
@@ -44,6 +58,7 @@ void process_files(Options options)
     // Check how many files were specified on the command line.
     if (options.fasta_files.size() == 0)
     {
+        BOOST_LOG_TRIVIAL(info) << "Processing FASTA file from stdin";
         // Try to read a FASTA file from stdin
         SeqFileIn seq_file(cin);
         // Compute various statistics for the file
@@ -56,6 +71,7 @@ void process_files(Options options)
         // Process each file specified on the command line
         for (string filename : options.fasta_files)
         {
+            BOOST_LOG_TRIVIAL(info) << "Processing FASTA file from: " << filename;
             ifstream input_file(filename);
             if (!input_file)
             {
@@ -70,9 +86,24 @@ void process_files(Options options)
     }
 }
 
+void init_logging(Options options, std::string command_line)
+{
+
+    logging::add_common_attributes();
+    boost::log::register_simple_formatter_factory<boost::log::trivial::severity_level, char>("Severity");
+    boost::log::add_file_log
+    (
+        boost::log::keywords::file_name = "logfile",
+        boost::log::keywords::format = "[%TimeStamp%] (%Severity%): %Message%"
+    );
+    BOOST_LOG_TRIVIAL(info) << "program started";
+    BOOST_LOG_TRIVIAL(info) << "command line: " << command_line;
+}
+
 /*
     Entry point for the program
         - parse command line options
+	- optionally initialise logging
         - process input files
 
     arguments:
@@ -82,6 +113,9 @@ void process_files(Options options)
 int main(int argc, const char **argv)
 {
     Options options(argc, argv);
+    std::vector<std::string> arguments(argv + 1, argv + argc);
+    std::string command_line = boost::algorithm::join(arguments, " ");
+    init_logging(options, command_line);
     process_files(options);
     return Success;
 }

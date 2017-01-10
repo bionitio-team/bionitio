@@ -17,8 +17,9 @@ find_package (ZLIB)
 # Load the SeqAn module and fail if not found.
 find_package (SeqAn REQUIRED)
 
-# Load the SeqAn module and fail if not found.
-find_package(Boost COMPONENTS program_options REQUIRED)
+# Load the required BOOST modules and fail if not found.
+ADD_DEFINITIONS(-DBOOST_LOG_DYN_LINK=1)
+find_package(Boost COMPONENTS program_options log log_setup thread filesystem system)
 
 add_library(Catch INTERFACE)
 target_include_directories(Catch INTERFACE ${CMAKE_SOURCE_DIR}/catch/)

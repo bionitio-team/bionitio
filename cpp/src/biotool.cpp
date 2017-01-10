@@ -89,15 +89,22 @@ void process_files(Options options)
 void init_logging(Options options, std::string command_line)
 {
 
-    logging::add_common_attributes();
-    boost::log::register_simple_formatter_factory<boost::log::trivial::severity_level, char>("Severity");
-    boost::log::add_file_log
-    (
-        boost::log::keywords::file_name = "logfile",
-        boost::log::keywords::format = "[%TimeStamp%] (%Severity%): %Message%"
-    );
-    BOOST_LOG_TRIVIAL(info) << "program started";
-    BOOST_LOG_TRIVIAL(info) << "command line: " << command_line;
+    if (options.log_filename.size() > 0) {
+        logging::add_common_attributes();
+        boost::log::register_simple_formatter_factory<boost::log::trivial::severity_level, char>("Severity");
+        boost::log::add_file_log
+        (
+            boost::log::keywords::file_name = options.log_filename,
+            boost::log::keywords::format = "[%TimeStamp%] (%Severity%): %Message%"
+        );
+        BOOST_LOG_TRIVIAL(info) << "program started";
+        BOOST_LOG_TRIVIAL(info) << "command line: " << command_line;
+    }
+    else {
+	// turn off logging
+	boost::shared_ptr<logging::core> core = logging::core::get();
+        core->set_logging_enabled(false);
+    }
 }
 
 /*

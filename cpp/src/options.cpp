@@ -43,6 +43,7 @@ Options::Options(int argc, const char** argv)
     minlen = DEFAULT_MIN_LEN;
     verbose = false;
     version = false;
+    log_filename = "";
     fasta_files = {};
 
     string minlen_str =
@@ -50,6 +51,7 @@ Options::Options(int argc, const char** argv)
         to_string(DEFAULT_MIN_LEN) + ")";
     string version_str = "Display program version and exit";
     string verbose_str = "Print more stuff about what's happening";
+    string log_filename_str = "Log file name";
 
     // Description of the command line arguments.
     po::options_description desc(PROGRAM_NAME + " allowed options");
@@ -58,6 +60,7 @@ Options::Options(int argc, const char** argv)
         ("minlen,m", po::value<unsigned int>(), minlen_str.c_str())
         ("verbose", verbose_str.c_str())
         ("version", version_str.c_str())
+	("log", po::value<string>(), log_filename_str.c_str())
         ("files",
             po::value<vector<string>>()->multitoken()->zero_tokens()->composing(),
             "FASTA FILES");
@@ -103,6 +106,10 @@ Options::Options(int argc, const char** argv)
     if (vm.count("version"))
     {
         version = true;
+    }
+    if (vm.count("log"))
+    {
+        log_filename = vm["log"].as<string>();
     }
     if (vm.count("files"))
     {

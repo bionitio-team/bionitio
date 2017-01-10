@@ -16,6 +16,8 @@ class Options
         bool version;
 	// Zero or more input FASTA filenames
         vector<string> fasta_files;
+	// Optional log file. Empty string means no logging should be performed.
+	string log_filename;
         Options(int argc, const char **argv);
 };
 #endif

@@ -10,6 +10,7 @@ Portability : POSIX
 
 #include <cstdlib>
 #include <iostream>
+#include <boost/log/trivial.hpp>
 #include "error.h"
 #include "constants.h"
 #include "exit_status.h"
@@ -32,6 +33,7 @@ using namespace std;
 */
 void exit_with_error(string message, exit_status status)
 {
+    BOOST_LOG_TRIVIAL(error) << message;
     print_error(message);
     exit(status);
 }

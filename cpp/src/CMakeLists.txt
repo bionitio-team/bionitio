@@ -24,7 +24,7 @@ find_package(Boost COMPONENTS program_options log log_setup thread filesystem sy
 add_library(Catch INTERFACE)
 target_include_directories(Catch INTERFACE ${CMAKE_SOURCE_DIR}/catch/)
 add_executable(biotool-test test.cpp)
-target_link_libraries (biotool-test biotool-lib Catch ${SEQAN_LIBRARIES})
+target_link_libraries (biotool-test biotool-lib Catch ${SEQAN_LIBRARIES} ${Boost_LIBRARIES})
 
 # ----------------------------------------------------------------------------
 # Build Setup

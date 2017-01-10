@@ -75,7 +75,7 @@ void process_files(Options options)
             ifstream input_file(filename);
             if (!input_file)
             {
-                exit_with_error("Could not open the file.", Error_open_file);
+                exit_with_error("Could not open the file: " + filename, Error_open_file);
             }
             SeqFileIn seq_file(input_file);
             // Compute various statistics for the file

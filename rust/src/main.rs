@@ -64,8 +64,10 @@ static PROGRAM_NAME: &'static str = "biotool";
 
 /// Exit the program, printing an error message on stderr, and returning
 /// a specific error code. The program name is prefixed onto the front of
-/// the error message.
+/// the error message. If logging is enabled we also write the error
+/// message to the log file.
 fn exit_with_error(status: i32, message: &String) -> () {
+    error!(target: "log_messages", "{}", message);
     writeln!(&mut std::io::stderr(),
              "{} ERROR: {}!",
              PROGRAM_NAME,
@@ -258,7 +260,7 @@ fn init_logging(options: &CmdOptions) -> () {
         // --log was specified, set logging output to the supplied filename
         Some(ref filename) => {
             let log_messages = FileAppender::builder()
-                .encoder(Box::new(PatternEncoder::new("{d} - {m}{n}")))
+                .encoder(Box::new(PatternEncoder::new("{d(%Y-%m-%d %H:%M:%S)} {l} - {m}{n}")))
                 .build(filename)
                 .unwrap();
 
@@ -310,7 +312,8 @@ fn main() {
                     info!(target: "log_messages", "Processing FASTA file from {}", filename);
                     compute_print_stats(&options, filename, file);
                 }
-                Err(error) => exit_with_error(EXIT_FILE_IO_ERROR, &format!("{}", error)),
+                Err(error) => exit_with_error(EXIT_FILE_IO_ERROR,
+                    &format!("Failed to open '{}'. {}", filename, error)),
             }
         }
     }

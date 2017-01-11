@@ -43,6 +43,7 @@ def exit_with_error(message, exit_status):
         exit_status: a positive integer representing the exit status of the
             program.
     '''
+    logging.error(message)
     print("{} ERROR: {}, exiting".format(PROGRAM_NAME, message), file=sys.stderr)
     sys.exit(exit_status)
 
@@ -217,8 +218,8 @@ def init_logging(log_filename):
         logging.basicConfig(filename=log_filename,
             level=logging.DEBUG,
             filemode='w',
-            format='%(asctime)s %(message)s',
-            datefmt='%m/%d/%Y %H:%M:%S')
+            format='%(asctime)s %(levelname)s - %(message)s',
+            datefmt='%m-%d-%Y %H:%M:%S')
         logging.info('program started')
         logging.info('command line: {0}'.format(' '.join(sys.argv)))
 

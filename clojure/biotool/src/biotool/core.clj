@@ -5,6 +5,6 @@
 (defn -main
   "Prints the first sequence from a fasta file"
   [file]
-  (with-open [r (bs/bs-reader (bs/init-fasta-file file :iupacAminoAcids))]
-    (println
-     (bs/bioseq->string (first (bs/biosequence-seq r))))))
+  (with-open [reader (bs/bs-reader (bs/init-fasta-file file :iupacAminoAcids))]
+    (doseq [row (bs/biosequence-seq reader)]
+      (println (count (:sequence row))))))

@@ -1,8 +1,13 @@
 (ns biotool.core
   (:require [clj-biosequence.core :as bs]
             [clojure.string :as string]
-            [clojure.tools.cli :refer [parse-opts]])
+            [clojure.tools.cli :refer [parse-opts]]
+            [clojure.java.io :as io]
+            [taoensso.timbre :as timbre]
+            [taoensso.timbre.appenders.core :as appenders])
   (:gen-class))
+
+(timbre/refer-timbre)
 
 (def initial-stats
   "Initial value of stats, before any sequences have been considered"
@@ -66,11 +71,13 @@
 
 (defn process-fasta-file 
   [minlen file]
+  (timbre/info "Processing FASTA file from" file)
   (with-open [reader (bs/bs-reader (bs/init-fasta-file file :iupacAminoAcids))]
     (process-fasta-reader minlen reader file)))
 
 (defn process-stdin
   [minlen]
+  (timbre/info "Processing FASTA file from stdin")
   (with-open [reader (bs/init-fasta-reader (java.io.BufferedReader. *in*) :iupacAminoAcids)]
     (process-fasta-reader minlen reader "stdin")))
 
@@ -110,6 +117,15 @@
    ["-v" "--version"]
    ["-h" "--help"]])
 
+(defn config-logging
+  [log-filename]
+  (when log-filename
+    (let [log-file-name log-filename] 
+      (timbre/merge-config! {:appenders {:println {:enabled? false}}})
+      (timbre/merge-config! {:appenders {:spit (appenders/spit-appender {:fname log-filename})}})
+      (timbre/set-level! :info))
+    (timbre/info "Program started")))
+
 (defn -main
   "Orchestrate the computation" 
   [& args]
@@ -117,4 +133,5 @@
     (cond
       (:help options) (exit 0 (usage summary))
       errors (exit 1 (error-msg errors)))
+    (config-logging (:log options))
     (process-fasta-files (:minlen options) arguments)))

@@ -191,6 +191,7 @@ A set of sample test input files is provided in the `test_data` folder. Addition
 * BASH
 * C
 * C++
+* Clojure
 * Java
 * Javascript
 * Haskell

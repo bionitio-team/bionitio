@@ -9,4 +9,5 @@
                  [com.taoensso/timbre "4.8.0"]]
   :main ^:skip-aot biotool.core
   :target-path "target/%s"
-  :profiles {:uberjar {:aot :all}})
+  :profiles {:uberjar {:aot :all}}
+  :plugins [[lein-cljfmt "0.5.6"]])

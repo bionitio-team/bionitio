@@ -124,6 +124,7 @@ function check_dependencies {
     # Check for git
     git --version > /dev/null || {
        echo "${program_name}: ERROR: git is not installed in the PATH" 
+       echo "Please install git, and ensure it can be found in your PATH variable."
        exit 1
     }
 }
@@ -234,11 +235,11 @@ copy_test_data
 verbose_message "setting the license to ${license}"
 set_license
 # 8. remove the cloned git repository.
-#verbose_message "removing ${new_project_name}/${git_tmp_dir}"
-#remove_biotool_repository
+verbose_message "removing ${new_project_name}/${git_tmp_dir}"
+remove_biotool_repository
 # 9. Rename biotool to the new project name.
-#verbose_message "renaming references to biotool to new project name ${new_project_name}" 
-#rename_project
+verbose_message "renaming references to biotool to new project name ${new_project_name}" 
+rename_project
 # 10. Create repository for new project.
-#verbose_message "initialising new git repository for ${new_project_name}"
-#create_project_repository
+verbose_message "initialising new git repository for ${new_project_name}"
+create_project_repository

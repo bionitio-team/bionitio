@@ -236,7 +236,9 @@
   Result:
     nil"
   [status msg]
-  (binding [*out* *err*] println msg)
+  ;; for some reason printing to stderr is not working
+  ;; (binding [*out* *err*] println msg)
+  (println msg)
   (System/exit status))
 
 (def cli-options

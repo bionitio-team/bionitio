@@ -17,13 +17,21 @@ We recommend using the `leiningen` tool to install biotool. You will need to ins
 On OS X this can be can with homebrew like so (you may need to run `brew update` first):
 
 ```
-% brew install leiningen 
+$ brew install leiningen 
 ```
 
 Once you have `leiningen` installed you can use it to build biotool like so:
 
 ```
-% lein run -- --help 
+$ lein bin 
+```
+
+This will create an executable program in the directory called `bin`.
+
+You can run the program like so:
+
+```
+$ ./bin/biotool-clj -h
 ```
 
 # General behaviour
@@ -36,23 +44,23 @@ An optional command line argument `--minlen` can be supplied. Sequences with len
 
 These are the statistics computed by biotool, for all sequences with length greater-than-or-equal-to `--minlen`:
 
-* *NUMSEQ*: the number of sequences in the file satisfying the minimum length requirement.
-* *TOTAL*: the total length of all the counted sequences.
-* *MIN*: the minimum length of the counted sequences.
-* *AVERAGE*: the average length of the counted sequences rounded down to an integer.
-* *MAX*: the maximum length of the counted sequences.
+* NUMSEQ: the number of sequences in the file satisfying the minimum length requirement.
+* TOTAL: the total length of all the counted sequences.
+* MIN: the minimum length of the counted sequences.
+* AVERAGE: the average length of the counted sequences rounded down to an integer.
+* MAX: the maximum length of the counted sequences.
 
 If there are zero sequences counted in a file, the values of MIN, AVERAGE and MAX cannot be computed. In that case biotool will print a dash (`-`) in the place of the numerical value. Note that when `--minlen` is set to a value greater than zero it is possible that an input FASTA file does not contain any sequences with length greater-than-or-equal-to the specified value. If this situation arises biotool acts in the same way as if there are no sequences in the file.
 
 # Usage 
 
-In the examples below, `%` indicates the command line prompt.
+In the examples below, `$` indicates the command line prompt.
 
 ## Help message
 
 Biotool can display usage information on the command line via the `-h` or `--help` argument:
 ```
-XXX fixme
+$ lein run -- --help
 ```
 
 ## Reading FASTA files named on the command line

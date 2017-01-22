@@ -297,7 +297,7 @@ fn main() {
     init_logging(&options);
 
     // Display the output header.
-    println!("FILENAME\tTOTAL\tNUMSEQ\tMIN\tAVG\tMAX");
+    println!("FILENAME\tNUMSEQ\tTOTAL\tMIN\tAVG\tMAX");
     if options.fasta_files.len() == 0 {
         // No FASTA files were specified on the command line, so
         // read from stdin instead.

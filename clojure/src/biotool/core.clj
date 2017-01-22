@@ -185,7 +185,7 @@
   Result:
     nil"
   [minlen files]
-  (let [header "FILENAME\tTOTAL\tNUMSEQ\tMIN\tAVG\tMAX"]
+  (let [header "FILENAME\tNUMSEQ\tTOTAL\tMIN\tAVG\tMAX"]
     (println header)
     (if (empty? files)
       ;; If there are no filenames to process, then use stdin.

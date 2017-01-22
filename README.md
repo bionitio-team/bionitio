@@ -32,15 +32,21 @@ XXX Perhaps we should also provide boilerplate for other standard open source li
 
 # Starting a new project from biotool
 
-One of the main goals of biotool is to provide a good place to start writing bioinformatics command line tools. To make that easy we've provided a shell script to help you start a new project. All you need to do is tell the script two things:
+One of the main goals of biotool is to provide a good place to start writing bioinformatics command line tools. To make that easy we've provided a shell script to help you start a new project. You must specify the following things: 
 
-1. The programming language you want to use (one of: c, clojure, cpp, haskell, java, js, perl5, python, r, ruby, rust)
-2. The name of your new project.
+Required:
+
+1. (-l) the programming language you want to use (one of: c, clojure, cpp, haskell, java, js, perl5, python, r, ruby, rust)
+2. (-n) the name of your new project.
+
+Optional:
+
+1. (-c) the license that you want to assign to your new project (one of: Apache-2.0, BSD-2-Clause, BSD-3-Clause, GPL-2.0, GPL-3.0, MIT). If you do not specify a license then it defaults to the MIT license.
 
 You can run the script like so, using curl:
 
 ```
-curl -sSf https://raw.githubusercontent.com/biotool-paper/biotool/master/boot/biotool-boot.sh  | bash -s -- -l rust -n skynet
+curl -sSf https://raw.githubusercontent.com/biotool-paper/biotool/master/boot/biotool-boot.sh  | bash -s -- -l rust -n skynet -c BSD-3-Clause
 ```
 
 In the example above, a new project directory called `skynet` will be created in the current working directory, and a fresh project will be started using the rust implementation of biotool. A new git repository will be created within the `skynet` directory.
@@ -49,7 +55,7 @@ If you prefer not to run a shell script from the web, then you can clone the bio
 
 ```
 curl https://raw.githubusercontent.com/biotool-paper/biotool/master/boot/biotool-boot.sh > biotool-boot.sh
-bash biotool-boot.sh -l rust -n skynet
+bash biotool-boot.sh -l rust -n skynet -c BSD-3-Clause
 ```
 
 # General behaviour

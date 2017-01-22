@@ -25,10 +25,10 @@ Basic features of the tool include:
 
 Where possible we have tried to follow the recommended conventions for programming style for each implementation language.
 
-# Licence
+# License
 
-All of the various implementations of biotool are released as open source software under the terms of [MIT License](https://raw.githubusercontent.com/biotool-paper/biotool/master/LICENSE)
-XXX Perhaps we should also provide boilerplate for other standard open source licenses to make it easy for users to choose which one they want.
+The biotool project is released as open source software under the terms of [MIT License](https://raw.githubusercontent.com/biotool-paper/biotool/master/LICENSE).
+However, we grant permission to users who derive their own projects from biotool to apply their own license to their derived works. Licenses applied to projects deriving from biotool do not affect in any way the license of the overall biotool project, or licenses applied to other independent derivations.
 
 # Starting a new project from biotool
 

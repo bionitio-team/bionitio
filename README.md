@@ -36,12 +36,12 @@ One of the main goals of biotool is to provide a good place to start writing bio
 
 Required:
 
-* -l <language>: the programming language you want to use (one of: c, clojure, cpp, haskell, java, js, perl5, python, r, ruby, rust)
-* -n <name>: the name of your new project.
+* -l \<language\>: the programming language you want to use (one of: c, clojure, cpp, haskell, java, js, perl5, python, r, ruby, rust)
+* -n \<name\>: the name of your new project.
 
 Optional:
 
-* -c <license>: the license that you want to assign to your new project (one of: Apache-2.0, BSD-2-Clause, BSD-3-Clause, GPL-2.0, GPL-3.0, MIT). If you do not specify a license then it defaults to the MIT license.
+* -c \<license\>: the license that you want to assign to your new project (one of: Apache-2.0, BSD-2-Clause, BSD-3-Clause, GPL-2.0, GPL-3.0, MIT). If you do not specify a license then it defaults to the MIT license.
 
 You can run the script like so, using curl:
 

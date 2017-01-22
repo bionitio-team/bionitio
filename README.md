@@ -194,7 +194,6 @@ A set of sample test input files is provided in the `test_data` folder. Addition
 
 # Programming languages used to implement biotool
 
-* BASH
 * C
 * C++
 * Clojure

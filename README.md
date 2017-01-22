@@ -46,7 +46,8 @@ Optional:
 You can run the script like so, using curl:
 
 ```
-curl -sSf https://raw.githubusercontent.com/biotool-paper/biotool/master/boot/biotool-boot.sh  | bash -s -- -l rust -n skynet -c BSD-3-Clause
+curl -sSf https://raw.githubusercontent.com/biotool-paper/biotool/master/boot/biotool-boot.sh \
+ | bash -s -- -l rust -n skynet -c BSD-3-Clause
 ```
 
 In the example above, a new project directory called `skynet` will be created in the current working directory, and a fresh project will be started using the rust implementation of biotool. A new git repository will be created within the `skynet` directory.

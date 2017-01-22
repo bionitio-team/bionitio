@@ -1,0 +1,16 @@
+sudo: true
+dist: trusty
+
+language: node_js 
+
+addons:
+  apt:
+    packages:
+      npm
+
+before_install:
+  - ./.travis/install-dependencies.sh 
+
+script:
+  - ./.travis/test.sh biotool.js
+  - ./.travis/unit-test.sh

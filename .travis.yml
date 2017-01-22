@@ -10,16 +10,16 @@ addons:
       npm
 
 before_install:
-  - ./.travis/install-dependencies/c-install-dependencies.sh
-  - ./.travis/install-dependencies/cpp-install-dependencies.sh
-  - ./.travis/install-dependencies/haskell-install-dependencies.sh
-  - ./.travis/install-dependencies/java-install-dependencies.sh
-  - ./.travis/install-dependencies/js-install-dependencies.sh
-  - ./.travis/install-dependencies/python-install-dependencies.sh
-  - ./.travis/install-dependencies/r-install-dependencies.sh
-  - ./.travis/install-dependencies/ruby-install-dependencies.sh
-  - ./.travis/install-dependencies/rust-install-dependencies.sh
-  - ./.travis/install-dependencies/perl5-install-dependencies.sh
+  - ./c/.travis/install-dependencies.sh 
+  - ./cpp/.travis/install-dependencies.sh 
+  - ./haskell/.travis/install-dependencies.sh  
+  - ./java/.travis/install-dependencies.sh  
+  - ./js/.travis/install-dependencies.sh 
+  - ./python/.travis/install-dependencies.sh  
+  - ./r/.travis/install-dependencies.sh 
+  - ./ruby/.travis/install-dependencies.sh 
+  - ./rust/.travis/install-dependencies.sh 
+  - ./perl5/.travis/install-dependencies.sh
 
 script:
   - ./.travis/test.sh c/biotool-c
@@ -32,7 +32,7 @@ script:
   - ./.travis/test.sh cpp/src/biotool-build/biotool-cpp
   - ./.travis/test.sh r/biotool.R
   - ./.travis/test.sh perl5/biotool.pl
-  - ./.travis/test-c.sh
-  - ./.travis/test-java.sh
-  - ./.travis/test-python.sh
-  - ./.travis/test-haskell.sh
+  - ./c/.travis/unit-test.sh
+  - ./haskell/.travis/unit-test.sh
+  - ./java/.travis/unit-test.sh
+  - ./python/.travis/unit-test.sh

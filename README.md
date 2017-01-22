@@ -14,9 +14,10 @@ Basic features of the tool include:
 * Command line argument parsing.
 * Reading input from files or optionally from standard input.
 * The use of library code for parsing a common bioinformatics file format (FASTA).
+* Optional logging.
 * Defined exit status values.
 * A test suite. 
-* A well-defined version number, following the principles of [Semantic Versioning](http://semver.org/).
+* A version number.
 * (Where possible) standardised software packaging using programming language specific mechanisms.
 * A standard open-source software license. 
 * User documentation.
@@ -33,7 +34,7 @@ XXX Perhaps we should also provide boilerplate for other standard open source li
 
 One of the main goals of biotool is to provide a good place to start writing bioinformatics command line tools. To make that easy we've provided a shell script to help you start a new project. All you need to do is tell the script two things:
 
-1. The programming language you want to use (one of: bash, c, cpp, haskell, java, js, perl5, python, r, ruby, rust)
+1. The programming language you want to use (one of: c, clojure, cpp, haskell, java, js, perl5, python, r, ruby, rust)
 2. The name of your new project.
 
 You can run the script like so, using curl:
@@ -45,6 +46,11 @@ curl -sSf https://raw.githubusercontent.com/biotool-paper/biotool/master/boot/bi
 In the example above, a new project directory called `skynet` will be created in the current working directory, and a fresh project will be started using the rust implementation of biotool. A new git repository will be created within the `skynet` directory.
 
 If you prefer not to run a shell script from the web, then you can clone the biotool repository, and run the script locally.
+
+```
+curl https://raw.githubusercontent.com/biotool-paper/biotool/master/boot/biotool-boot.sh > biotool-boot.sh
+bash biotool-boot.sh -l rust -n skynet
+```
 
 # General behaviour
 

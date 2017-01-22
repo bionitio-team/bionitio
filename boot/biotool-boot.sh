@@ -7,9 +7,10 @@
 # 5. Recursively copy source tree from the git repository into the project directory.
 # 6. Recursively copy test_data directory from the git repository into the project directory.
 # 7. Set the license for the project.
-# 8. Remove the cloned git repository.
-# 9. Rename biotool to the new project name.
-# 10. Create repository for new project.
+# 8. Copy the .travis/test.sh script into the project directory.
+# 9. Remove the cloned git repository.
+# 10. Rename biotool to the new project name.
+# 11. Create repository for new project.
 
 #set -x
 
@@ -150,7 +151,7 @@ function clone_biotool_repository {
 }
 
 function copy_biotool_language {
-    cp -R ${new_project_name}/${git_tmp_dir}/${language}/* ${new_project_name} || {
+    cp -R ${new_project_name}/${git_tmp_dir}/${language}/ ${new_project_name} || {
         echo ${program_name}: ERROR: copy command failed: 'cp -R {new_project_name}/${git_tmp_dir}/$language/ ${new_project_name}'
         exit 1
     }
@@ -165,6 +166,10 @@ function copy_test_data {
 
 function set_license {
     cp ${new_project_name}/${git_tmp_dir}/license_options/${license} ${new_project_name}/LICENSE
+}
+
+function copy_travis_test {
+    cp ${new_project_name}/${git_tmp_dir}/.travis/test.sh ${new_project_name}/.travis/test.sh
 }
 
 function remove_biotool_repository {
@@ -234,12 +239,15 @@ copy_test_data
 # 7. Set the license for the project
 verbose_message "setting the license to ${license}"
 set_license
-# 8. remove the cloned git repository.
+# 8. Copy the .travis/test.sh script into the project directory.
+verbose_message "copying .travis/test.sh into the project directory"
+copy_travis_test
+# 9. remove the cloned git repository.
 verbose_message "removing ${new_project_name}/${git_tmp_dir}"
 remove_biotool_repository
-# 9. Rename biotool to the new project name.
+# 10. Rename biotool to the new project name.
 verbose_message "renaming references to biotool to new project name ${new_project_name}" 
 rename_project
-# 10. Create repository for new project.
+# 11. Create repository for new project.
 verbose_message "initialising new git repository for ${new_project_name}"
 create_project_repository

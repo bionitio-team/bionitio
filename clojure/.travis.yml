@@ -1,0 +1,11 @@
+sudo: true
+dist: trusty
+
+language: clojure
+
+before_install:
+  - ./.travis/install-dependencies.sh 
+
+script:
+  - ./.travis/test.sh bin/biotool-clj
+  - ./.travis/unit-test.sh

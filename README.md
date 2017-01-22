@@ -3,7 +3,7 @@
 # Overview 
 
 This project provides a template for implementing command line bioinformatics tools in various programming languages, 
-demonstrating best practice using a toy example called `biotool`. Many of the principles adopted by biotool are motivated by the paper "[Ten recommendations for creating usable bioinformatics command line software](http://www.gigasciencejournal.com/content/2/1/15)".
+demonstrating best practice using a toy example called `biotool`.
 
 The program reads one or more input FASTA files. For each file it computes a variety of statistics, and then prints a summary of the statistics as output.
 
@@ -14,9 +14,10 @@ Basic features of the tool include:
 * Command line argument parsing.
 * Reading input from files or optionally from standard input.
 * The use of library code for parsing a common bioinformatics file format (FASTA).
+* Optional logging.
 * Defined exit status values.
 * A test suite. 
-* A well-defined version number, following the principles of [Semantic Versioning](http://semver.org/).
+* A version number.
 * (Where possible) standardised software packaging using programming language specific mechanisms.
 * A standard open-source software license. 
 * User documentation.
@@ -24,27 +25,39 @@ Basic features of the tool include:
 
 Where possible we have tried to follow the recommended conventions for programming style for each implementation language.
 
-# Licence
+# License
 
-All of the various implementations of biotool are released as open source software under the terms of [MIT License](https://raw.githubusercontent.com/biotool-paper/biotool/master/LICENSE)
-XXX Perhaps we should also provide boilerplate for other standard open source licenses to make it easy for users to choose which one they want.
+The biotool project is released as open source software under the terms of [MIT License](https://raw.githubusercontent.com/biotool-paper/biotool/master/LICENSE).
+However, we grant permission to users who derive their own projects from biotool to apply their own license to their derived works. Licenses applied to projects deriving from biotool do not affect in any way the license of the overall biotool project, or licenses applied to other independent derivations.
 
 # Starting a new project from biotool
 
-One of the main goals of biotool is to provide a good place to start writing bioinformatics command line tools. To make that easy we've provided a shell script to help you start a new project. All you need to do is tell the script two things:
+One of the main goals of biotool is to provide a good place to start writing bioinformatics command line tools. To make that easy we've provided a shell script to help you start a new project. You must specify the following things: 
 
-1. The programming language you want to use (one of: bash, c, cpp, haskell, java, js, perl5, python, r, ruby, rust)
-2. The name of your new project.
+Required:
+
+* -l \<language\>: the programming language you want to use (one of: c, clojure, cpp, haskell, java, js, perl5, python, r, ruby, rust)
+* -n \<name\>: the name of your new project.
+
+Optional:
+
+* -c \<license\>: the license that you want to assign to your new project (one of: Apache-2.0, BSD-2-Clause, BSD-3-Clause, GPL-2.0, GPL-3.0, MIT). If you do not specify a license then it defaults to the MIT license.
 
 You can run the script like so, using curl:
 
 ```
-curl -sSf https://raw.githubusercontent.com/biotool-paper/biotool/master/boot/biotool-boot.sh  | bash -s -- -l rust -n skynet
+curl -sSf https://raw.githubusercontent.com/biotool-paper/biotool/master/boot/biotool-boot.sh \
+ | bash -s -- -l rust -n skynet -c BSD-3-Clause
 ```
 
 In the example above, a new project directory called `skynet` will be created in the current working directory, and a fresh project will be started using the rust implementation of biotool. A new git repository will be created within the `skynet` directory.
 
 If you prefer not to run a shell script from the web, then you can clone the biotool repository, and run the script locally.
+
+```
+curl https://raw.githubusercontent.com/biotool-paper/biotool/master/boot/biotool-boot.sh > biotool-boot.sh
+bash biotool-boot.sh -l rust -n skynet -c BSD-3-Clause
+```
 
 # General behaviour
 
@@ -68,25 +81,28 @@ If there are zero sequences counted in a file, the values of MIN, AVERAGE and MA
 
 Installation and usage instructions are provided separately for each of the implementations of biotool. Please see the README.md files in the corresponding sub-folders for each implementation.
 
-Each implementation of biotool conforms to a standard command line interface, illustrated below. There may be small cosmetic differences in help messages due to programming language idiosyncrasies, but otherwise the behaviour of all implementations should be the same. The name of the executable program for each version is different, for example, the Python version is called `biotool-py`.
+Each implementation of biotool conforms to a standard command line interface, illustrated below. There may be small cosmetic differences in help messages due to programming language idiosyncrasies, but otherwise the behaviour of all implementations should be the same. The name of the executable program for each version is different, for example, the Python version is called `biotool-py`. The examples below show the output from the Python version, however the other implementations will behave similarly.
 
-In the examples below, `%` indicates the command line prompt.
+In the examples below, `$` indicates the command line prompt.
 
 ## Help message
 
 Biotool can display usage information on the command line via the `-h` or `--help` argument:
 ```
-% biotool -h
-Synopsis:
-  Print fasta stats
-Usage:
-  biotool [options] contigs.fasta [another.fa ...]
-Options:
-  --help       Show this help
-  --version    Print version and exit
-  --verbose    Print more stuff about what's happening
-  --minlen N   Minimum length sequence to include in stats (default=0)
-  --log FILE   Output a log file containing program progress
+$ biotool-py -h 
+usage: biotool-py [-h] [--minlen N] [--version] [--log LOG_FILE]
+                  [FASTA_FILE [FASTA_FILE ...]]
+
+Print fasta stats
+
+positional arguments:
+  FASTA_FILE      Input FASTA files
+
+optional arguments:
+  -h, --help      show this help message and exit
+  --minlen N      Minimum length sequence to include in stats (default 0)
+  --version       show program's version number and exit
+  --log LOG_FILE  record program progress in LOG_FILE
 ```
 
 ## Reading FASTA files named on the command line
@@ -97,14 +113,14 @@ There are no restrictions on the name of the FASTA files. Often FASTA filenames 
 
 The example below illustrates biotool applied to a single named FASTA file called `file1.fa`:
 ```
-% biotool file1.fa
+$ biotool-py file1.fa
 FILENAME	NUMSEQ	TOTAL	MIN	AVG	MAX
 file1.fa	5264	3801855	31	722	53540
 ```
 
 The example below illustrates biotool applied to three named FASTA files called `file1.fa`, `file2.fa` and `file3.fa`:
 ```
-% biotool file1.fa file2.fa file3.fa
+$ biotool-py file1.fa file2.fa file3.fa
 FILENAME	NUMSEQ	TOTAL	MIN	AVG	MAX
 file1.fa	5264	3801855	31	722	53540
 file2.fa	5264	3801855	31	722	53540
@@ -116,7 +132,7 @@ file3.fa	5264	3801855	31	722	53540
 The example below illustrates biotool reading a FASTA file from standard input. In this example we have redirected the contents of a file called `file1.fa` into the standard input using the shell redirection operator `<`:
 
 ```
-% biotool < file1.fa
+$ biotool-py < file1.fa
 FILENAME	NUMSEQ	TOTAL	MIN	AVG	MAX
 stdin	5264	3801855	31	722	53540
 ```
@@ -124,7 +140,7 @@ stdin	5264	3801855	31	722	53540
 Equivalently, you could achieve the same result by piping a FASTA file into biotool:
 
 ```
-% cat file1.fa | biotool
+$ cat file1.fa | biotool-py
 FILENAME	NUMSEQ	TOTAL	MIN	AVG	MAX
 stdin	5264	3801855	31	722	53540
 ```
@@ -135,7 +151,7 @@ Biotool provides an optional command line argument `--minlen` which causes it to
 
 The example below illustrates biotool applied to a single FASTA file called `file`.fa` with a `--minlen` filter of `1000`.
 ```
-% biotool --minlen 1000 file.fa
+$ biotool-py --minlen 1000 file.fa
 FILENAME	NUMSEQ	TOTAL	MIN	AVG	MAX
 file1.fa	4711	2801855	1021	929	53540
 ```
@@ -146,7 +162,7 @@ It is possible that the input FASTA file contains zero sequences, or, when the `
 
 The example below illustrates biotool applied to a single FASTA file called `empty`.fa` which contains zero sequences:
 ```
-% biotool empty.fa
+$ biotool-py empty.fa
 FILENAME	NUMSEQ	TOTAL	MIN	AVG	MAX
 empty.fa	0	0	-	-	-
 ```
@@ -160,10 +176,10 @@ If the ``--log FILE`` command line argument is specified, biotool will output a 
 # normal biotool output appears here
 # contents of log file displayed below
 % cat bt.log
-12/04/2016 19:14:47 program started
-12/04/2016 19:14:47 command line: /usr/local/bin/biotool-py --log bt.log file1.fasta file2.fasta 
-12/04/2016 19:14:47 Processing FASTA file from file1.fasta
-12/04/2016 19:14:47 Processing FASTA file from file2.fasta
+12/04/2016 19:14:47 INFO - program started
+12/04/2016 19:14:47 INFO - command line: biotool-py --log bt.log file1.fasta file2.fasta 
+12/04/2016 19:14:47 INFO - Processing FASTA file from file1.fasta
+12/04/2016 19:14:47 INFO - Processing FASTA file from file2.fasta
 ```
 
 # Exit status values
@@ -189,7 +205,6 @@ A set of sample test input files is provided in the `test_data` folder. Addition
 
 # Programming languages used to implement biotool
 
-* BASH
 * C
 * C++
 * Clojure

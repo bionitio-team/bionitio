@@ -1,0 +1,11 @@
+sudo: true
+dist: trusty
+
+language: haskell
+
+before_install:
+  - ./.travis/install-dependencies.sh  
+
+script:
+  - ./.travis/test.sh ~/.local/bin/biotool-hs
+  - ./.travis/unit-test.sh

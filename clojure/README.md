@@ -17,13 +17,21 @@ We recommend using the `leiningen` tool to install biotool. You will need to ins
 On OS X this can be can with homebrew like so (you may need to run `brew update` first):
 
 ```
-% brew install leiningen 
+$ brew install leiningen 
 ```
 
 Once you have `leiningen` installed you can use it to build biotool like so:
 
 ```
-% lein run -- --help 
+$ lein bin 
+```
+
+This will create an executable program in the directory called `bin`.
+
+You can run the program like so:
+
+```
+$ ./bin/biotool-clj -h
 ```
 
 # General behaviour
@@ -36,23 +44,32 @@ An optional command line argument `--minlen` can be supplied. Sequences with len
 
 These are the statistics computed by biotool, for all sequences with length greater-than-or-equal-to `--minlen`:
 
-* *NUMSEQ*: the number of sequences in the file satisfying the minimum length requirement.
-* *TOTAL*: the total length of all the counted sequences.
-* *MIN*: the minimum length of the counted sequences.
-* *AVERAGE*: the average length of the counted sequences rounded down to an integer.
-* *MAX*: the maximum length of the counted sequences.
+* NUMSEQ: the number of sequences in the file satisfying the minimum length requirement.
+* TOTAL: the total length of all the counted sequences.
+* MIN: the minimum length of the counted sequences.
+* AVERAGE: the average length of the counted sequences rounded down to an integer.
+* MAX: the maximum length of the counted sequences.
 
 If there are zero sequences counted in a file, the values of MIN, AVERAGE and MAX cannot be computed. In that case biotool will print a dash (`-`) in the place of the numerical value. Note that when `--minlen` is set to a value greater than zero it is possible that an input FASTA file does not contain any sequences with length greater-than-or-equal-to the specified value. If this situation arises biotool acts in the same way as if there are no sequences in the file.
 
 # Usage 
 
-In the examples below, `%` indicates the command line prompt.
+In the examples below, `$` indicates the command line prompt.
 
 ## Help message
 
 Biotool can display usage information on the command line via the `-h` or `--help` argument:
 ```
-XXX fixme
+$ ./bin/biotool-clj --help
+Print fasta stats
+
+Usage: program-name [options] FILES
+
+Options:
+      --minlen N      0  Minimum length sequence to include in stats
+      --log LOG-FILE     record program progress in LOG-FILE
+  -v, --version
+  -h, --help
 ```
 
 ## Reading FASTA files named on the command line
@@ -63,16 +80,14 @@ There are no restrictions on the name of the FASTA files. Often FASTA filenames 
 
 The example below illustrates biotool applied to a single named FASTA file called `file1.fa`:
 ```
-XXX fixme
-% biotool-clj file1.fa
+$ ./bin/biotool-clj file1.fa
 FILENAME	NUMSEQ	TOTAL	MIN	AVG	MAX
 file1.fa	5264	3801855	31	722	53540
 ```
 
 The example below illustrates biotool applied to three named FASTA files called `file1.fa`, `file2.fa` and `file3.fa`:
 ```
-XXX fixme
-% biotool-clj file1.fa file2.fa file3.fa
+$ ./bin/biotool-clj file1.fa file2.fa file3.fa
 FILENAME	NUMSEQ	TOTAL	MIN	AVG	MAX
 file1.fa	5264	3801855	31	722	53540
 file2.fa	5264	3801855	31	722	53540
@@ -84,8 +99,7 @@ file3.fa	5264	3801855	31	722	53540
 The example below illustrates biotool reading a FASTA file from standard input. In this example we have redirected the contents of a file called `file1.fa` into the standard input using the shell redirection operator `<`:
 
 ```
-XXX fixme
-% biotool-clj < file1.fa
+$ ./bin/biotool-clj < file1.fa
 FILENAME	NUMSEQ	TOTAL	MIN	AVG	MAX
 stdin	5264	3801855	31	722	53540
 ```
@@ -93,8 +107,7 @@ stdin	5264	3801855	31	722	53540
 Equivalently, you could achieve the same result by piping a FASTA file into biotool:
 
 ```
-XXX fixme
-% cat file1.fa | biotool-clj
+$ cat file1.fa | ./bin/biotool-clj
 FILENAME	NUMSEQ	TOTAL	MIN	AVG	MAX
 stdin	5264	3801855	31	722	53540
 ```
@@ -105,8 +118,7 @@ Biotool provides an optional command line argument `--minlen` which causes it to
 
 The example below illustrates biotool applied to a single FASTA file called `file`.fa` with a `--minlen` filter of `1000`.
 ```
-XXX fixme
-% biotool-clj --minlen 1000 file.fa
+$ ./bin/biotool-clj --minlen 1000 file.fa
 FILENAME	NUMSEQ	TOTAL	MIN	AVG	MAX
 file1.fa	4711	2801855	1021	929	53540
 ```
@@ -117,10 +129,21 @@ It is possible that the input FASTA file contains zero sequences, or, when the `
 
 The example below illustrates biotool applied to a single FASTA file called `empty`.fa` which contains zero sequences:
 ```
-XXX fixme
-% biotool-clj empty.fa
+$ ./bin/biotool-clj empty.fa
 FILENAME	NUMSEQ	TOTAL	MIN	AVG	MAX
 empty.fa	0	0	-	-	-
+```
+
+## Logging
+
+If the ``--log FILE`` command line argument is specified, `biotool-clj` will output a log file containing information about program progress. The log file includes the command line used to execute the program, and a note indicating which files have been processes so far. Events in the log file are annotated with their date and time of occurrence. 
+
+```
+$ ./bin/biotool-clj --log bt.log file1.fasta file2.fasta 
+# normal biotool output appears here
+# contents of log file displayed below
+$ cat bt.log
+XXX fixme
 ```
 
 # Exit status values
@@ -143,14 +166,12 @@ Biotool returns the following exit status values:
 # Testing
 
 ```
-% cd biotool/clojure
 XXX fixme
 ```
 
 A set of sample test input files is provided in the `test_data` folder.
 ```
-XXX fixme
-% biotool-clj two_sequence.fasta 
+$ ./bin/biotool-clj two_sequence.fasta 
 FILENAME	TOTAL	NUMSEQ	MIN	AVG	MAX
 two_sequence.fasta	2	357	120	179	237
 ```

@@ -1,0 +1,11 @@
+sudo: true
+dist: trusty
+
+language: r
+
+before_install:
+  - ./.travis/install-dependencies.sh 
+
+script:
+  - ./.travis/test.sh biotool.R
+  - ./.travis/unit-test.sh

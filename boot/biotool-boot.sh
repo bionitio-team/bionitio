@@ -41,7 +41,7 @@ If a directory already exists in the current working directory with the same
 name as the new_project_name then this installer will not continue.
 
 Valid languages are:
-bash, c, cpp, haskell, java, js, perl5, python, r, ruby, rust
+c, clojure, cpp, haskell, java, js, perl5, python, r, ruby, rust
 
 -h shows this help message
 
@@ -79,7 +79,7 @@ function parse_args {
     fi
 
     case ${language} in
-        bash|c|cpp|haskell|java|js|perl5|python|r|ruby|rust)
+        c|clojure|cpp|haskell|java|js|perl5|python|r|ruby|rust)
             # this is an allowed language
             ;;
         *)

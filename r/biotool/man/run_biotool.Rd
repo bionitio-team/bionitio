@@ -4,8 +4,7 @@
 \alias{run_biotool}
 \title{Biotool}
 \usage{
-run_biotool(fasta_files, min_len = 0, pretty = TRUE, verbose = FALSE,
-  quit_on_error = TRUE)
+run_biotool(fasta_files, min_len = 0, pretty = TRUE, quit_on_error = TRUE)
 }
 \arguments{
 \item{fasta_files}{Vector of filenames}
@@ -15,8 +14,6 @@ calculating statistics}
 
 \item{pretty}{A dash (-) is used in place of min, avg, and max if numseq is
 zero.}
-
-\item{verbose}{A logical value indicating whether the function is verbose}
 
 \item{quit_on_error}{A logical value indicating if an error when reading a
 fasta file will invoke the \code{quit} function to terminate R with an

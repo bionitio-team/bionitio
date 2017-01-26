@@ -9,6 +9,7 @@ echo 'R install'
    sudo apt-get update && sudo apt-get install r-base r-base-dev -y
    sudo Rscript -e "install.packages('optparse', repos='http://cran.rstudio.org')"
    sudo Rscript -e "install.packages('seqinr', repos='http://cran.rstudio.org')"
+   sudo Rscript -e "install.packages('logging', repos='http://cran.rstudio.org')"
    cd r
    sudo R CMD INSTALL biotool
 ) > /dev/null 2>&1

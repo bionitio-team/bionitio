@@ -4,12 +4,10 @@
 \alias{load_fasta_file}
 \title{Load a FASTA file}
 \usage{
-load_fasta_file(filename, verbose = FALSE, quit_on_error = TRUE)
+load_fasta_file(filename, quit_on_error = TRUE)
 }
 \arguments{
 \item{filename}{The name of the input FASTA file.}
-
-\item{verbose}{A logical value indicating whether the function is verbose}
 
 \item{quit_on_error}{A logical value indicating if an error when reading a
 fasta file will invoke the \code{quit} function to terminate R with an

@@ -5,7 +5,8 @@
 echo 'C++ install'
 (
    sudo apt-get update
-   sudo apt-get install libboost-program-options-dev -y
+   #sudo apt-get install libboost-program-options-dev -y
+   sudo apt-get install libboost-all-dev 
    cd cpp/src
    BIOTOOL_CPP_PATH=`pwd`
    wget --no-check-certificate http://www.cmake.org/files/v3.4/cmake-3.4.1.tar.gz

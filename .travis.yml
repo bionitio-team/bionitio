@@ -18,8 +18,8 @@ before_install:
 #  - ./python/.travis/install-dependencies.sh  
 # - ./r/.travis/install-dependencies.sh 
 # - ./ruby/.travis/install-dependencies.sh 
- - ./rust/.travis/install-dependencies.sh 
-#  - ./perl5/.travis/install-dependencies.sh
+# - ./rust/.travis/install-dependencies.sh 
+ - ./perl5/.travis/install-dependencies.sh
 
 script:
 #  - ./.travis/test.sh c/biotool-c
@@ -30,8 +30,8 @@ script:
 #  - ./.travis/test.sh biotool-py
 # - ./.travis/test.sh r/biotool.R
 # - ./.travis/test.sh ruby/biotool.rb
- - ./.travis/test.sh ~/.cargo/bin/biotool-rs
-#  - ./.travis/test.sh perl5/biotool.pl
+# - ./.travis/test.sh ~/.cargo/bin/biotool-rs
+ - ./.travis/test.sh perl5/biotool.pl
 #  - ./c/.travis/unit-test.sh
 #  - ./haskell/.travis/unit-test.sh
 #  - ./java/.travis/unit-test.sh

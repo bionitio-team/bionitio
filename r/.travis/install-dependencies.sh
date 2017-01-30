@@ -12,4 +12,4 @@ echo 'R install'
    sudo Rscript -e "install.packages('logging', repos='http://cran.rstudio.org')"
    cd r
    sudo R CMD INSTALL biotool
-) > /dev/null 2>&1
+)

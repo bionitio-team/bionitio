@@ -120,7 +120,7 @@ defineOptions = Options
               (long "log"
                <> short 'l'
                <> metavar "LOG_FILE"
-               <> help ("record program progress in LOG_FILE")))
+               <> help "record program progress in LOG_FILE"))
    <*> switch
           (long "version"
            <> short 'v'

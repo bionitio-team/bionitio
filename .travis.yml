@@ -17,8 +17,8 @@ before_install:
 # - ./js/.travis/install-dependencies.sh # breaks travis, empty FASTA file
 #  - ./python/.travis/install-dependencies.sh  
 # - ./r/.travis/install-dependencies.sh 
- - ./ruby/.travis/install-dependencies.sh 
-#  - ./rust/.travis/install-dependencies.sh 
+# - ./ruby/.travis/install-dependencies.sh 
+ - ./rust/.travis/install-dependencies.sh 
 #  - ./perl5/.travis/install-dependencies.sh
 
 script:
@@ -29,8 +29,8 @@ script:
 # - ./.travis/test.sh js/biotool.js
 #  - ./.travis/test.sh biotool-py
 # - ./.travis/test.sh r/biotool.R
- - ./.travis/test.sh ruby/biotool.rb
-#  - ./.travis/test.sh ~/.cargo/bin/biotool-rs
+# - ./.travis/test.sh ruby/biotool.rb
+ - ./.travis/test.sh ~/.cargo/bin/biotool-rs
 #  - ./.travis/test.sh perl5/biotool.pl
 #  - ./c/.travis/unit-test.sh
 #  - ./haskell/.travis/unit-test.sh

@@ -12,8 +12,8 @@ addons:
 before_install:
 #  - ./c/.travis/install-dependencies.sh 
 # - ./cpp/.travis/install-dependencies.sh 
- - ./haskell/.travis/install-dependencies.sh  
-#  - ./java/.travis/install-dependencies.sh  
+# - ./haskell/.travis/install-dependencies.sh  
+ - ./java/.travis/install-dependencies.sh  
 #  - ./js/.travis/install-dependencies.sh 
 #  - ./python/.travis/install-dependencies.sh  
 #  - ./r/.travis/install-dependencies.sh 
@@ -24,11 +24,11 @@ before_install:
 script:
 #  - ./.travis/test.sh c/biotool-c
 # - ./.travis/test.sh cpp/src/biotool-build/biotool-cpp
- - ./.travis/test.sh ~/.local/bin/biotool-hs
+# - ./.travis/test.sh ~/.local/bin/biotool-hs
+ - ./.travis/test.sh java/biotool-java
 # - ./.travis/test.sh js/biotool.js
 #  - ./.travis/test.sh ruby/biotool.rb
 #  - ./.travis/test.sh biotool-py
-#  - ./.travis/test.sh java/biotool-java
 #  - ./.travis/test.sh ~/.cargo/bin/biotool-rs
 #  - ./.travis/test.sh r/biotool.R
 #  - ./.travis/test.sh perl5/biotool.pl

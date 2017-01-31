@@ -36,3 +36,4 @@ script:
  - ./haskell/.travis/unit-test.sh
 #  - ./java/.travis/unit-test.sh
  - ./python/.travis/unit-test.sh
+ - ./rust/.travis/unit-test.sh

@@ -50,9 +50,9 @@ curl -sSf https://raw.githubusercontent.com/biotool-paper/biotool/master/boot/bi
  | bash -s -- -l rust -n skynet -c BSD-3-Clause
 ```
 
-In the example above, a new project directory called `skynet` will be created in the current working directory, and a fresh project will be started using the rust implementation of biotool. A new git repository will be created within the `skynet` directory.
+The example above starts a fresh project called `skynet` using Rust as the implementation language. A new git repository will be created in a sub-directory called `skynet`, and the project using the BSD 3 Clause license.
 
-If you prefer not to run a shell script from the web, then you can clone the biotool repository, and run the script locally.
+If you prefer not to run a shell script from the web, then you can clone the biotool repository, and run the script locally, as shown below:
 
 ```
 curl https://raw.githubusercontent.com/biotool-paper/biotool/master/boot/biotool-boot.sh > biotool-boot.sh

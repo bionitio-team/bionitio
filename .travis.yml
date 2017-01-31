@@ -11,6 +11,7 @@ addons:
 before_install:
  - ./c/.travis/install-dependencies.sh
  - ./cpp/.travis/install-dependencies.sh 
+ - ./clojure/.travis/install-dependencies.sh 
  - ./haskell/.travis/install-dependencies.sh  
  - ./java/.travis/install-dependencies.sh
  - ./js/.travis/install-dependencies.sh
@@ -24,6 +25,7 @@ before_install:
 script:
 # - ./.travis/test.sh c/biotool-c
  - ./.travis/test.sh cpp/src/biotool-build/biotool-cpp
+ - ./.travis/test.sh clojure/bin/bin/biotool-clj
  - ./.travis/test.sh ~/.local/bin/biotool-hs
 # - ./.travis/test.sh java/biotool-java
 # - ./.travis/test.sh js/biotool.js

@@ -5,7 +5,7 @@
 This project provides a template for implementing command line bioinformatics tools in various programming languages, 
 demonstrating best practice using a toy example called `biotool`.
 
-The program reads one or more input FASTA files. For each file it computes a variety of statistics, and then prints a summary of the statistics as output.
+The program reads one or more input FASTA files. For each file it computes a variety of simple statistics, and then prints a summary output.
 
 The goal is to provide a solid foundation for new bioinformatics command line tools, and is an ideal starting place for new projects. An additional advantage of biotool is that it allows us to compare programming styles in different languages.
 

@@ -25,7 +25,7 @@ before_install:
 script:
 # - ./.travis/test.sh c/biotool-c
  - ./.travis/test.sh cpp/src/biotool-build/biotool-cpp
- - ./.travis/test.sh clojure/bin/bin/biotool-clj
+ - ./.travis/test.sh clojure/bin/biotool-clj
  - ./.travis/test.sh ~/.local/bin/biotool-hs
 # - ./.travis/test.sh java/biotool-java
 # - ./.travis/test.sh js/biotool.js

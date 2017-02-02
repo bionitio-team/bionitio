@@ -35,7 +35,7 @@ public class FastaStatsTest
     public void testOneSequence() 
         throws java.io.IOException, FastaException {
         InputStream stream = new ByteArrayInputStream(">header\nATGC\nA".getBytes("UTF-8"));
-        FastaStats stats = new FastaStats(stream, false, 0);
+        FastaStats stats = new FastaStats(stream, null, 0);
         assertTrue(stats.getTotal() == 1);
         assertTrue(stats.getNumSeq() == 5);
         assertTrue(stats.getMin() == 5);
@@ -48,7 +48,7 @@ public class FastaStatsTest
     public void testTwoSequences() 
         throws java.io.IOException, FastaException {
         InputStream stream = new ByteArrayInputStream(">header1\nATGC\nAGG\n>header2\nTT\n".getBytes("UTF-8"));
-        FastaStats stats = new FastaStats(stream, false, 0);
+        FastaStats stats = new FastaStats(stream, null, 0);
         assertTrue(stats.getTotal() == 2);
         assertTrue(stats.getNumSeq() == 9);
         assertTrue(stats.getMin() == 2);
@@ -61,7 +61,7 @@ public class FastaStatsTest
     public void testMinLen() 
         throws java.io.IOException, FastaException {
         InputStream stream = new ByteArrayInputStream(">header1\nATGC\nAGG\n>header2\nTT\n".getBytes("UTF-8"));
-        FastaStats stats = new FastaStats(stream, false, 3);
+        FastaStats stats = new FastaStats(stream, null, 3);
         assertTrue(stats.getTotal() == 1);
         assertTrue(stats.getNumSeq() == 7);
         assertTrue(stats.getMin() == 7);

@@ -6,8 +6,10 @@
 */
 package org.supernifty.biotool;
 
-import java.io.PrintStream;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.PrintStream;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -53,7 +55,7 @@ public final class App {
             + "Options:\n"
             + "  --help       Show this help\n"
             + "  --version    Print version and exit\n"
-            + "  --verbose    Print more stuff about what's happening\n"
+            + "  --log FILE   Log progress to FILE\n"
             + "  --minlen N   Minimum length sequence to include in stats "
             + "(default=0)"
         );
@@ -74,7 +76,7 @@ public final class App {
      * @param args command line arguments
      * @param in where to read input from
      * @param out where to send output to
-     * @param err where to send logging and errors
+     * @param err where to send errors
      * @return exit code indicating result of processing
      */
     public static int process(final String[] args,
@@ -87,10 +89,10 @@ public final class App {
         options.addOption(OptionBuilder.withLongOpt("version")
                                 .withDescription("Print version and exit")
                                 .create());
-        options.addOption("v", "verbose", false,
-            "Print more stuff about what's happening");
         options.addOption("m", "minlen", true,
             "Minimum length sequence to include in stats (default=0)");
+        options.addOption("l", "log", true,
+            "File to log progress to");
 
         CommandLineParser parser = new DefaultParser();
         try {
@@ -117,11 +119,31 @@ public final class App {
                     return EXIT_CMD_LINE; // cmd line error
                 }
             }
+            Logger logger = null;
+            if (cmd.hasOption("log")) {
+                String logFilename = cmd.getOptionValue("log");
+                if (logFilename == null) {
+                    err.println("\n*** No log filename provided. ***\n");
+                    printHelp(err);
+                    return EXIT_CMD_LINE; // cmd line error
+                }
+                try {
+                    logger = new Logger(new PrintStream(new File(logFilename)));
+                } catch (FileNotFoundException e) {
+                    err.println("\n*** Failed to open file '"
+                        + logFilename + "' for writing. ***\n");
+                    return EXIT_CMD_LINE; // cmd line error
+                }
+            }
+            if (logger != null) {
+                logger.log("Program starting. Command line arguments: "
+                    + String.join(" ", args));
+            }
             out.println("FILENAME\tTOTAL\tNUMSEQ\tMIN\tAVG\tMAX");
             if (cmd.getArgs().length == 0) {
                 try {
                     FastaStats stats = new FastaStats(
-                        in, cmd.hasOption("verbose"), minlength);
+                        in, logger, minlength);
                     out.printf("%s\t%d\t%d\t%d\t%d\t%d\n", "stdin",
                         stats.getTotal(),
                         stats.getNumSeq(),
@@ -138,7 +160,7 @@ public final class App {
                 for (String filename: cmd.getArgs()) {
                     try {
                         FastaStats stats = new FastaStats(filename,
-                            cmd.hasOption("verbose"),
+                            logger,
                             minlength);
                         out.printf("%s\t%d\t%d\t%d\t%d\t%d\n",
                             filename,

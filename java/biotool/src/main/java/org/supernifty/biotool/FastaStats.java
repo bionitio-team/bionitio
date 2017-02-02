@@ -19,47 +19,47 @@ public class FastaStats {
     /**
      * Construct a FastaStats object from an input stream.
      * @param input the input stream to read fasta sequences from
-     * @param verbose write additional details of progress to stderr
+     * @param logger log progress
      * @param minlength include stats for sequences that are at least this long
      * @throws java.io.IOException if an error occurs while reading the input
      * @throws FastaException if an error occurs while processing the file
      */
     public FastaStats(final InputStream input,
-        final boolean verbose,
+        final Logger logger,
         final int minlength)
         throws java.io.IOException, FastaException {
-        log("Reading from stdin...", verbose);
-        process(input, verbose, minlength);
-        log("Reading from stdin: done", verbose);
+        log("Reading from stdin...", logger);
+        process(input, logger, minlength);
+        log("Reading from stdin: done", logger);
     }
 
     /**
      * Construct a FastaStats object from an input stream.
      * @param filename filename to read fasta sequences from
-     * @param verbose write additional details of progress to stderr
+     * @param logger log progress
      * @param minlength include stats for sequences that are at least this long
      * @throws java.io.IOException if an error occurs while reading the file
      * @throws FastaException if an error occurs while processing the file
      */
     public FastaStats(final String filename,
-        final boolean verbose,
+        final Logger logger,
         final int minlength)
         throws java.io.IOException, FastaException {
-        log("Reading " + filename + "...", verbose);
-        process(new FileInputStream(filename), verbose, minlength);
-        log("Reading " + filename + ": done", verbose);
+        log("Reading " + filename + "...", logger);
+        process(new FileInputStream(filename), logger, minlength);
+        log("Reading " + filename + ": done", logger);
     }
 
     /**
      * Calculate stats for a set of fasta sequences read from an input stream.
      * @param input input stream to read fasta sequences from
-     * @param verbose write additional details of progress to stderr
+     * @param logger log progress
      * @param minlength include stats for sequences that are at least this long
      * @throws java.io.IOException if an error occurs while reading the input
      * @throws FastaException if an error occurs while processing the file
      */
     private void process(final InputStream input,
-        final boolean verbose,
+        final Logger logger,
         final int minlength)
         throws java.io.IOException, FastaException {
         LinkedHashMap<String, ProteinSequence> result;
@@ -123,13 +123,13 @@ public class FastaStats {
     }
 
     /**
-     * log a message to stderr if verbose is set.
+     * log a message to stderr if logger is set.
      * @param msg message to log
-     * @param verbose whether to actually log the message
+     * @param logger log progress
      */
-    private void log(final String msg, final boolean verbose) {
-        if (verbose) {
-            System.err.println(msg);
+    private void log(final String msg, final Logger logger) {
+        if (logger != null) {
+            logger.log(msg);
         }
     }
 

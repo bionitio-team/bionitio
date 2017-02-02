@@ -11,7 +11,6 @@ Building biotool requires [Java](https://java.com/download/) and [Maven](https:/
 
 ```bash
 mvn compile
-mvn compile-test
 mvn test
 ```
 
@@ -45,7 +44,7 @@ In the examples below, `%` indicates the command line prompt.
 Biotool can display usage information on the command line via the `-h` or `--help` argument:
 ```
 % biotool-java -h
-Usage: biotool-java [--minlen N] [--version] [--verbose] [[FASTA_FILE ...]]
+Usage: biotool-java [--minlen N] [--version] [--log FILE] [[FASTA_FILE ...]]
   Print fasta stats
 
 Available options:
@@ -53,7 +52,7 @@ Available options:
   --minlen N               Minimum length sequence to include in stats
                            (default=0)
   --version                Print version and exit
-  --verbose                Print more stuff about what's happening
+  --log LOG_FILE           record program progress in LOG_FILE
 ```
 
 ## Reading FASTA files named on the command line

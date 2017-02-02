@@ -5,4 +5,4 @@ echo 'C install'
 (
    cd c
    make
-) 2>&1
+)

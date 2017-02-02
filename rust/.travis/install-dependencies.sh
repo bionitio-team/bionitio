@@ -8,4 +8,4 @@ echo 'Rust install'
    cd rust
    cargo install
 
-) > /dev/null 2>&1
+)

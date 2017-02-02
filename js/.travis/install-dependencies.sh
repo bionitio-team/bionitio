@@ -5,7 +5,7 @@
 
 echo 'JS install'
 (
+   sudo apt-get update && sudo apt-get install npm -y
    cd js
    npm install
-
-) > /dev/null 2>&1
+)

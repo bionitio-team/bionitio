@@ -4,7 +4,6 @@
 #'     and get the sequences.
 #'
 #' @param filename The name of the input FASTA file.
-#' @param verbose A logical value indicating whether the function is verbose
 #' @param quit_on_error A logical value indicating if an error when reading a
 #'     fasta file will invoke the \code{quit} function to terminate R with an
 #'     exit status of 3. This will only occur if the R session is
@@ -17,21 +16,21 @@
 #' @examples
 #' my_fasta_file <- system.file("extdata", "two_sequence.fasta", package = "biotool")
 #' load_fasta_file(filename = my_fasta_file)
-load_fasta_file <- function(filename, verbose = FALSE, quit_on_error = TRUE) {
+load_fasta_file <- function(filename, quit_on_error = TRUE) {
   sequences <- tryCatch(
     seqinr::read.fasta(file = filename, seqtype = "AA", seqonly = TRUE),
     error = function(e) {
       # Handle empty files with a message instead of stopping
       if (e$message == "no line starting with a > character found") {
-        if (verbose) {
-          message("WARNING: ", filename,
-                  " has no lines starting with a > character.")
-        }
+        logging::logwarn(paste(filename,
+                               " has no lines starting with a > character."))
       } else {
+        logging::logerror(e$message)
         stop(e$message)
       }
     },
     warning = function(w) {
+      logging::logerror(w$message)
       # Handle invalid files by quitting if not an interactive session
       if (interactive() | (! quit_on_error)) {
         stop(w$message)
@@ -119,7 +118,6 @@ pretty_output <- function(stats) {
 #'     calculating statistics
 #' @param pretty A dash (-) is used in place of min, avg, and max if numseq is
 #'     zero.
-#' @param verbose A logical value indicating whether the function is verbose
 #' @param quit_on_error A logical value indicating if an error when reading a
 #'     fasta file will invoke the \code{quit} function to terminate R with an
 #'     exit status of 3. This will only occur if the R session is
@@ -134,13 +132,13 @@ pretty_output <- function(stats) {
 #'     system.file("extdata", "two_sequence.fasta", package = "biotool"))
 #' run_biotool(my_fasta_files)
 run_biotool <- function(fasta_files, min_len = 0, pretty = TRUE,
-                        verbose = FALSE, quit_on_error = TRUE) {
+                        quit_on_error = TRUE) {
   # Check existance and read permission
   stopifnot(fasta_exists(fasta_files) & fasta_permission(fasta_files))
   # Process each FASTA file
   results <- lapply(fasta_files, FUN = function(x) {
-    if (verbose) message("Processing file: ", x)
-    get_seq_stats(sequences = load_fasta_file(filename = x, verbose = verbose,
+    logging::loginfo(paste("Processing file:", x))
+    get_seq_stats(sequences = load_fasta_file(filename = x,
                                               quit_on_error = quit_on_error),
                   filename = x,
                   min_len = min_len)

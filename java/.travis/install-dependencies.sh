@@ -8,4 +8,4 @@ echo 'Java install'
    mvn --quiet compile
    mvn --quiet package
 
-) > /dev/null 2>&1
+)

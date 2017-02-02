@@ -5,11 +5,12 @@
 suppressPackageStartupMessages({
   library(optparse, quietly = TRUE)
   library(biotool, quietly = TRUE)
+  library(logging, quietly = TRUE)
 })
 
 VERSION <- packageVersion("biotool")
 DEFAULT_MIN_LEN <- 0
-DEFAULT_VERBOSE <- FALSE
+DEFAULT_LOG <- ""
 
 option_list <- list(
   make_option("--minlen",
@@ -17,10 +18,10 @@ option_list <- list(
                            "[default: %default]"),
               type = "integer",
               default = DEFAULT_MIN_LEN),
-  make_option("--verbose",
-              help = "Print more stuff about what's happening",
-              action = "store_true",
-              default = DEFAULT_VERBOSE),
+  make_option("--log",
+              help = "Record program process in specified log filename",
+              type = "character",
+              default = DEFAULT_LOG),
   make_option("--version",
               help = "Print version and exit",
               action = "store_true",
@@ -65,6 +66,14 @@ if (opts$version) {
   quit(save = "no")
 }
 
+# Start logging
+if (nchar(opts$log) != 0) {
+  addHandler(writeToFile, file = opts$log)
+  setLevel(level = "DEBUG", container = "writeToFile")
+  loginfo("Program started")
+  loginfo(paste("Command:", paste(commandArgs(), collapse = " ")))
+}
+
 # Read from stdin if argument is '-' or empty
 args[args == "-"] <- "stdin"
 if (length(args) == 0) {
@@ -73,9 +82,9 @@ if (length(args) == 0) {
 fasta_files <- args
 
 # Process each FASTA file
-results <- run_biotool(fasta_files = fasta_files, min_len = opts$minlen,
-                       verbose = opts$verbose)
+results <- run_biotool(fasta_files = fasta_files, min_len = opts$minlen)
 colnames(results) <- toupper(colnames(results))
 
 # Write to stdout
 write.table(results, stdout(), sep = "\t", row.names = FALSE, quote = FALSE)
+loginfo("Program finished")

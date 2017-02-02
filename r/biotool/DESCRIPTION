@@ -9,7 +9,8 @@ Description: This package reads in one or more input FASTA files and calculates
 License: MIT + file LICENSE
 LazyData: TRUE
 Imports:
-    seqinr
+    seqinr,
+    logging
 Suggests:
     testthat,
     lintr

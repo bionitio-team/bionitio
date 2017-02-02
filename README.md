@@ -5,7 +5,7 @@
 This project provides a template for implementing command line bioinformatics tools in various programming languages, 
 demonstrating best practice using a toy example called `biotool`.
 
-The program reads one or more input FASTA files. For each file it computes a variety of statistics, and then prints a summary of the statistics as output.
+The program reads one or more input FASTA files. For each file it computes a variety of simple statistics, and then prints a summary output.
 
 The goal is to provide a solid foundation for new bioinformatics command line tools, and is an ideal starting place for new projects. An additional advantage of biotool is that it allows us to compare programming styles in different languages.
 
@@ -50,9 +50,9 @@ curl -sSf https://raw.githubusercontent.com/biotool-paper/biotool/master/boot/bi
  | bash -s -- -l rust -n skynet -c BSD-3-Clause
 ```
 
-In the example above, a new project directory called `skynet` will be created in the current working directory, and a fresh project will be started using the rust implementation of biotool. A new git repository will be created within the `skynet` directory.
+The example above starts a fresh project called `skynet` using Rust as the implementation language. A new git repository will be created in a sub-directory called `skynet`, and the project using the BSD 3 Clause license.
 
-If you prefer not to run a shell script from the web, then you can clone the biotool repository, and run the script locally.
+If you prefer not to run a shell script from the web, then you can clone the biotool repository, and run the script locally, as shown below:
 
 ```
 curl https://raw.githubusercontent.com/biotool-paper/biotool/master/boot/biotool-boot.sh > biotool-boot.sh
@@ -61,9 +61,8 @@ bash biotool-boot.sh -l rust -n skynet -c BSD-3-Clause
 
 # General behaviour
 
-Biotool accepts zero or more FASTA filenames  on the command line. If zero filenames are specified it reads a single FASTA file from the standard input device (stdin). Otherwise it reads each named FASTA file in the order specified on the command line. Biotool reads each input FASTA file, computes various statistics about the contents of the file, and then displays a tab-delimited summary of the statistics as output. Each input file produces at most one output line of statistics. Each line of output is prefixed by the input filename or by the text "`stdin`" if the standard input device was used.
-
-Biotool processes each FASTA file one sequence at a time. Therefore the memory usage is proportional to the longest sequence in the file.
+Biotool accepts zero or more FASTA filenames on the command line. It processes each file in sequence, computing various simple statistics about the reads contained in the file,
+and then displays a tab-delimited summary of the statistics as output. If zero filenames are specified it reads a single FASTA file from the standard input device (stdin). 
 
 An optional command line argument `--minlen` can be supplied. Sequences with length strictly less than the given value will be ignored by biotool and do not contribute to the computed statistics. By default `--minlen` is set to zero.
 
@@ -75,7 +74,9 @@ These are the statistics computed by biotool, for all sequences with length grea
 * AVERAGE: the average length of the counted sequences rounded down to an integer.
 * MAX: the maximum length of the counted sequences.
 
-If there are zero sequences counted in a file, the values of MIN, AVERAGE and MAX cannot be computed. In that case biotool will print a dash (`-`) in the place of the numerical value. Note that when `--minlen` is set to a value greater than zero it is possible that an input FASTA file does not contain any sequences with length greater-than-or-equal-to the specified value. If this situation arises biotool acts in the same way as if there are no sequences in the file.
+If there are zero sequences counted in a file, the values of MIN, AVERAGE and MAX cannot be computed. In that situation biotool will print a dash (`-`) in the place of the numerical values. Note that when `--minlen` is set to a value greater than zero it is possible that an input FASTA file does not contain any sequences with length greater-than-or-equal-to the specified value. If this situation arises biotool acts in the same way as if there are no sequences in the file.
+
+Biotool processes each FASTA file one sequence at a time. Therefore the memory usage is proportional to the longest sequence in the file.
 
 # Installation and usage 
 

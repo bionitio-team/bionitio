@@ -273,12 +273,16 @@
     (timbre/info "Program started")
     (timbre/info "Command line: " (string/join " " *command-line-args*)))
 
+
+(def exit-success 0)
+(def exit-failure-cli 2) ; Command line argument error
+
 (defn -main
   "Orchestrate the computation"
   [& args]
   (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)]
     (cond
-      (:help options) (exit 0 (usage summary))
-      errors (exit 1 (error-msg errors)))
+      (:help options) (exit exit-success (usage summary))
+      errors (exit exit-failure-cli (error-msg errors)))
     (init-logging (:log options))
     (process-fasta-files (:minlen options) arguments)))

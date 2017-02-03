@@ -162,12 +162,18 @@ public final class App {
                         FastaStats stats = new FastaStats(filename,
                             logger,
                             minlength);
-                        out.printf("%s\t%d\t%d\t%d\t%d\t%d\n",
-                            filename,
-                            stats.getTotal(),
-                            stats.getNumSeq(),
-                            stats.getMin(),
-                            stats.getAverage(), stats.getMax());
+                        if (stats.getTotal() > 0) {
+                            out.printf("%s\t%d\t%d\t%d\t%d\t%d\n",
+                                filename,
+                                stats.getTotal(),
+                                stats.getNumSeq(),
+                                stats.getMin(),
+                                stats.getAverage(), 
+                                stats.getMax());
+                        }
+                        else {
+                            out.printf("%s\t0\t0\t-\t-\t-\n", filename);
+                        }
                     } catch (java.io.IOException e) {
                         err.println("Failed to open '"
                             + filename

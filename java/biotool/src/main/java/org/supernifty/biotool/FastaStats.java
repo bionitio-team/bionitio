@@ -9,6 +9,9 @@ package org.supernifty.biotool;
 import java.io.InputStream;
 import java.io.FileInputStream;
 import java.util.LinkedHashMap;
+
+import org.apache.commons.io.input.CountingInputStream;
+
 import org.biojava.nbio.core.sequence.ProteinSequence;
 import org.biojava.nbio.core.sequence.io.FastaReaderHelper;
 
@@ -63,9 +66,14 @@ public class FastaStats {
         final int minlength)
         throws java.io.IOException, FastaException {
         LinkedHashMap<String, ProteinSequence> result;
+        CountingInputStream countedStream = new CountingInputStream(input);
         try {
-            result = FastaReaderHelper.readFastaProteinSequence(input);
+            result = FastaReaderHelper.readFastaProteinSequence(countedStream);
         } catch (java.lang.ArrayIndexOutOfBoundsException e) {
+            if (countedStream.getCount() == 0) {
+                total = 0;
+                return;
+            }
             throw new FastaException("Failed to process fasta file");
         }
         total = 0;

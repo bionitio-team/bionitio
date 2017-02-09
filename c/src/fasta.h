@@ -11,8 +11,9 @@ struct FastaStats {
     unsigned long min; // min length of sequences
     unsigned long max; // max length of sequences
     double average;
+    int is_empty; // file with no content?
 };
 
-struct FastaStats processFasta(FILE *fh, int verbose, int minlength);
+struct FastaStats processFasta(FILE *fasta_fh, FILE *log, int minlength);
 
 #endif

@@ -49,7 +49,7 @@ In the examples below, `%` indicates the command line prompt.
 Biotool can display usage information on the command line via the `-h` or `--help` argument:
 ```
 % biotool-c -h
-Usage: biotool-c [--minlen N] [--version] [--verbose] [[FASTA_FILE ...]]
+Usage: biotool-c [--minlen N] [--version] [--log LOG_FILE] [[FASTA_FILE ...]]
   Print fasta stats
 
 Available options:
@@ -57,7 +57,7 @@ Available options:
   --minlen N               Minimum length sequence to include in stats
                            (default=0)
   --version                Print version and exit
-  --verbose                Print more stuff about what's happening
+  --log LOG_FILE           Write progress to LOG_FILE
 ```
 
 ## Reading FASTA files named on the command line

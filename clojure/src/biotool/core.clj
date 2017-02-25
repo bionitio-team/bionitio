@@ -28,6 +28,27 @@
 ;; Set up logging infrastructure
 (timbre/refer-timbre)
 
+;; Program exit status codes
+(def exit-success 0)
+(def exit-failure 1)
+(def exit-failure-cli 2) ; Command line argument error
+
+(defn exit-with-error
+  "Print an error message to stderr and then exit the program
+  with a given exit status.
+
+  Arguments:
+    status: The exit status of the program (non-negative integer).
+    msg: Error message to display on stderr (string).
+
+  Result:
+    nil"
+  [status msg]
+  ;; for some reason printing to stderr is not working
+  ;; (binding [*out* *err*] println msg)
+  (println msg)
+  (System/exit status))
+
 (def initial-stats
   "Initial value of stats, before any sequences have been considered"
   {:num-sequences 0
@@ -152,8 +173,10 @@
 
   [minlen filename]
   (timbre/info "Processing FASTA file from" filename)
-  (with-open [reader (bs/bs-reader (bs/init-fasta-file filename :iupacAminoAcids))]
-    (process-fasta-reader minlen filename reader)))
+  (try
+    (with-open [reader (bs/bs-reader (bs/init-fasta-file filename :iupacAminoAcids))]
+      (process-fasta-reader minlen filename reader))
+    (catch Exception e (exit-with-error exit-failure (.getMessage e)))))
 
 (defn process-stdin
   "Compute the statistics for a single input FASTA file from stdin, 
@@ -225,22 +248,6 @@
   (str "The following errors occurred while parsing your command:\n\n"
        (string/join \newline errors)))
 
-(defn exit
-  "Print an error message to stderr and then exit the program
-  with a given exit status.
-
-  Arguments:
-    status: The exit status of the program (non-negative integer).
-    msg: Error message to display on stderr (string).
-
-  Result:
-    nil"
-  [status msg]
-  ;; for some reason printing to stderr is not working
-  ;; (binding [*out* *err*] println msg)
-  (println msg)
-  (System/exit status))
-
 (def cli-options
   "Define the command line options of the program."
   (let [default-minlen 0]
@@ -273,16 +280,14 @@
     (timbre/info "Program started")
     (timbre/info "Command line: " (string/join " " *command-line-args*)))
 
-
-(def exit-success 0)
-(def exit-failure-cli 2) ; Command line argument error
-
 (defn -main
   "Orchestrate the computation"
   [& args]
   (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)]
     (cond
-      (:help options) (exit exit-success (usage summary))
-      errors (exit exit-failure-cli (error-msg errors)))
+      (:help options)
+         (do (println (usage summary))
+               (System/exit exit-success))
+      errors (exit-with-error exit-failure-cli (error-msg errors)))
     (init-logging (:log options))
     (process-fasta-files (:minlen options) arguments)))

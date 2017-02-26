@@ -170,7 +170,7 @@ empty.fa	0	0	-	-	-
 
 ## Logging
 
-If the ``--log FILE`` command line argument is specified, biotool will output a log file containing information about program progress. The log file includes the command line used to execute the program, and a note indicating which files have been processes so far. Events in the log file are annotated with their date and time of occurrence. 
+If the ``--log FILE`` command line argument is specified, biotool will output a log file containing information about program progress. The log file includes the command line used to execute the program, and a note indicating which files have been processed so far. Events in the log file are annotated with their date and time of occurrence. 
 
 ```
 % biotool-py --log bt.log file1.fasta file2.fasta 

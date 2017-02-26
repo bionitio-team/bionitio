@@ -11,20 +11,21 @@ KSEQ_INIT(gzFile, gzread)
 
 /**
  * process a single fasta file
- * @param fh file handle containing fasta file
- * @param verbose whether to write additional progress info
+ * @param fasta_fh file handle containing fasta file
+ * @param log where to write additional progress info
  * @param minlength only process sequences that are at least this length
  * @return structure containing fasta stats
  */
-struct FastaStats processFasta(FILE *fh, int verbose, int minlength) {
+struct FastaStats processFasta(FILE *fasta_fh, FILE* log, int minlength) {
     struct FastaStats result;
     result.total_sequences = 0;
     result.sequences = 0;
     result.bases = 0;
     result.min = 1e9;
     result.max = 0;
+    result.is_empty = 0; // not empty
 
-    gzFile fp = gzdopen(fileno(fh), "r");
+    gzFile fp = gzdopen(fileno(fasta_fh), "r");
     kseq_t *seq = kseq_init(fp);
     while(kseq_read(seq) >= 0) {
         // process and/or store the sequences
@@ -37,6 +38,7 @@ struct FastaStats processFasta(FILE *fh, int verbose, int minlength) {
             result.max = result.max > bases ? result.max : bases;
         }
     }
+    result.is_empty = (seq->f->begin == 0);
     if (result.sequences > 0) {
         result.average = (float)result.bases / result.sequences;
     }

@@ -8,6 +8,7 @@ use warnings;
 use Getopt::Long;
 use File::Spec;
 use Bio::SeqIO;
+use Log::Log4perl qw(get_logger :nowarn);
 
 #.........................................................................
 # globals
@@ -17,6 +18,8 @@ my(undef,undef,$EXE) = File::Spec->splitpath($0);
 my $VERSION = "1.0";
 my $verbose = 0;
 my $minlen = 0;
+my $logfile = "";
+my @ORIGINAL_ARGV = @ARGV;
 
 #.........................................................................
 # process command line 
@@ -26,10 +29,40 @@ GetOptions(
   "version"  => sub { print "$EXE $VERSION\n"; exit(0); },
   "verbose"  => sub { $verbose++ },
   "minlen=i" => \$minlen,
+  "log=s" => \$logfile,
 )
 or usage(2);
 
 push @ARGV, "/dev/stdin" unless @ARGV;
+
+#.........................................................................
+# initialise logging 
+
+if ($logfile ne "") {
+  # logging configuration
+  my $log_conf = qq(
+    log4perl.logger                    = INFO, FileApp
+    log4perl.appender.FileApp          = Log::Log4perl::Appender::File
+    log4perl.appender.FileApp.filename = $logfile 
+    log4perl.appender.FileApp.layout   = PatternLayout
+    log4perl.appender.FileApp.layout.ConversionPattern = %d> %m%n
+  );
+  # Initialize logging behaviour
+  Log::Log4perl->init( \$log_conf );
+}
+    
+# Obtain a logger instance
+my $logger = get_logger("Biotool");
+
+# Log the program name and command line arguments
+$logger->info("Command line arguments: $0 @ORIGINAL_ARGV");
+
+#$logger->info("info");
+#$logger->error("error");
+#$logger->warn("warn");
+#$logger->debug("debug");
+#$logger->fatal("fatal");
+#$logger->trace("trace");
 
 #.........................................................................
 # MAIN

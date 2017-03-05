@@ -149,7 +149,7 @@
   Result:
     A record containing the stats for this FASTA file"
 
-  [minlen filename reader]
+  [minlen reader]
     (reduce
       update-stats
       initial-stats
@@ -174,7 +174,7 @@
   (timbre/info "Processing FASTA file from" filename)
   (try
     (with-open [reader (bs/bs-reader (bs/init-fasta-file filename :iupacAminoAcids))]
-      (print-results filename (process-fasta-reader minlen filename reader)))
+      (print-results filename (process-fasta-reader minlen reader)))
     (catch Exception e (exit-with-error exit-failure (.getMessage e)))))
 
 (defn process-stdin
@@ -191,7 +191,7 @@
   [minlen]
   (timbre/info "Processing FASTA file from stdin")
   (with-open [reader (bs/init-fasta-reader (java.io.BufferedReader. *in*) :iupacAminoAcids)]
-    (print-results "stdin" (process-fasta-reader minlen "stdin" reader))))
+    (print-results "stdin" (process-fasta-reader minlen reader))))
 
 (defn process-fasta-files
   "Compute the statistics for each file in an array of filenames. If the array is

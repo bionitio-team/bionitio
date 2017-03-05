@@ -29,8 +29,8 @@
 (timbre/refer-timbre)
 
 ;; Program exit status codes
-(def exit-success 0)
-(def exit-failure 1)
+(def exit-success 0)     ; Program terminated successfully
+(def exit-failure 1)     ; General runtime failure
 (def exit-failure-cli 2) ; Command line argument error
 
 (defn exit-with-error

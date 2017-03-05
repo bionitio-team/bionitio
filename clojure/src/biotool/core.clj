@@ -2,16 +2,16 @@
 ;;; Description: Reads one or more FASTA files and computes various
 ;;;              simple statistics about them. Intended as an example
 ;;;              bioinformatics command line tool.
-;;; Copyright:   (c) Bernie Pope, 2017 
-;;; License:     MIT 
+;;; Copyright:   (c) Bernie Pope, 2017
+;;; License:     MIT
 ;;; Maintainer:  bjpope@unimelb.edu.au
-;;; Stability:   stable 
+;;; Stability:   stable
 ;;; Portability: POSIX
 
 ;;; The main parts of the program are:
-;;; 1. Parse command line arguments. 
+;;; 1. Parse command line arguments.
 ;;; 2. Process each FASTA file in sequence.
-;;; 3. Pretty print output for each file. 
+;;; 3. Pretty print output for each file.
 ;;;
 ;;; If no FASTA filenames are specified on the command line then the program
 ;;; will try to read a FASTA file from standard input.
@@ -54,7 +54,7 @@
   {:num-sequences 0
    :num-bases 0
    ;; We set the min and max sequence lengths to nil, indicating that
-   ;; we have not seen any sequences yet. 
+   ;; we have not seen any sequences yet.
    :min-sequence-length nil
    :max-sequence-length nil})
 
@@ -147,16 +147,15 @@
     reader: The reader object representing the input FASTA file contents.
 
   Result:
-    nil"
+    A record containing the stats for this FASTA file"
 
   [minlen filename reader]
-  (print-results filename
-                 (reduce
-                  update-stats
-                  initial-stats
-                  (filter
-                   (fn [record] (seq-length-gte-minlen? minlen record))
-                   (bs/biosequence-seq reader)))))
+    (reduce
+      update-stats
+      initial-stats
+      (filter
+        (fn [record] (seq-length-gte-minlen? minlen record))
+          (bs/biosequence-seq reader))))
 
 (defn process-fasta-file
   "Compute the statistics for a single input FASTA file from a file, given by its filename,
@@ -175,11 +174,11 @@
   (timbre/info "Processing FASTA file from" filename)
   (try
     (with-open [reader (bs/bs-reader (bs/init-fasta-file filename :iupacAminoAcids))]
-      (process-fasta-reader minlen filename reader))
+      (print-results filename (process-fasta-reader minlen filename reader)))
     (catch Exception e (exit-with-error exit-failure (.getMessage e)))))
 
 (defn process-stdin
-  "Compute the statistics for a single input FASTA file from stdin, 
+  "Compute the statistics for a single input FASTA file from stdin,
   and pretty print the result to the standard output. It is a wrapper around
   process-fasta-reader.
 
@@ -192,11 +191,11 @@
   [minlen]
   (timbre/info "Processing FASTA file from stdin")
   (with-open [reader (bs/init-fasta-reader (java.io.BufferedReader. *in*) :iupacAminoAcids)]
-    (process-fasta-reader minlen "stdin" reader)))
+    (print-results "stdin" (process-fasta-reader minlen "stdin" reader))))
 
 (defn process-fasta-files
   "Compute the statistics for each file in an array of filenames. If the array is
-  empty, compute statistics from stdin. Print an output header before any inputs 
+  empty, compute statistics from stdin. Print an output header before any inputs
   are processed.
 
   Arguments:
@@ -229,7 +228,7 @@
   [options-summary]
   (->> ["Print fasta stats"
         ""
-        "Usage: program-name [options] FILES"
+        "Usage: biotool-clj [options] FILES"
         ""
         "Options:"
         options-summary]

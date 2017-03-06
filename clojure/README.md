@@ -165,8 +165,19 @@ Biotool returns the following exit status values:
 
 # Testing
 
+Unit tests can be run like so:
+
 ```
-XXX fixme
+lein test
+```
+
+You should hopefully see output like so:
+
+```
+lein test biotool.core-test
+
+Ran 9 tests containing 9 assertions.
+0 failures, 0 errors.
 ```
 
 A set of sample test input files is provided in the `test_data` folder.

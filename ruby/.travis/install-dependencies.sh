@@ -5,6 +5,5 @@
 echo 'Ruby install'
 (
    cd ruby
-   bundle install
-
+   gem install bio
 )

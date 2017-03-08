@@ -1,5 +1,10 @@
 require "test/unit"
 require 'stringio'
+
+# Useful to add lib dir manually
+libdir = File.dirname(__FILE__) + "/../lib"
+$LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
+
 require 'biotool'
 
 class BiotoolTest < Test::Unit::TestCase

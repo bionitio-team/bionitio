@@ -1,6 +1,6 @@
 # Ruby biotool
 
-Try without installing: `ruby -Ilib bin/biotool`
+Run without installing: `./bin/biotool`
 
 ## How to build & install
 
@@ -11,7 +11,7 @@ Try without installing: `ruby -Ilib bin/biotool`
 
 ## Running tests
 
-`ruby -Ilib test/test_biotool.rb`
+`ruby test/test_biotool.rb`
 
 ## Usage
 

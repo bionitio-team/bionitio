@@ -31,7 +31,7 @@ script:
 # - ./.travis/test.sh js/biotool.js
  - ./.travis/test.sh biotool-py
  - ./.travis/test.sh r/biotool.R
- - ./.travis/test.sh ruby/biotool.rb
+ - ./.travis/test.sh ruby/bin/biotool
  - ./.travis/test.sh ~/.cargo/bin/biotool-rs
  - ./.travis/test.sh perl5/biotool.pl
 # - ./c/.travis/unit-test.sh
@@ -39,3 +39,4 @@ script:
 #  - ./java/.travis/unit-test.sh
  - ./python/.travis/unit-test.sh
  - ./rust/.travis/unit-test.sh
+ - ./ruby/.travis/unit-test.sh

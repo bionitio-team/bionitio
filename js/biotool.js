@@ -4,9 +4,9 @@
  */
 
 var opts = require('commander');
-var fasta = require('bionode-fasta');
 var fs = require('fs');
 var through = require('through2')
+var fasta = require('./lib/fasta-parser');
 
 
 // Helper function to verbose option
@@ -49,10 +49,11 @@ function process_fasta(file) {
 
     // Filter, and collect stats on each sequence
     function next_seq(data, enc, next) {
-        var l = data.seq.length
+        obj = JSON.parse(data.toString());
+        var l = obj.seq.length
         if (l>=opts.minlen) {
             if (opts.verbose>=2)
-                console.error([file, data.id, l].join("\t"))
+                console.error([file, obj.id, l].join("\t"))
             min = n==0 ? l : Math.min(l,min)
             max = n==0 ? l : Math.max(l,max)
             n += 1
@@ -86,7 +87,7 @@ function process_files(files) {
           console.error("Error reading file", err.path);
           process.exit(1);
       })
-      .pipe(fasta({objectMode:true}))
+      .pipe(fasta())
       .on('error', function(err, x) {
           console.error("Failed parsing of file", file, err);
           process.exit(3);

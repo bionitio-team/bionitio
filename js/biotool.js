@@ -6,13 +6,10 @@
 var opts = require('commander');
 var fs = require('fs');
 var through = require('through2')
+var winston = require('winston');
+
 var fasta = require('./lib/fasta-parser');
 
-
-// Helper function to verbose option
-function increaseVerbosity(v, total) {
-  return total + 1;
-}
 
 // Override handling of unknown options - someone decided exit code 2 was better than the default 1
 opts.unknownOption = function(flag) {
@@ -24,17 +21,28 @@ opts.unknownOption = function(flag) {
 
 // Option parsing
 opts
-  .version('1.0.0')
+  .version('0.1.0')
   .usage('[options] contigs.fasta [contigs2.fasta ...]')
   .description('Print fasta stats')
   .option('-m, --minlen <n>', 'Minimum length sequence to include in stats (default=0)', parseInt, 0)
-  .option('-v, --verbose', "Print more stuff about what's happening", increaseVerbosity, 0)
+  .option('-l, --log <LOG_FILE>', "record program progress in LOG_FILE")
   .parse(process.argv);
 
 // Default to reading stdin if there are no files specified
 if (opts.args == 0)
     opts.args = ["/dev/stdin"];
 
+// Setup logging
+var logger = new (winston.Logger)
+logger.info("Command line");
+if (opts.log !== undefined)
+    logger.configure({
+      transports: [
+        new (winston.transports.File)({ filename: opts.log })
+      ]
+    });
+
+logger.info("Command line: %s", process.argv.join(" "));
 
 
 ////////////////////////////////////////////////////////////
@@ -52,8 +60,6 @@ function process_fasta(file) {
         obj = JSON.parse(data.toString());
         var l = obj.seq.length
         if (l>=opts.minlen) {
-            if (opts.verbose>=2)
-                console.error([file, obj.id, l].join("\t"))
             min = n==0 ? l : Math.min(l,min)
             max = n==0 ? l : Math.max(l,max)
             n += 1
@@ -78,18 +84,19 @@ function process_files(files) {
         return
     var file = files.shift()
 
-    if (opts.verbose>=1)
-        console.error("Processing: "+file);
+    logger.info("Processing FASTA file : %s", file);
 
     // Read the file, pipe through the fasta parser, then through our filter, then output as appropriate
     fs.createReadStream(file)
       .on('error', function(err) {
           console.error("Error reading file", err.path);
+          logger.error("Error reading file : %s", err.path);
           process.exit(1);
       })
       .pipe(fasta())
       .on('error', function(err, x) {
           console.error("Failed parsing of file", file, err);
+          logger.error("Error reading file : %s", err.path);
           process.exit(3);
       })
       .pipe(process_fasta(file))

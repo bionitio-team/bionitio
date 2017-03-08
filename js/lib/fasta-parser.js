@@ -63,16 +63,22 @@ function parser() {
       cacheBuf.append(openID)
       cacheBuf.append(id)
       cacheBuf.append(closeIDOpenSeq)
-    }
-    else {
-      cacheBuf.append(buf)
+    } else {
+      if (buf.length==0) {
+        // Ignore empty
+      } else if (!cacheBuf)
+        this.emit('error', {msg:'Failed fasta parsing', buf: buf})
+      else
+        cacheBuf.append(buf)
     }
     next()
   }
 
   function flush() {
-    cacheBuf.append(closeSeq)
-    this.push(cacheBuf.slice())
+    if (cacheBuf) {
+      cacheBuf.append(closeSeq)
+      this.push(cacheBuf.slice())
+    }
     this.push(null)
   }
 }

@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash -xv
 
 # 1. Parse command line arguments.
 # 2. Check dependencies.
@@ -39,7 +39,7 @@ Usage:
 Example:
     ${program_name} -c BSD-3-Clause -l python -n skynet
 
-The above example Will try to initialise a new project in directory 'skynet'
+The above example will try to initialise a new project in directory 'skynet'
 based on the 'python' biotool implementation, using the BSD-3-Clause license.
 
 If a directory already exists in the current working directory with the same
@@ -192,6 +192,7 @@ function rename_project {
     # project name with all characters upper case
     all_upper_project_name="$(tr '[:lower:]' '[:upper:]' <<< ${new_project_name})"
     
+    # substitute all occurrences of biotool in content
     find ${new_project_name} -type f -print0 | xargs -0 sed -i.temporary  "s/biotool/${new_project_name}/g"
     find ${new_project_name} -name "*.temporary" -type f -delete
     
@@ -200,6 +201,32 @@ function rename_project {
     
     find ${new_project_name} -type f -print0 | xargs -0 sed -i.temporary  "s/BIOTOOL/${all_upper_project_name}/g"
     find ${new_project_name} -name "*.temporary" -type f -delete
+
+    # rename directories and files
+    echo "renaming directories"
+    (shopt -s nullglob && recursive_rename() {
+      for old in "$1"*/; do
+        new1="${old//biotool/${new_project_name}}"
+        new2="${new1//Biotool/${first_upper_project_name}}"
+        new="${new2//BIOTOOL/${all_upper_project_name}}"
+        if [ "$old" != "$new" ]; then
+          echo "$old -> $new"
+          mv -- "$old" "$new"
+        fi
+        recursive_rename "$new"
+      done
+    } && recursive_rename ${new_project_name})
+
+    echo "renaming files"
+    for old in $(find ${new_project_name} -type f); do
+      new1="${old//biotool/${new_project_name}}"
+      new2="${new1//Biotool/${first_upper_project_name}}"
+      new="${new2//BIOTOOL/${all_upper_project_name}}"
+      if [ "$old" != "$new" ]; then
+        echo "$old -> $new"
+        mv -- "$old" "$new"
+      fi
+    done
 }
 
 

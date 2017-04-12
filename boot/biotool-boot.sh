@@ -203,27 +203,27 @@ function rename_project {
     find ${new_project_name} -name "*.temporary" -type f -delete
 
     # rename directories and files
-    echo "renaming directories"
+    verbose_message "renaming directories"
     (shopt -s nullglob && recursive_rename() {
       for old in "$1"*/; do
         new1="${old//biotool/${new_project_name}}"
         new2="${new1//Biotool/${first_upper_project_name}}"
         new="${new2//BIOTOOL/${all_upper_project_name}}"
         if [ "$old" != "$new" ]; then
-          echo "$old -> $new"
+          verbose_message "$old -> $new"
           mv -- "$old" "$new"
         fi
         recursive_rename "$new"
       done
-    } && recursive_rename ${new_project_name})
+    } && recursive_rename "${new_project_name}/")
 
-    echo "renaming files"
+    verbose_message "renaming files"
     for old in $(find ${new_project_name} -type f); do
       new1="${old//biotool/${new_project_name}}"
       new2="${new1//Biotool/${first_upper_project_name}}"
       new="${new2//BIOTOOL/${all_upper_project_name}}"
       if [ "$old" != "$new" ]; then
-        echo "$old -> $new"
+        verbose_message "$old -> $new"
         mv -- "$old" "$new"
       fi
     done

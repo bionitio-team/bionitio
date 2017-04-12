@@ -1,4 +1,4 @@
-#!/bin/bash -xv
+#!/usr/bin/env bash
 
 # 1. Parse command line arguments.
 # 2. Check dependencies.

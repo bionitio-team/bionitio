@@ -15,7 +15,6 @@ my @COLUMNS = qw(FILENAME TOTAL NUMSEQ MIN AVG MAX);
 my ( undef, undef, $PROGRAM_NAME ) = File::Spec->splitpath($0);
 my $VERSION        = "1.0";
 my $DEFAULT_MINLEN = 0;
-my $verbose        = 0;
 my $logger;
 
 sub get_options {
@@ -25,7 +24,6 @@ sub get_options {
     GetOptions(
         "help"    => sub { usage($EXIT_SUCCESS) },
         "version" => sub { print "$PROGRAM_NAME $VERSION\n"; exit(0); },
-        "verbose" => sub { $verbose++ },
         "minlen=i" => \$minlen,
         "log=s"    => \$logfile,
     ) or usage($EXIT_COMMAND_LINE_ERROR);
@@ -143,7 +141,6 @@ Usage:
 Options:
   --help       Show this help
   --version    Print version and exit
-  --verbose    Print more stuff about what's happening
   --minlen N   Minimum length sequence to include in stats (default=$DEFAULT_MINLEN)
   --log FILE   Log messages are written to FILE
 EOF

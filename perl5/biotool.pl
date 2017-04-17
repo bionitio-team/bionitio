@@ -23,7 +23,7 @@ sub get_options {
 
     GetOptions(
         "help"    => sub { usage($EXIT_SUCCESS) },
-        "version" => sub { print "$PROGRAM_NAME $VERSION\n"; exit(0); },
+        "version" => sub { print "$PROGRAM_NAME $VERSION\n"; exit($EXIT_SUCCESS); },
         "minlen=i" => \$minlen,
         "log=s"    => \$logfile,
     ) or usage($EXIT_COMMAND_LINE_ERROR);
@@ -69,34 +69,6 @@ sub exit_with_error {
     $logger->error($message); 
     print STDERR "$PROGRAM_NAME ERROR: $message\n";
     exit($exit_status);
-}
-
-sub main {
-    my %options = get_options();
-    init_logging($options{logfile});
-
-    my $badfiles = 0;
-
-    print tsv( \@COLUMNS );
-
-    if (@ARGV) {
-        for my $filename (@ARGV) {
-            $logger->info("Processing FASTA file from $filename");
-            if (open(my $filehandle, $filename)) {
-                my $res = process_file($filename, $filehandle, $options{minlen});
-                print tsv($res) if $res;
-            }
-            else {
-                exit_with_error("Could not open $filename for reading", $EXIT_FILE_IO_ERROR);
-            }
-        }
-    }
-    else {
-        $logger->info("Processing FASTA file from stdin");
-        my $res = process_file("stdin", \*STDIN, $options{minlen});
-        print tsv($res) if $res;
-    }
-    exit($EXIT_SUCCESS);
 }
 
 sub process_file {
@@ -145,6 +117,37 @@ Options:
   --log FILE   Log messages are written to FILE
 EOF
     exit $exit_status;
+}
+
+sub process_files {
+    my (%options) = @_;
+
+    print tsv(\@COLUMNS);
+
+    if (@ARGV) {
+        for my $filename (@ARGV) {
+            $logger->info("Processing FASTA file from $filename");
+            if (open(my $filehandle, $filename)) {
+                my $res = process_file($filename, $filehandle, $options{minlen});
+                print tsv($res) if $res;
+            }
+            else {
+                exit_with_error("Could not open $filename for reading", $EXIT_FILE_IO_ERROR);
+            }
+        }
+    }
+    else {
+        $logger->info("Processing FASTA file from stdin");
+        my $res = process_file("stdin", \*STDIN, $options{minlen});
+        print tsv($res) if $res;
+    }
+}
+
+sub main {
+    my %options = get_options();
+    init_logging($options{logfile});
+    process_files(%options);
+    exit($EXIT_SUCCESS);
 }
 
 main();

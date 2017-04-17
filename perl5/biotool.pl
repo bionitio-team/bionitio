@@ -18,9 +18,6 @@ my $DEFAULT_MINLEN = 0;
 my $verbose        = 0;
 my $logger;
 
-# Keep a copy of ARGV, so we can write the original to the log file
-my @ORIGINAL_ARGV = @ARGV;
-
 sub get_options {
     my $minlen  = 0;
     my $logfile = "";
@@ -33,10 +30,7 @@ sub get_options {
         "log=s"    => \$logfile,
     ) or usage($EXIT_COMMAND_LINE_ERROR);
 
-    # XXX this does not look portable!
-    push @ARGV, "/dev/stdin" unless @ARGV;
-
-    return ( minlen => $minlen, logfile => $logfile );
+    return (minlen => $minlen, logfile => $logfile);
 }
 
 sub init_logging {
@@ -55,16 +49,14 @@ sub init_logging {
       log4perl.appender.FileApp.layout   = PatternLayout
       log4perl.appender.FileApp.layout.ConversionPattern = %d %p %m%n
     );
-        Log::Log4perl->init( \$log_conf );
+        Log::Log4perl->init(\$log_conf);
     }
 
     # Obtain a logger instance
     $logger = get_logger("Biotool");
-
     $logger->info("program started");
-
     # Log the program name and command line arguments
-    $logger->info("command line arguments: $0 @ORIGINAL_ARGV");
+    $logger->info("command line arguments: $0 @ARGV");
 }
 
 # Print an error message to stderr, prefixed by the program name and 'ERROR'.
@@ -83,38 +75,46 @@ sub exit_with_error {
 
 sub main {
     my %options = get_options();
-    init_logging( $options{logfile} );
+    init_logging($options{logfile});
 
     my $badfiles = 0;
 
     print tsv( \@COLUMNS );
 
-    for my $file (@ARGV) {
-        $logger->info("Processing FASTA file from $file");
-        unless ( -r $file ) {
-	    exit_with_error("Unable to read file: $file", $EXIT_FILE_IO_ERROR);
+    if (@ARGV) {
+        for my $filename (@ARGV) {
+            $logger->info("Processing FASTA file from $filename");
+            if (open(my $filehandle, $filename)) {
+                my $res = process_file($filename, $filehandle, $options{minlen});
+                print tsv($res) if $res;
+            }
+            else {
+                exit_with_error("Could not open $filename for reading", $EXIT_FILE_IO_ERROR);
+            }
         }
-        my $res = process_file( $file, $options{minlen} );
+    }
+    else {
+        $logger->info("Processing FASTA file from stdin");
+        my $res = process_file("stdin", \*STDIN, $options{minlen});
         print tsv($res) if $res;
     }
     exit($EXIT_SUCCESS);
 }
 
 sub process_file {
-    my ( $fname, $minlen ) = @_;
+    my ($filename, $filehandle, $minlen) = @_;
 
     # to collect stats
     my $bp  = 0;
     my $n   = 0;
-    my $min = 1E12;
+    my $min = 1E12; # XXX fixme
     my $max = 0;
 
     # loop over each sequence
-    my $in = Bio::SeqIO->new( -file => $fname, -format => 'fasta' );
+    my $in = Bio::SeqIO->new( -fh => $filehandle, -format => 'fasta' );
     while ( my $seq = $in->next_seq ) {
         my $L = $seq->length;
         next if $L < $minlen;
-        print STDERR tsv( [ $fname, $seq->id, $seq->length ] ) if $verbose >= 2;
         $n++;
         $bp += $seq->length;
         $min = $L if $L < $min;
@@ -123,8 +123,8 @@ sub process_file {
 
     # FILENAME TOTAL NUMSEQ MIN AVG MAX
     return $n <= 0
-      ? [ $fname, $n, $bp, '-', '-', '-' ]
-      : [ $fname, $n, $bp, $min, int( $bp / $n ), $max ];
+      ? [ $filename, $n, $bp, '-', '-', '-' ]
+      : [ $filename, $n, $bp, $min, int( $bp / $n ), $max ];
 }
 
 sub tsv {

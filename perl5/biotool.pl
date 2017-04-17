@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 
 use strict;
-use warnings;
+use warnings 'FATAL' => 'all';
 use Getopt::Long;
 use File::Spec;
 use Bio::SeqIO;
@@ -80,7 +80,7 @@ sub process_file {
     my $min_len = undef;
     my $max_len = undef;
 
-    # Process each sequence in the input FASTA file 
+    # XXX should catch exceptions raised by SeqIO, no idea how to do it
     my $in = Bio::SeqIO->new(-fh => $filehandle, -format => 'fasta');
     while (my $seq = $in->next_seq) {
         my $this_len = $seq->length;

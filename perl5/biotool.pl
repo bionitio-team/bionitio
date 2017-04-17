@@ -12,7 +12,7 @@ my $EXIT_FILE_IO_ERROR = 1;
 my $EXIT_COMMAND_LINE_ERROR = 2;
 my $EXIT_FASTA_FILE_ERROR = 3;
 my @COLUMNS = qw(FILENAME TOTAL NUMSEQ MIN AVG MAX);
-my ( undef, undef, $PROGRAM_NAME ) = File::Spec->splitpath($0);
+my (undef, undef, $PROGRAM_NAME) = File::Spec->splitpath($0);
 my $VERSION        = "1.0";
 my $DEFAULT_MINLEN = 0;
 my $logger;
@@ -22,8 +22,8 @@ sub get_options {
     my $logfile = "";
 
     GetOptions(
-        "help"    => sub { usage($EXIT_SUCCESS) },
-        "version" => sub { print "$PROGRAM_NAME $VERSION\n"; exit($EXIT_SUCCESS); },
+        "help"    => sub {usage($EXIT_SUCCESS)},
+        "version" => sub {print "$PROGRAM_NAME $VERSION\n"; exit($EXIT_SUCCESS);},
         "minlen=i" => \$minlen,
         "log=s"    => \$logfile,
     ) or usage($EXIT_COMMAND_LINE_ERROR);
@@ -65,42 +65,44 @@ sub init_logging {
 #     exit_status: a positive integer representing the exit status of the
 #         program.
 sub exit_with_error {
-    my ( $message, $exit_status) = @_;
+    my ($message, $exit_status) = @_;
     $logger->error($message); 
     print STDERR "$PROGRAM_NAME ERROR: $message\n";
     exit($exit_status);
 }
 
 sub process_file {
-    my ($filename, $filehandle, $minlen) = @_;
+    my ($filename, $filehandle, $minlen_threshold) = @_;
 
     # to collect stats
-    my $bp  = 0;
-    my $n   = 0;
-    my $min = 1E12; # XXX fixme
-    my $max = 0;
+    my $num_bases  = 0;
+    my $num_seqs   = 0;
+    my $min_len = undef;
+    my $max_len = undef;
 
-    # loop over each sequence
-    my $in = Bio::SeqIO->new( -fh => $filehandle, -format => 'fasta' );
-    while ( my $seq = $in->next_seq ) {
-        my $L = $seq->length;
-        next if $L < $minlen;
-        $n++;
-        $bp += $seq->length;
-        $min = $L if $L < $min;
-        $max = $L if $L > $max;
+    # Process each sequence in the input FASTA file 
+    my $in = Bio::SeqIO->new(-fh => $filehandle, -format => 'fasta');
+    while (my $seq = $in->next_seq) {
+        my $this_len = $seq->length;
+        # Skip this sequence if its length is less than the threshold
+        if ($this_len >= $minlen_threshold) {
+            $num_seqs++;
+            $num_bases += $this_len;
+            $min_len = $this_len if (!defined($min_len)) || $this_len < $min_len;
+            $max_len = $this_len if (!defined($max_len)) || $this_len > $max_len;
+        }
     }
 
     # FILENAME TOTAL NUMSEQ MIN AVG MAX
-    return $n <= 0
-      ? [ $filename, $n, $bp, '-', '-', '-' ]
-      : [ $filename, $n, $bp, $min, int( $bp / $n ), $max ];
+    return $num_seqs <= 0
+      ? [$filename, $num_seqs, $num_bases, '-', '-', '-']
+      : [$filename, $num_seqs, $num_bases, $min_len, int($num_bases / $num_seqs), $max_len];
 }
 
 sub tsv {
-    my ( $row, $sep ) = @_;
+    my ($row, $sep) = @_;
     $sep ||= "\t";
-    return join( $sep, @$row ) . "\n";
+    return join($sep, @$row) . "\n";
 }
 
 sub usage {

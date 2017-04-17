@@ -7,8 +7,12 @@ use File::Spec;
 use Bio::SeqIO;
 use Log::Log4perl qw(get_logger :nowarn);
 
+my $EXIT_SUCCESS = 0;
+my $EXIT_FILE_IO_ERROR = 1;
+my $EXIT_COMMAND_LINE_ERROR = 2;
+my $EXIT_FASTA_FILE_ERROR = 3;
 my @COLUMNS = qw(FILENAME TOTAL NUMSEQ MIN AVG MAX);
-my ( undef, undef, $EXE ) = File::Spec->splitpath($0);
+my ( undef, undef, $PROGRAM_NAME ) = File::Spec->splitpath($0);
 my $VERSION        = "1.0";
 my $DEFAULT_MINLEN = 0;
 my $verbose        = 0;
@@ -22,12 +26,12 @@ sub get_options {
     my $logfile = "";
 
     GetOptions(
-        "help"    => sub { usage(0) },
-        "version" => sub { print "$EXE $VERSION\n"; exit(0); },
+        "help"    => sub { usage($EXIT_SUCCESS) },
+        "version" => sub { print "$PROGRAM_NAME $VERSION\n"; exit(0); },
         "verbose" => sub { $verbose++ },
         "minlen=i" => \$minlen,
         "log=s"    => \$logfile,
-    ) or usage(2);
+    ) or usage($EXIT_COMMAND_LINE_ERROR);
 
     # XXX this does not look portable!
     push @ARGV, "/dev/stdin" unless @ARGV;
@@ -63,6 +67,20 @@ sub init_logging {
     $logger->info("command line arguments: $0 @ORIGINAL_ARGV");
 }
 
+# Print an error message to stderr, prefixed by the program name and 'ERROR'.
+# Then exit program with supplied exit status.
+#
+# Arguments:
+#     message: an error message as a string.
+#     exit_status: a positive integer representing the exit status of the
+#         program.
+sub exit_with_error {
+    my ( $message, $exit_status) = @_;
+    $logger->error($message); 
+    print STDERR "$PROGRAM_NAME ERROR: $message\n";
+    exit($exit_status);
+}
+
 sub main {
     my %options = get_options();
     init_logging( $options{logfile} );
@@ -74,17 +92,12 @@ sub main {
     for my $file (@ARGV) {
         $logger->info("Processing FASTA file from $file");
         unless ( -r $file ) {
-
-            # XXX should really have an exit_with_error function
-            # that can display error on STDERR and also write to log
-            print STDERR "ERROR: Unable to read file: $file\n";
-            $logger->error("ERROR: Unable to read file: $file");
-            exit(1);
+	    exit_with_error("Unable to read file: $file", $EXIT_FILE_IO_ERROR);
         }
         my $res = process_file( $file, $options{minlen} );
         print tsv($res) if $res;
     }
-    exit(0);
+    exit($EXIT_SUCCESS);
 }
 
 sub process_file {
@@ -121,12 +134,12 @@ sub tsv {
 }
 
 sub usage {
-    my ($errcode) = @_;
+    my ($exit_status) = @_;
     print <<"EOF";
 Synopsis:
   Print fasta stats
 Usage:
-  $EXE [options] contigs.fasta [another.fa ...]
+  $PROGRAM_NAME [options] contigs.fasta [another.fa ...]
 Options:
   --help       Show this help
   --version    Print version and exit
@@ -134,7 +147,7 @@ Options:
   --minlen N   Minimum length sequence to include in stats (default=$DEFAULT_MINLEN)
   --log FILE   Log messages are written to FILE
 EOF
-    exit $errcode;
+    exit $exit_status;
 }
 
 main();

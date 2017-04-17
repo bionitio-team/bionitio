@@ -1,17 +1,11 @@
 #!/usr/bin/env perl
 
-#.........................................................................
-# modules
-
 use strict;
 use warnings;
 use Getopt::Long;
 use File::Spec;
 use Bio::SeqIO;
 use Log::Log4perl qw(get_logger :nowarn);
-
-#.........................................................................
-# globals
 
 my @COLUMNS = qw(FILENAME TOTAL NUMSEQ MIN AVG MAX);
 my ( undef, undef, $EXE ) = File::Spec->splitpath($0);
@@ -22,9 +16,6 @@ my $logger;
 
 # Keep a copy of ARGV, so we can write the original to the log file
 my @ORIGINAL_ARGV = @ARGV;
-
-#.........................................................................
-# process command line
 
 sub get_options {
     my $minlen  = 0;
@@ -43,9 +34,6 @@ sub get_options {
 
     return ( minlen => $minlen, logfile => $logfile );
 }
-
-#.........................................................................
-# initialise logging
 
 sub init_logging {
 
@@ -75,9 +63,6 @@ sub init_logging {
     $logger->info("command line arguments: $0 @ORIGINAL_ARGV");
 }
 
-#.........................................................................
-# MAIN
-
 sub main {
     my %options = get_options();
     init_logging( $options{logfile} );
@@ -101,8 +86,6 @@ sub main {
     }
     exit(0);
 }
-
-#.........................................................................
 
 sub process_file {
     my ( $fname, $minlen ) = @_;
@@ -131,16 +114,11 @@ sub process_file {
       : [ $fname, $n, $bp, $min, int( $bp / $n ), $max ];
 }
 
-#.........................................................................
-
 sub tsv {
     my ( $row, $sep ) = @_;
     $sep ||= "\t";
     return join( $sep, @$row ) . "\n";
 }
-
-#.........................................................................
-# Usage info to stdout
 
 sub usage {
     my ($errcode) = @_;

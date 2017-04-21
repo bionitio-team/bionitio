@@ -11,7 +11,7 @@ my $EXIT_SUCCESS = 0;
 my $EXIT_FILE_IO_ERROR = 1;
 my $EXIT_COMMAND_LINE_ERROR = 2;
 my $EXIT_FASTA_FILE_ERROR = 3;
-my $HEADER = "FILENAME,TOTAL,NUMSEQ,MIN,AVG,MAX";
+my $HEADER = "FILENAME\tTOTAL\tNUMSEQ\tMIN\tAVG\tMAX";
 my (undef, undef, $PROGRAM_NAME) = File::Spec->splitpath($0);
 my $VERSION        = "1.0";
 my $DEFAULT_MINLEN = 0;
@@ -100,7 +100,7 @@ sub process_file {
 
 sub pretty_output {
     my ($filename, $row) = @_;
-    return "$filename," . join(",", @$row) . "\n";
+    return "$filename\t" . join("\t", @$row) . "\n";
 }
 
 sub usage {

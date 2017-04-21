@@ -11,7 +11,7 @@ my $EXIT_SUCCESS = 0;
 my $EXIT_FILE_IO_ERROR = 1;
 my $EXIT_COMMAND_LINE_ERROR = 2;
 my $EXIT_FASTA_FILE_ERROR = 3;
-my @COLUMNS = qw(FILENAME TOTAL NUMSEQ MIN AVG MAX);
+my $HEADER = "FILENAME,TOTAL,NUMSEQ,MIN,AVG,MAX";
 my (undef, undef, $PROGRAM_NAME) = File::Spec->splitpath($0);
 my $VERSION        = "1.0";
 my $DEFAULT_MINLEN = 0;
@@ -72,7 +72,7 @@ sub exit_with_error {
 }
 
 sub process_file {
-    my ($filename, $filehandle, $minlen_threshold) = @_;
+    my ($filehandle, $minlen_threshold) = @_;
 
     # to collect stats
     my $num_bases  = 0;
@@ -93,16 +93,14 @@ sub process_file {
         }
     }
 
-    # FILENAME TOTAL NUMSEQ MIN AVG MAX
     return $num_seqs <= 0
-      ? [$filename, $num_seqs, $num_bases, '-', '-', '-']
-      : [$filename, $num_seqs, $num_bases, $min_len, int($num_bases / $num_seqs), $max_len];
+      ? [$num_seqs, $num_bases, '-', '-', '-']
+      : [$num_seqs, $num_bases, $min_len, int($num_bases / $num_seqs), $max_len];
 }
 
-sub tsv {
-    my ($row, $sep) = @_;
-    $sep ||= "\t";
-    return join($sep, @$row) . "\n";
+sub pretty_output {
+    my ($filename, $row) = @_;
+    return "$filename," . join(",", @$row) . "\n";
 }
 
 sub usage {
@@ -124,14 +122,14 @@ EOF
 sub process_files {
     my (%options) = @_;
 
-    print tsv(\@COLUMNS);
+    print $HEADER . "\n";
 
     if (@ARGV) {
         for my $filename (@ARGV) {
             $logger->info("Processing FASTA file from $filename");
             if (open(my $filehandle, $filename)) {
-                my $res = process_file($filename, $filehandle, $options{minlen});
-                print tsv($res) if $res;
+                my $res = process_file($filehandle, $options{minlen});
+                print pretty_output($filename, $res) if $res;
             }
             else {
                 exit_with_error("Could not open $filename for reading", $EXIT_FILE_IO_ERROR);
@@ -140,8 +138,8 @@ sub process_files {
     }
     else {
         $logger->info("Processing FASTA file from stdin");
-        my $res = process_file("stdin", \*STDIN, $options{minlen});
-        print tsv($res) if $res;
+        my $res = process_file(\*STDIN, $options{minlen});
+        print pretty_output("stdin", $res) if $res;
     }
 }
 
@@ -152,4 +150,4 @@ sub main {
     exit($EXIT_SUCCESS);
 }
 
-main();
+main() unless caller();

@@ -32,30 +32,38 @@ However, we grant permission to users who derive their own projects from biotool
 
 # Starting a new project from biotool
 
-One of the main goals of biotool is to provide a good place to start writing bioinformatics command line tools. To make that easy we've provided a shell script to help you start a new project. You must specify the following things: 
+One of the main goals of biotool is to provide a good place to start writing bioinformatics command line tools. To make that easy we've provided a shell script called `biotool-boot.sh` to help you start a new project, which is run like so:
+
+```
+biotool-boot.sh -l rust -n skynet -c BSD-3-Clause
+```
+
+The example above starts a fresh project called `skynet` using Rust as the implementation language. A new git repository will be created in a sub-directory called `skynet`, and the project using the BSD 3 Clause license.
+
+When setting up a new project using `biotool-boot.sh` You must specify the following things: 
 
 Required:
 
-* -l \<language\>: the programming language you want to use (one of: c, clojure, cpp, haskell, java, js, perl5, python, r, ruby, rust)
-* -n \<name\>: the name of your new project.
+* -l LANGUAGE: the programming language you want to use (one of: c, clojure, cpp, haskell, java, js, perl5, python, r, ruby, rust)
+* -n NAME: the name of your new project.
 
 Optional:
 
-* -c \<license\>: the license that you want to assign to your new project (one of: Apache-2.0, BSD-2-Clause, BSD-3-Clause, GPL-2.0, GPL-3.0, MIT). If you do not specify a license then it defaults to the MIT license.
+* -c LICENSE: the license that you want to assign to your new project (one of: Apache-2.0, BSD-2-Clause, BSD-3-Clause, GPL-2.0, GPL-3.0, MIT). If you do not specify a license then it defaults to the MIT license.
 
-You can run the script like so, using curl:
+If you don't have a local copy of the script, you can run it from the web like so, using curl:
 
 ```
 curl -sSf https://raw.githubusercontent.com/biotool-paper/biotool/master/boot/biotool-boot.sh \
  | bash -s -- -l rust -n skynet -c BSD-3-Clause
 ```
 
-The example above starts a fresh project called `skynet` using Rust as the implementation language. A new git repository will be created in a sub-directory called `skynet`, and the project using the BSD 3 Clause license.
-
-If you prefer not to run a shell script from the web, then you can clone the biotool repository, and run the script locally, as shown below:
+If you prefer not to run a shell script from the web, then you can either clone the whole biotool repository, or just make a local copy of the `biotool-boot.sh` script, and run it locally, as shown below:
 
 ```
+# Copy the script to your local computer
 curl https://raw.githubusercontent.com/biotool-paper/biotool/master/boot/biotool-boot.sh > biotool-boot.sh
+# Run the script on your local computer
 bash biotool-boot.sh -l rust -n skynet -c BSD-3-Clause
 ```
 

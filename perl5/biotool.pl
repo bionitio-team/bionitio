@@ -1,5 +1,23 @@
 #!/usr/bin/env perl
 
+# Module      : biotool.pl 
+# Description : The main entry point for the program.
+# Copyright   : (c) Torsten Seemann and Bernie Pope, 2016 - 2017
+# License     : MIT 
+# Maintainer  : tseemann@unimelb.edu.au
+# Portability : POSIX
+# 
+# The program reads one or more input FASTA files. For each file it computes a
+# variety of statistics, and then prints a summary of the statistics as output.
+#
+# The main parts of the program are:
+# 1. Parse command line arguments.
+# 2. Process each FASTA file in sequence.
+# 3. Pretty print output for each file.
+#
+# If no FASTA filenames are specified on the command line then the program
+# will try to read a FASTA file from standard input.
+
 use strict;
 use warnings 'FATAL' => 'all';
 use Getopt::Long;
@@ -7,18 +25,52 @@ use File::Spec;
 use Bio::SeqIO;
 use Log::Log4perl qw(get_logger :nowarn);
 
+# Exit status codes.
+# 0: Success
+# 1: File I/O error. This can occur if at least one of the input FASTA
+#        files cannot be opened for reading. This can occur because the file
+#        does not exist at the specified path, or biotool does not have permission
+#        to read from the file.  
+# 2: A command line error occurred. This can happen if the user specifies
+#        an incorrect command line argument. In this circumstance biotool will
+#        also print a usage message to the standard error device (stderr).  
+# 3: FASTA file error. This can occur when the input FASTA file is
+#        incorrectly formatted, and cannot be parsed. 
 my $EXIT_SUCCESS = 0;
 my $EXIT_FILE_IO_ERROR = 1;
 my $EXIT_COMMAND_LINE_ERROR = 2;
 my $EXIT_FASTA_FILE_ERROR = 3;
+
+# Header row for the output
 my $HEADER = "FILENAME\tTOTAL\tNUMSEQ\tMIN\tAVG\tMAX";
+
+# Get the program name
 my (undef, undef, $PROGRAM_NAME) = File::Spec->splitpath($0);
-my $VERSION        = "1.0";
+
+# Program version number
+my $VERSION = "1.0";
+
+# Default value for the minlen command line argument
 my $DEFAULT_MINLEN = 0;
+
+# Log message handler. This is global so that we can refer to it
+# everywhere in the program without having to pass it as a parameter. 
 my $logger;
 
+# Parse command line arguments
+#
+# Arguments: None
+# Result: Returns a hash containing the specified (or defaulted) values for
+#     minlen and logfile.
+#
+# If the user supplies the --help (or -h) option, this function will print
+# a usage message, and then exit the program successfully.
+# If the user supplies the --version option, this function will print the program
+# name a version number, and exit the programm successfully.
+# If the user invokes the program with incorrect arguments then this function
+# will print a usage message and exit the program with an error.
 sub get_options {
-    my $minlen  = 0;
+    my $minlen  = $DEFAULT_MINLEN;
     my $logfile = "";
 
     GetOptions(
@@ -31,14 +83,26 @@ sub get_options {
     return (minlen => $minlen, logfile => $logfile);
 }
 
+# Initialise program logging
+#
+# Arguments:
+#     logfile: the filename (string) of the output log file, where log messages
+#         will be written. If this is the empty string then the logger will not
+#         be configured, and no log messages will be written (even when the
+#         logging functions are called).
+# Result: None
+#
+# Initial log messages are written indicating that the program has started, and
+# the command line arguments that were used.
 sub init_logging {
 
-    # message pattern is:
-    #   %d date (and time), %p priority (level), %m message, %n newline
-    # minimum priority is INFO
+    # The output log message pattern is:
+    #     %d date (and time), %p priority (level), %m message, %n newline
+    # The minimum priority is INFO.
 
     my ($logfile) = @_;
 
+    # Create a logging handler
     if ( $logfile ne "" ) {
         my $log_conf = qq(
       log4perl.logger                    = INFO, FileApp
@@ -57,13 +121,18 @@ sub init_logging {
     $logger->info("command line arguments: $0 @ARGV");
 }
 
-# Print an error message to stderr, prefixed by the program name and 'ERROR'.
-# Then exit program with supplied exit status.
+# Print an error message and exit the program.
 #
 # Arguments:
 #     message: an error message as a string.
 #     exit_status: a positive integer representing the exit status of the
 #         program.
+#
+# Result: None
+#
+# Print an error message to stderr, prefixed by the program name and 'ERROR'.
+# Then exit program with supplied exit status. If logging is enabled, the error
+# message is also written to the log file.
 sub exit_with_error {
     my ($message, $exit_status) = @_;
     $logger->error($message); 
@@ -71,6 +140,28 @@ sub exit_with_error {
     exit($exit_status);
 }
 
+# Collect statistics from a single input FASTA file.
+#
+# Arguments:
+#     filehandle: open file handle representing the input FASTA file
+#     minlen_threshold: the minimum length sequence in the FASTA file
+#         that will be considered when computing the statistics. 
+#         Sequences shorter than this length will be ignored and skipped
+#         over. 
+#
+# Result: A list of five values representing:
+#     - the number of sequences counted in the input file
+#     - the total number of bases in all of the counted sequences
+#     - the length of the shortest counted sequence
+#     - the average length of the counted sequences rounded down to the
+#         nearest integer.
+#     - the length of the longest counted sequence
+#
+#  If the input file is empty, or no sequences are considered (because
+#  none satisfied the minimum length threshold), then the first two values
+#  in the output list (number of sequences, and total number of bases) will
+#  be set to 0. The remaining values cannot be computed, so are represented
+#  by a single-dash character in a string '-'. 
 sub process_file {
     my ($filehandle, $minlen_threshold) = @_;
 
@@ -82,6 +173,7 @@ sub process_file {
 
     # XXX should catch exceptions raised by SeqIO, no idea how to do it
     my $in = Bio::SeqIO->new(-fh => $filehandle, -format => 'fasta');
+    # Process each sequence in the input FASTA file
     while (my $seq = $in->next_seq) {
         my $this_len = $seq->length;
         # Skip this sequence if its length is less than the threshold
@@ -93,16 +185,75 @@ sub process_file {
         }
     }
 
+    # Check if any sequences were counted
     return $num_seqs <= 0
       ? [$num_seqs, $num_bases, '-', '-', '-']
       : [$num_seqs, $num_bases, $min_len, int($num_bases / $num_seqs), $max_len];
 }
 
-sub pretty_output {
-    my ($filename, $row) = @_;
-    return "$filename\t" . join("\t", @$row) . "\n";
+# Compute statistics for each input FASTA file, or from standard input
+#
+# Arguments:
+#     options: the command line options given to the program, specified as a hash
+#
+# Result: None
+#
+# If the user specified one or more named FASTA files on the command line, then each
+# file is processed in-turn. If an error occurs trying to process a given file
+# the program exits immediately, and does not try to process any remaining files.
+# If no FASTA files are named, then the program tries
+# to read a FASTA file from the standard input device.
+sub process_files {
+    my (%options) = @_;
+
+    print $HEADER . "\n";
+
+    if (@ARGV) {
+        # Process each named FASTA file in-turn
+        for my $filename (@ARGV) {
+            $logger->info("Processing FASTA file from $filename");
+            if (open(my $filehandle, $filename)) {
+                my $res = process_file($filehandle, $options{minlen});
+                print pretty_output($filename, $res) if $res;
+            }
+            else {
+                exit_with_error("Could not open $filename for reading", $EXIT_FILE_IO_ERROR);
+            }
+        }
+    }
+    else {
+        # Try to read and process a FASTA file from the standard input device
+        $logger->info("Processing FASTA file from stdin");
+        my $res = process_file(\*STDIN, $options{minlen});
+        print pretty_output("stdin", $res) if $res;
+    }
 }
 
+# Pretty print the FASTA statistics as a tab-separated string
+#
+# Arguments:
+#     filename: the name of the input FASTA file (or "stdin" if the input was
+#         read from standard input)
+#     statistics: the computed statistics for this particular FASTA file, as a list
+#         of values
+#
+# Result: a string in tab separated format, with the filename prepended onto the
+#     front of the statistics
+sub pretty_output {
+    my ($filename, $statistics) = @_;
+    return "$filename\t" . join("\t", @$statistics) . "\n";
+}
+
+# Display a program usage message, and exit the program
+#
+# XXX this must be kept up-to-date with the command line argument parser
+# it would be nicer if they could automatically be generated from the same
+# information.
+#
+# Arguments:
+#     exit_status: the exit status code to return when the program terminates
+#
+# Result: None
 sub usage {
     my ($exit_status) = @_;
     print <<"EOF";
@@ -119,30 +270,12 @@ EOF
     exit $exit_status;
 }
 
-sub process_files {
-    my (%options) = @_;
-
-    print $HEADER . "\n";
-
-    if (@ARGV) {
-        for my $filename (@ARGV) {
-            $logger->info("Processing FASTA file from $filename");
-            if (open(my $filehandle, $filename)) {
-                my $res = process_file($filehandle, $options{minlen});
-                print pretty_output($filename, $res) if $res;
-            }
-            else {
-                exit_with_error("Could not open $filename for reading", $EXIT_FILE_IO_ERROR);
-            }
-        }
-    }
-    else {
-        $logger->info("Processing FASTA file from stdin");
-        my $res = process_file(\*STDIN, $options{minlen});
-        print pretty_output("stdin", $res) if $res;
-    }
-}
-
+# The entry point for the program
+#
+# Arguments: None
+# Result: None
+#
+# This function controls the overall execution of the program
 sub main {
     my %options = get_options();
     init_logging($options{logfile});
@@ -150,4 +283,10 @@ sub main {
     exit($EXIT_SUCCESS);
 }
 
+# Run the main function only if this script has not been loaded
+# from another script. This is useful for unit testing. If the
+# script is run from the command line, then the main function will
+# be executed, and the program will run as normal. However, if the script
+# is imported from another place, say the unit testing script, then 
+# the main function will not run. 
 main() unless caller();

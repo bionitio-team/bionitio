@@ -13,6 +13,11 @@ require 'biotool.pl';
 # Test wrapper for the process_file function from biotool.
 #
 # Arguments:
+#     contents: a string containing the contents of the FASTA file to test
+#     minlen_threshold: the value of the --minlen command line argument
+#     expected: the expected output if the function works correctly
+#     test_name: a descriptive label for the test to be printed out when
+#     the test runs and succeeds of fails
 sub test_process_file {
     my ($contents, $minlen_threshold, $expected, $test_name) = @_;
     my $file_handle = IO::String->new($contents);

@@ -20,11 +20,16 @@
 
 use strict;
 use warnings 'FATAL' => 'all';
-use Getopt::Long;
 use File::Spec;
 use Bio::SeqIO;
+use Bio::Root::Exception;
 use Log::Log4perl qw(get_logger :nowarn);
 use Getopt::ArgParse;
+use Try::Tiny;
+
+# Set this to 1 to include stack traces in BioPerl errors, set
+# it to 0 to exclude stack traces.
+$Error::Debug = 0;
 
 # Exit status codes.
 # 0: Success
@@ -132,13 +137,16 @@ sub exit_with_error {
 #         nearest integer.
 #     - the length of the longest counted sequence
 #
-#  If the input file is empty, or no sequences are considered (because
-#  none satisfied the minimum length threshold), then the first two values
-#  in the output list (number of sequences, and total number of bases) will
-#  be set to 0. The remaining values cannot be computed, so are represented
-#  by a single-dash character in a string '-'. 
+# If the input file is empty, or no sequences are considered (because
+# none satisfied the minimum length threshold), then the first two values
+# in the output list (number of sequences, and total number of bases) will
+# be set to 0. The remaining values cannot be computed, so are represented
+# by a single-dash character in a string '-'. 
+#
+# If there is an error parsing the input FILE then we exit the program
+# with an error message.
 sub process_file {
-    my ($filehandle, $minlen_threshold) = @_;
+    my ($filename, $filehandle, $minlen_threshold) = @_;
 
     # to collect stats
     my $num_bases  = 0;
@@ -146,19 +154,23 @@ sub process_file {
     my $min_len = undef;
     my $max_len = undef;
 
-    # XXX should catch exceptions raised by SeqIO, no idea how to do it
-    my $in = Bio::SeqIO->new(-fh => $filehandle, -format => 'fasta');
-    # Process each sequence in the input FASTA file
-    while (my $seq = $in->next_seq) {
-        my $this_len = $seq->length;
-        # Skip this sequence if its length is less than the threshold
-        if ($this_len >= $minlen_threshold) {
-            $num_seqs++;
-            $num_bases += $this_len;
-            $min_len = $this_len if (!defined($min_len)) || $this_len < $min_len;
-            $max_len = $this_len if (!defined($max_len)) || $this_len > $max_len;
+    try {
+        my $in = Bio::SeqIO->new(-fh => $filehandle, -format => 'fasta');
+        # Process each sequence in the input FASTA file
+        while (my $seq = $in->next_seq) {
+            my $this_len = $seq->length;
+            # Skip this sequence if its length is less than the threshold
+            if ($this_len >= $minlen_threshold) {
+                $num_seqs++;
+                $num_bases += $this_len;
+                $min_len = $this_len if (!defined($min_len)) || $this_len < $min_len;
+                $max_len = $this_len if (!defined($max_len)) || $this_len > $max_len;
+            }
         }
-    }
+    } catch {
+        exit_with_error("An error occurred when reading the FASTA file from $filename:\n$_",
+            $EXIT_FASTA_FILE_ERROR);
+    };
 
     # Check if any sequences were counted
     return $num_seqs <= 0
@@ -188,7 +200,7 @@ sub process_files {
         for my $filename ($options->fasta_files) {
             $logger->info("Processing FASTA file from $filename");
             if (open(my $filehandle, $filename)) {
-                my $res = process_file($filehandle, $options->minlen);
+                my $res = process_file($filename, $filehandle, $options->minlen);
                 print pretty_output($filename, $res) if $res;
             }
             else {
@@ -199,7 +211,7 @@ sub process_files {
     else {
         # Try to read and process a FASTA file from the standard input device
         $logger->info("Processing FASTA file from stdin");
-        my $result = process_file(\*STDIN, $options->minlen);
+        my $result = process_file("stdin", \*STDIN, $options->minlen);
         print pretty_output("stdin", $result) if $result;
     }
 }

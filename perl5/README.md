@@ -60,15 +60,19 @@ In the examples below, `%` indicates the command line prompt.
 Biotool can display usage information on the command line via the `-h` or `--help` argument:
 ```
 % ./biotool.pl -h
-Synopsis:
-  Print fasta stats
-Usage:
-  biotool.pl [options] contigs.fasta [another.fa ...]
-Options:
-  --help       Show this help
-  --version    Print version and exit
-  --minlen N   Minimum length sequence to include in stats (default=0)
-  --log FILE   Log messages are written to FILE 
+usage: biotool.pl [FASTA_FILES] [--help|-h] [--log] [--version] [--minlen|-m]
+
+Read one or more FASTA files, compute simple stats for each file
+
+optional positional arguments:
+  FASTA_FILES    ? input FASTA files
+
+optional named arguments:
+  --help, -h           ? show this help message and exit
+  --log LOG_FILE       ? record program progress in LOG_FILE
+  --version VERSION    ? Print the program version and then exit
+  --minlen, -m N       ? Minimum length sequence to include in stats
+                           Default: 0
 ```
 
 ## Reading FASTA files named on the command line
@@ -161,6 +165,9 @@ Biotool returns the following exit status values:
 # Error handling
 
 ## Invalid input FASTA files
+
+If the input file cannot be parsed as FASTA then `biotool.pl` will exit the program immediately, and will not process any remaining files.
+It returns an exit status of 3 in this circumstance.
 
 ## Incorrect command line arguments
 

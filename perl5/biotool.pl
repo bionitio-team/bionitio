@@ -24,6 +24,7 @@ use Getopt::Long;
 use File::Spec;
 use Bio::SeqIO;
 use Log::Log4perl qw(get_logger :nowarn);
+use Getopt::ArgParse;
 
 # Exit status codes.
 # 0: Success
@@ -69,18 +70,39 @@ my $logger;
 # name a version number, and exit the programm successfully.
 # If the user invokes the program with incorrect arguments then this function
 # will print a usage message and exit the program with an error.
+#sub get_options {
+#    my $minlen  = $DEFAULT_MINLEN;
+#    my $logfile = "";
+#
+#    GetOptions(
+#        "help"    => sub {usage($EXIT_SUCCESS)},
+#        "version" => sub {print "$PROGRAM_NAME $VERSION\n"; exit($EXIT_SUCCESS);},
+#        "minlen=i" => \$minlen,
+#        "log=s"    => \$logfile,
+#    ) or usage($EXIT_COMMAND_LINE_ERROR);
+#
+#    return (minlen => $minlen, logfile => $logfile);
+#}
+
 sub get_options {
-    my $minlen  = $DEFAULT_MINLEN;
-    my $logfile = "";
-
-    GetOptions(
-        "help"    => sub {usage($EXIT_SUCCESS)},
-        "version" => sub {print "$PROGRAM_NAME $VERSION\n"; exit($EXIT_SUCCESS);},
-        "minlen=i" => \$minlen,
-        "log=s"    => \$logfile,
-    ) or usage($EXIT_COMMAND_LINE_ERROR);
-
-    return (minlen => $minlen, logfile => $logfile);
+    my $parser = Getopt::ArgParse->new_parser(
+        prog        => 'biotool.pl',
+        description => 'Read one or more FASTA files, compute simple stats for each file',
+        #epilog      => 'This appears at the bottom of usage',
+    ); 
+    $parser->add_arg('--minlen', '-m', type => 'Scalar', default => $DEFAULT_MINLEN,
+        help => 'Minimum length sequence to include in stats (default $DEFAULT_MINLEN)',
+        metavar => 'N');
+    $parser->add_arg('--version', type => 'Bool', default => 0,
+        help => 'Print the program version and then exit');
+    $parser->add_arg('--log', type => 'Scalar',
+        help => 'record program progress in LOG_FILE',
+        metavar => 'LOG_FILE');
+    $parser->add_arg('fasta_files',
+        help => 'input FASTA files',
+        nargs => '*',
+        metavar => 'FASTA_FILE');
+    my $options = $parser->parse_args();
 }
 
 # Initialise program logging
@@ -277,10 +299,11 @@ EOF
 #
 # This function controls the overall execution of the program
 sub main {
-    my %options = get_options();
-    init_logging($options{logfile});
-    process_files(%options);
-    exit($EXIT_SUCCESS);
+    get_options();
+    #my %options = get_options();
+    #init_logging($options{logfile});
+    #process_files(%options);
+    #exit($EXIT_SUCCESS);
 }
 
 # Run the main function only if this script has not been loaded

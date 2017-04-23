@@ -53,7 +53,7 @@ def parse_args():
     Returns Options object with command line argument values as attributes.
     Will exit the program on a command line error.
     '''
-    parser = ArgumentParser(description='Print fasta stats')
+    parser = ArgumentParser(description='Read one or more FASTA files, compute simple stats for each file')
     parser.add_argument(
         '--minlen',
         metavar='N',

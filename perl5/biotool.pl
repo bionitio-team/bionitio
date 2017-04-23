@@ -123,6 +123,8 @@ sub exit_with_error {
 # Collect statistics from a single input FASTA file.
 #
 # Arguments:
+#     filename: a descriptive name of the input FASTA file, can be
+#         any string, this is only used to generate error messages.
 #     filehandle: open file handle representing the input FASTA file
 #     minlen_threshold: the minimum length sequence in the FASTA file
 #         that will be considered when computing the statistics. 

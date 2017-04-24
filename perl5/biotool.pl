@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
 
-# Module      : biotool.pl 
+# Module      : biotool.pl
 # Description : The main entry point for the program.
 # Copyright   : (c) Torsten Seemann and Bernie Pope, 2016 - 2017
-# License     : MIT 
+# License     : MIT
 # Maintainer  : tseemann@unimelb.edu.au
 # Portability : POSIX
-# 
+#
 # The program reads one or more input FASTA files. For each file it computes a
 # variety of statistics, and then prints a summary of the statistics as output.
 #
@@ -36,22 +36,22 @@ $Error::Debug = 0;
 # 1: File I/O error. This can occur if at least one of the input FASTA
 #        files cannot be opened for reading. This can occur because the file
 #        does not exist at the specified path, or biotool does not have permission
-#        to read from the file.  
+#        to read from the file.
 # 2: A command line error occurred. This can happen if the user specifies
 #        an incorrect command line argument. In this circumstance biotool will
-#        also print a usage message to the standard error device (stderr).  
+#        also print a usage message to the standard error device (stderr).
 # 3: FASTA file error. This can occur when the input FASTA file is
-#        incorrectly formatted, and cannot be parsed. 
-my $EXIT_SUCCESS = 0;
-my $EXIT_FILE_IO_ERROR = 1;
+#        incorrectly formatted, and cannot be parsed.
+my $EXIT_SUCCESS            = 0;
+my $EXIT_FILE_IO_ERROR      = 1;
 my $EXIT_COMMAND_LINE_ERROR = 2;
-my $EXIT_FASTA_FILE_ERROR = 3;
+my $EXIT_FASTA_FILE_ERROR   = 3;
 
 # Header row for the output
 my $HEADER = "FILENAME\tTOTAL\tNUMSEQ\tMIN\tAVG\tMAX";
 
 # Get the program name
-my (undef, undef, $PROGRAM_NAME) = File::Spec->splitpath($0);
+my ( undef, undef, $PROGRAM_NAME ) = File::Spec->splitpath($0);
 
 # Program version number
 my $VERSION = "1.0";
@@ -60,7 +60,7 @@ my $VERSION = "1.0";
 my $DEFAULT_MINLEN = 0;
 
 # Log message handler. This is global so that we can refer to it
-# everywhere in the program without having to pass it as a parameter. 
+# everywhere in the program without having to pass it as a parameter.
 my $logger;
 
 # Initialise program logging
@@ -91,12 +91,13 @@ sub init_logging {
       log4perl.appender.FileApp.layout   = PatternLayout
       log4perl.appender.FileApp.layout.ConversionPattern = %d %p %m%n
     );
-        Log::Log4perl->init(\$log_conf);
+        Log::Log4perl->init( \$log_conf );
     }
 
     # Obtain a logger instance
     $logger = get_logger("Biotool");
     $logger->info("program started");
+
     # Log the program name and command line arguments
     $logger->info("command line arguments: $0 @ARGV");
 }
@@ -114,8 +115,8 @@ sub init_logging {
 # Then exit program with supplied exit status. If logging is enabled, the error
 # message is also written to the log file.
 sub exit_with_error {
-    my ($message, $exit_status) = @_;
-    $logger->error($message); 
+    my ( $message, $exit_status ) = @_;
+    $logger->error($message);
     print STDERR "$PROGRAM_NAME ERROR: $message\n";
     exit($exit_status);
 }
@@ -127,9 +128,9 @@ sub exit_with_error {
 #         any string, this is only used to generate error messages.
 #     filehandle: open file handle representing the input FASTA file
 #     minlen_threshold: the minimum length sequence in the FASTA file
-#         that will be considered when computing the statistics. 
+#         that will be considered when computing the statistics.
 #         Sequences shorter than this length will be ignored and skipped
-#         over. 
+#         over.
 #
 # Result: A list of five values representing:
 #     - the number of sequences counted in the input file
@@ -143,41 +144,52 @@ sub exit_with_error {
 # none satisfied the minimum length threshold), then the first two values
 # in the output list (number of sequences, and total number of bases) will
 # be set to 0. The remaining values cannot be computed, so are represented
-# by a single-dash character in a string '-'. 
+# by a single-dash character in a string '-'.
 #
 # If there is an error parsing the input FILE then we exit the program
 # with an error message.
 sub process_file {
-    my ($filename, $filehandle, $minlen_threshold) = @_;
+    my ( $filename, $filehandle, $minlen_threshold ) = @_;
 
     # to collect stats
-    my $num_bases  = 0;
-    my $num_seqs   = 0;
-    my $min_len = undef;
-    my $max_len = undef;
+    my $num_bases = 0;
+    my $num_seqs  = 0;
+    my $min_len   = undef;
+    my $max_len   = undef;
 
     try {
-        my $in = Bio::SeqIO->new(-fh => $filehandle, -format => 'fasta');
+        my $in = Bio::SeqIO->new( -fh => $filehandle, -format => 'fasta' );
+
         # Process each sequence in the input FASTA file
-        while (my $seq = $in->next_seq) {
+        while ( my $seq = $in->next_seq ) {
             my $this_len = $seq->length;
+
             # Skip this sequence if its length is less than the threshold
-            if ($this_len >= $minlen_threshold) {
+            if ( $this_len >= $minlen_threshold ) {
                 $num_seqs++;
                 $num_bases += $this_len;
-                $min_len = $this_len if (!defined($min_len)) || $this_len < $min_len;
-                $max_len = $this_len if (!defined($max_len)) || $this_len > $max_len;
+                $min_len = $this_len
+                  if ( !defined($min_len) ) || $this_len < $min_len;
+                $max_len = $this_len
+                  if ( !defined($max_len) ) || $this_len > $max_len;
             }
         }
-    } catch {
-        exit_with_error("An error occurred when reading the FASTA file from $filename:\n$_",
-            $EXIT_FASTA_FILE_ERROR);
+    }
+    catch {
+        exit_with_error(
+            "An error occurred when reading the FASTA file from $filename:\n$_",
+            $EXIT_FASTA_FILE_ERROR
+        );
     };
 
     # Check if any sequences were counted
     return $num_seqs <= 0
-      ? [$num_seqs, $num_bases, '-', '-', '-']
-      : [$num_seqs, $num_bases, $min_len, int($num_bases / $num_seqs), $max_len];
+      ? [ $num_seqs, $num_bases, '-', '-', '-' ]
+      : [
+        $num_seqs, $num_bases,
+        $min_len,  int( $num_bases / $num_seqs ),
+        $max_len
+      ];
 }
 
 # Compute statistics for each input FASTA file, or from standard input
@@ -197,24 +209,27 @@ sub process_files {
 
     print $HEADER . "\n";
 
-    if (scalar @{$options->fasta_files}) {
+    if ( scalar @{ $options->fasta_files } ) {
+
         # Process each named FASTA file in-turn
-        for my $filename ($options->fasta_files) {
+        for my $filename ( $options->fasta_files ) {
             $logger->info("Processing FASTA file from $filename");
-            if (open(my $filehandle, $filename)) {
-                my $res = process_file($filename, $filehandle, $options->minlen);
-                print pretty_output($filename, $res) if $res;
+            if ( open( my $filehandle, $filename ) ) {
+                my $res =
+                  process_file( $filename, $filehandle, $options->minlen );
+                print pretty_output( $filename, $res ) if $res;
             }
             else {
-                exit_with_error("Could not open $filename for reading", $EXIT_FILE_IO_ERROR);
+                exit_with_error( "Could not open $filename for reading",
+                    $EXIT_FILE_IO_ERROR );
             }
         }
     }
     else {
         # Try to read and process a FASTA file from the standard input device
         $logger->info("Processing FASTA file from stdin");
-        my $result = process_file("stdin", \*STDIN, $options->minlen);
-        print pretty_output("stdin", $result) if $result;
+        my $result = process_file( "stdin", \*STDIN, $options->minlen );
+        print pretty_output( "stdin", $result ) if $result;
     }
 }
 
@@ -229,8 +244,8 @@ sub process_files {
 # Result: a string in tab separated format, with the filename prepended onto the
 #     front of the statistics
 sub pretty_output {
-    my ($filename, $statistics) = @_;
-    return "$filename\t" . join("\t", @$statistics) . "\n";
+    my ( $filename, $statistics ) = @_;
+    return "$filename\t" . join( "\t", @$statistics ) . "\n";
 }
 
 # Parse command line arguments
@@ -247,23 +262,33 @@ sub pretty_output {
 # will print a usage message and exit the program with an error.
 sub get_options {
     my $parser = Getopt::ArgParse->new_parser(
-        prog        => 'biotool.pl',
-        description => 'Read one or more FASTA files, compute simple stats for each file',
-    ); 
-    $parser->add_arg('--minlen', '-m', type => 'Scalar', default => $DEFAULT_MINLEN,
-        help => 'Minimum length sequence to include in stats',
-        metavar => 'N');
-    $parser->add_arg('--version',
-        help => 'Print the program version and then exit');
-    $parser->add_arg('--log', type => 'Scalar',
-        help => 'record program progress in LOG_FILE',
-        metavar => 'LOG_FILE');
-    $parser->add_arg('fasta_files',
-        help => 'input FASTA files',
-        nargs => '*',
-        type => 'Array',
-        metavar => 'FASTA_FILES');
-   return $parser->parse_args();
+        prog => 'biotool.pl',
+        description =>
+          'Read one or more FASTA files, compute simple stats for each file',
+    );
+    $parser->add_arg(
+        '--minlen', '-m',
+        type    => 'Scalar',
+        default => $DEFAULT_MINLEN,
+        help    => 'Minimum length sequence to include in stats',
+        metavar => 'N'
+    );
+    $parser->add_arg( '--version',
+        help => 'Print the program version and then exit' );
+    $parser->add_arg(
+        '--log',
+        type    => 'Scalar',
+        help    => 'record program progress in LOG_FILE',
+        metavar => 'LOG_FILE'
+    );
+    $parser->add_arg(
+        'fasta_files',
+        help    => 'input FASTA files',
+        nargs   => '*',
+        type    => 'Array',
+        metavar => 'FASTA_FILES'
+    );
+    return $parser->parse_args();
 }
 
 # The entry point for the program
@@ -274,7 +299,7 @@ sub get_options {
 # This function controls the overall execution of the program
 sub main {
     my $options = get_options();
-    init_logging($options->log);
+    init_logging( $options->log );
     process_files($options);
     exit($EXIT_SUCCESS);
 }
@@ -283,6 +308,6 @@ sub main {
 # from another script. This is useful for unit testing. If the
 # script is run from the command line, then the main function will
 # be executed, and the program will run as normal. However, if the script
-# is imported from another place, say the unit testing script, then 
-# the main function will not run. 
+# is imported from another place, say the unit testing script, then
+# the main function will not run.
 main() unless caller();

@@ -184,8 +184,6 @@ function rename_project {
     # BSD sed does not support case insensitive matching, so we have to repeat for each
     # style of capitalisation.
     
-    # XXX need to rename directory and file names
-    
     # project name with first character upper case
     first_upper_project_name="$(tr '[:lower:]' '[:upper:]' <<< ${new_project_name:0:1})${new_project_name:1}"
     
@@ -203,29 +201,37 @@ function rename_project {
     find ${new_project_name} -name "*.temporary" -type f -delete
 
     # rename directories and files
-    verbose_message "renaming directories"
+    verbose_message "renaming directories..."
     (shopt -s nullglob && recursive_rename() {
-      for old in "$1"*/; do
+        for old in "$1"*/; do
+            new1="${old//biotool/${new_project_name}}"
+            new2="${new1//Biotool/${first_upper_project_name}}"
+            new="${new2//BIOTOOL/${all_upper_project_name}}"
+            if [ "$old" != "$new" ]; then
+                verbose_message "$old -> $new"
+                if [ -e "$new" ]; then
+                    echo "${program_name}: ERROR: cannot rename directory \"$old\" to \"$new\": \"$new\" exists. Choose a different project name."
+                    exit 1
+                fi
+                mv -- "$old" "$new"
+            fi
+            recursive_rename "$new" || exit 1
+        done
+    } && recursive_rename "${new_project_name}/") || exit 1
+
+    verbose_message "renaming files..."
+    for old in $(find ${new_project_name} -type f); do
         new1="${old//biotool/${new_project_name}}"
         new2="${new1//Biotool/${first_upper_project_name}}"
         new="${new2//BIOTOOL/${all_upper_project_name}}"
         if [ "$old" != "$new" ]; then
-          verbose_message "$old -> $new"
-          mv -- "$old" "$new"
+            verbose_message "$old -> $new"
+            if [ -e "$new" ]; then
+                echo "${program_name}: ERROR: cannot rename file \"$old\" to \"$new\": \"$new\" exists. Choose a different project name."
+                exit 1
+            fi
+            mv -- "$old" "$new"
         fi
-        recursive_rename "$new"
-      done
-    } && recursive_rename "${new_project_name}/")
-
-    verbose_message "renaming files"
-    for old in $(find ${new_project_name} -type f); do
-      new1="${old//biotool/${new_project_name}}"
-      new2="${new1//Biotool/${first_upper_project_name}}"
-      new="${new2//BIOTOOL/${all_upper_project_name}}"
-      if [ "$old" != "$new" ]; then
-        verbose_message "$old -> $new"
-        mv -- "$old" "$new"
-      fi
     done
 }
 

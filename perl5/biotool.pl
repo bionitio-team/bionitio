@@ -26,6 +26,7 @@ use Bio::Root::Exception;
 use Log::Log4perl qw(get_logger :nowarn);
 use Getopt::ArgParse;
 use Try::Tiny;
+use Readonly;
 
 # Set this to 1 to include stack traces in BioPerl errors, set
 # it to 0 to exclude stack traces.
@@ -42,20 +43,19 @@ $Error::Debug = 0;
 #        also print a usage message to the standard error device (stderr).
 # 3: FASTA file error. This can occur when the input FASTA file is
 #        incorrectly formatted, and cannot be parsed.
-use constant EXIT_SUCCESS            => 0;
-use constant EXIT_FILE_IO_ERROR      => 1;
-use constant EXIT_COMMAND_LINE_ERROR => 2;
-use constant EXIT_FASTA_FILE_ERROR   => 3;
+Readonly my $EXIT_SUCCESS            => 0;
+Readonly my $EXIT_FILE_IO_ERROR      => 1;
+Readonly my $EXIT_COMMAND_LINE_ERROR => 2;
+Readonly my $EXIT_FASTA_FILE_ERROR   => 3;
 
 # Program version number
-# my $VERSION = '1.0';
-use constant VERSION => '1.0';
+Readonly my $VERSION => '1.0';
 
 # Default value for the minlen command line argument
-use constant DEFAULT_MINLEN => 0;
+Readonly my $DEFAULT_MINLEN => 0;
 
 # Header row for the output
-use constant HEADER => "FILENAME\tTOTAL\tNUMSEQ\tMIN\tAVG\tMAX";
+Readonly my $HEADER => "FILENAME\tTOTAL\tNUMSEQ\tMIN\tAVG\tMAX";
 
 # Get the program name
 my ( undef, undef, $PROGRAM_NAME ) = File::Spec->splitpath($0);
@@ -179,7 +179,7 @@ sub process_file {
     catch {
         exit_with_error(
             "An error occurred when reading the FASTA file from $filename:\n$_",
-            EXIT_FASTA_FILE_ERROR
+            $EXIT_FASTA_FILE_ERROR
         );
     };
 
@@ -208,7 +208,7 @@ sub process_file {
 sub process_files {
     my ($options) = @_;
 
-    print HEADER . "\n";
+    print "$HEADER\n";
 
     if ( scalar @{ $options->fasta_files } ) {
 
@@ -222,7 +222,7 @@ sub process_files {
             }
             else {
                 exit_with_error( "Could not open $filename for reading",
-                    EXIT_FILE_IO_ERROR );
+                    $EXIT_FILE_IO_ERROR );
             }
         }
     }
@@ -270,7 +270,7 @@ sub get_options {
     $parser->add_arg(
         '--minlen', '-m',
         type    => 'Scalar',
-        default => DEFAULT_MINLEN,
+        default => $DEFAULT_MINLEN,
         help    => 'Minimum length sequence to include in stats',
         metavar => 'N'
     );
@@ -304,12 +304,12 @@ sub get_options {
 sub main {
     my $options = get_options();
     if ( $options->version ) {
-        print "$PROGRAM_NAME version ", VERSION, "\n";
-        exit(EXIT_SUCCESS);
+        print "$PROGRAM_NAME version $VERSION\n";
+        exit($EXIT_SUCCESS);
     }
     init_logging( $options->log );
     process_files($options);
-    exit(EXIT_SUCCESS);
+    exit($EXIT_SUCCESS);
 }
 
 # Run the main function only if this script has not been loaded

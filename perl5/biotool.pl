@@ -20,6 +20,7 @@
 
 use strict;
 use warnings 'FATAL' => 'all';
+use autodie;
 use File::Spec;
 use Bio::SeqIO;
 use Bio::Root::Exception;
@@ -27,10 +28,7 @@ use Log::Log4perl qw(get_logger :nowarn);
 use Getopt::ArgParse;
 use Try::Tiny;
 use Readonly;
-
-# Set this to 1 to include stack traces in BioPerl errors, set
-# it to 0 to exclude stack traces.
-$Error::Debug = 0;
+use version; our $VERSION = qv('1.0');
 
 # Exit status codes.
 # 0: Success
@@ -49,7 +47,7 @@ Readonly my $EXIT_COMMAND_LINE_ERROR => 2;
 Readonly my $EXIT_FASTA_FILE_ERROR   => 3;
 
 # Program version number
-Readonly my $VERSION => '1.0';
+#Readonly my $VERSION => '1.0';
 
 # Default value for the minlen command line argument
 Readonly my $DEFAULT_MINLEN => 0;
@@ -96,11 +94,12 @@ sub init_logging {
     }
 
     # Obtain a logger instance
-    $logger = get_logger("Biotool");
-    $logger->info("program started");
+    $logger = get_logger('Biotool');
+    $logger->info('program started');
 
     # Log the program name and command line arguments
     $logger->info("command line arguments: $0 @ARGV");
+    return;
 }
 
 # Print an error message and exit the program.
@@ -118,8 +117,8 @@ sub init_logging {
 sub exit_with_error {
     my ( $message, $exit_status ) = @_;
     $logger->error($message);
-    print STDERR "$PROGRAM_NAME ERROR: $message\n";
-    exit($exit_status);
+    print {*STDERR} "$PROGRAM_NAME ERROR: $message\n";
+    exit $exit_status;
 }
 
 # Collect statistics from a single input FASTA file.
@@ -169,10 +168,12 @@ sub process_file {
             if ( $this_len >= $minlen_threshold ) {
                 $num_seqs++;
                 $num_bases += $this_len;
-                $min_len = $this_len
-                  if ( !defined($min_len) ) || $this_len < $min_len;
-                $max_len = $this_len
-                  if ( !defined($max_len) ) || $this_len > $max_len;
+                if ( !defined($min_len) || $this_len < $min_len ) {
+                    $min_len = $this_len;
+                }
+                if ( !defined($max_len) || $this_len > $max_len ) {
+                    $max_len = $this_len;
+                }
             }
         }
     }
@@ -185,7 +186,7 @@ sub process_file {
 
     # Check if any sequences were counted
     return $num_seqs <= 0
-      ? [ $num_seqs, $num_bases, '-', '-', '-' ]
+      ? [ $num_seqs, $num_bases, q{-}, q{-}, q{-} ]
       : [
         $num_seqs, $num_bases,
         $min_len,  int( $num_bases / $num_seqs ),
@@ -215,10 +216,12 @@ sub process_files {
         # Process each named FASTA file in-turn
         for my $filename ( $options->fasta_files ) {
             $logger->info("Processing FASTA file from $filename");
-            if ( open( my $filehandle, $filename ) ) {
+            if ( open my $filehandle, '<', $filename ) {
                 my $res =
                   process_file( $filename, $filehandle, $options->minlen );
-                print pretty_output( $filename, $res ) if $res;
+                if ($res) { print pretty_output( $filename, $res ); }
+		# XXX why does this close fail?
+		# close $filehandle;
             }
             else {
                 exit_with_error( "Could not open $filename for reading",
@@ -228,10 +231,11 @@ sub process_files {
     }
     else {
         # Try to read and process a FASTA file from the standard input device
-        $logger->info("Processing FASTA file from stdin");
-        my $result = process_file( "stdin", \*STDIN, $options->minlen );
-        print pretty_output( "stdin", $result ) if $result;
+        $logger->info('Processing FASTA file from stdin');
+        my $result = process_file( 'stdin', \*STDIN, $options->minlen );
+        if ($result) { print pretty_output( 'stdin', $result ); }
     }
+    return;
 }
 
 # Pretty print the FASTA statistics as a tab-separated string
@@ -246,7 +250,7 @@ sub process_files {
 #     front of the statistics
 sub pretty_output {
     my ( $filename, $statistics ) = @_;
-    return "$filename\t" . join( "\t", @$statistics ) . "\n";
+    return "$filename\t" . join( "\t", @{$statistics} ) . "\n";
 }
 
 # Parse command line arguments
@@ -288,7 +292,7 @@ sub get_options {
     $parser->add_arg(
         'fasta_files',
         help    => 'input FASTA files',
-        nargs   => '*',
+        nargs   => q{*},
         type    => 'Array',
         metavar => 'FASTA_FILES'
     );
@@ -305,11 +309,11 @@ sub main {
     my $options = get_options();
     if ( $options->version ) {
         print "$PROGRAM_NAME version $VERSION\n";
-        exit($EXIT_SUCCESS);
+        exit $EXIT_SUCCESS;
     }
     init_logging( $options->log );
     process_files($options);
-    exit($EXIT_SUCCESS);
+    exit $EXIT_SUCCESS;
 }
 
 # Run the main function only if this script has not been loaded
@@ -318,4 +322,4 @@ sub main {
 # be executed, and the program will run as normal. However, if the script
 # is imported from another place, say the unit testing script, then
 # the main function will not run.
-main() unless caller();
+main() unless caller;

@@ -42,22 +42,23 @@ $Error::Debug = 0;
 #        also print a usage message to the standard error device (stderr).
 # 3: FASTA file error. This can occur when the input FASTA file is
 #        incorrectly formatted, and cannot be parsed.
-my $EXIT_SUCCESS            = 0;
-my $EXIT_FILE_IO_ERROR      = 1;
-my $EXIT_COMMAND_LINE_ERROR = 2;
-my $EXIT_FASTA_FILE_ERROR   = 3;
+use constant EXIT_SUCCESS            => 0;
+use constant EXIT_FILE_IO_ERROR      => 1;
+use constant EXIT_COMMAND_LINE_ERROR => 2;
+use constant EXIT_FASTA_FILE_ERROR   => 3;
+
+# Program version number
+# my $VERSION = '1.0';
+use constant VERSION => '1.0';
+
+# Default value for the minlen command line argument
+use constant DEFAULT_MINLEN => 0;
 
 # Header row for the output
-my $HEADER = "FILENAME\tTOTAL\tNUMSEQ\tMIN\tAVG\tMAX";
+use constant HEADER => "FILENAME\tTOTAL\tNUMSEQ\tMIN\tAVG\tMAX";
 
 # Get the program name
 my ( undef, undef, $PROGRAM_NAME ) = File::Spec->splitpath($0);
-
-# Program version number
-my $VERSION = "1.0";
-
-# Default value for the minlen command line argument
-my $DEFAULT_MINLEN = 0;
 
 # Log message handler. This is global so that we can refer to it
 # everywhere in the program without having to pass it as a parameter.
@@ -178,7 +179,7 @@ sub process_file {
     catch {
         exit_with_error(
             "An error occurred when reading the FASTA file from $filename:\n$_",
-            $EXIT_FASTA_FILE_ERROR
+            EXIT_FASTA_FILE_ERROR
         );
     };
 
@@ -207,7 +208,7 @@ sub process_file {
 sub process_files {
     my ($options) = @_;
 
-    print $HEADER . "\n";
+    print HEADER . "\n";
 
     if ( scalar @{ $options->fasta_files } ) {
 
@@ -221,7 +222,7 @@ sub process_files {
             }
             else {
                 exit_with_error( "Could not open $filename for reading",
-                    $EXIT_FILE_IO_ERROR );
+                    EXIT_FILE_IO_ERROR );
             }
         }
     }
@@ -269,12 +270,15 @@ sub get_options {
     $parser->add_arg(
         '--minlen', '-m',
         type    => 'Scalar',
-        default => $DEFAULT_MINLEN,
+        default => DEFAULT_MINLEN,
         help    => 'Minimum length sequence to include in stats',
         metavar => 'N'
     );
-    $parser->add_arg( '--version',
-        help => 'Print the program version and then exit' );
+    $parser->add_arg(
+        '--version',
+        type => 'Bool',
+        help => 'Print the program version and then exit'
+    );
     $parser->add_arg(
         '--log',
         type    => 'Scalar',
@@ -299,9 +303,13 @@ sub get_options {
 # This function controls the overall execution of the program
 sub main {
     my $options = get_options();
+    if ( $options->version ) {
+        print "$PROGRAM_NAME version ", VERSION, "\n";
+        exit(EXIT_SUCCESS);
+    }
     init_logging( $options->log );
     process_files($options);
-    exit($EXIT_SUCCESS);
+    exit(EXIT_SUCCESS);
 }
 
 # Run the main function only if this script has not been loaded

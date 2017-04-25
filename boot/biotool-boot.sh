@@ -67,6 +67,13 @@ Dependencies:
 UsageMessage
 }
 
+
+# echo an error message $1 and exit with status $2
+function exit_with_error {
+    printf "${program_name}: ERROR: $1\n"
+	exit $2
+}
+
 # Parse the command line arguments and set the global variables language and new_project_name
 function parse_args {
     local OPTIND opt
@@ -93,8 +100,7 @@ function parse_args {
     [ "$1" = "--" ] && shift
 
     if [[ -z ${language} ]]; then
-        echo "${program_name}: ERROR: missing command line argument: -l language, use -h for help"
-        exit 2
+		exit_with_error "missing command line argument: -l language, use -h for help" 2
     fi
 
     case ${language} in
@@ -102,8 +108,7 @@ function parse_args {
             # this is an allowed language
             ;;
         *)
-            echo "${program_name}: ERROR: ${language} is not one of the valid languages, use -h to see the list"
-            exit 2
+            exit_with_error "${language} is not one of the valid languages, use -h to see the list" 2
     esac
 
     case ${license} in
@@ -111,33 +116,27 @@ function parse_args {
             # this is an allowed license 
             ;;
         *)
-            echo "${program_name}: ERROR: ${license} is not one of the valid licenses, use -h to see the list"
-            exit 2
+            exit_with_error "${license} is not one of the valid licenses, use -h to see the list" 2
     esac
 
     if [[ -z ${new_project_name} ]]; then
-        echo "${program_name}: ERROR: missing command line argument: -n new_project_name, use -h for help"
-        exit 2
+        exit_with_error "missing command line argument: -n new_project_name, use -h for help" 2
     fi
 }
 
 function check_dependencies {
     # Check for git
     git --version > /dev/null || {
-       echo "${program_name}: ERROR: git is not installed in the PATH" 
-       echo "Please install git, and ensure it can be found in your PATH variable."
-       exit 1
+       exit_with_error "git is not installed in the PATH\nPlease install git, and ensure it can be found in your PATH variable." 1
     }
 }
 
 function create_project_directory {
     if [[ -d ${new_project_name} ]]; then
-        echo "${program_name}: ERROR: directory ${new_project_name} already exists, try another name or location, or rename the existing directory"
-        exit 1
+        exit_with_error "directory ${new_project_name} already exists, try another name or location, or rename the existing directory" 1
     else
         mkdir ${new_project_name} || {
-            echo "${program_name}: ERROR: failed to create directory ${new_project_name}"
-            exit 1
+            exit_with_error "failed to create directory ${new_project_name}" 1
         }
     fi
 }
@@ -145,22 +144,19 @@ function create_project_directory {
 function clone_biotool_repository {
     # XXX check if git is executable, catch output from git in case we need to report an error
     git clone https://github.com/biotool-paper/biotool ${new_project_name}/${git_tmp_dir} > /dev/null 2>&1 || {
-        echo ${program_name}: ERROR: git command failed: 'git clone https://github.com/biotool-paper/biotool ${new_project_name}/${git_tmp_dir}'
-        exit 1
+        exit_with_error "git command failed: \'git clone https://github.com/biotool-paper/biotool ${new_project_name}/${git_tmp_dir}\'" 1
     }
 }
 
 function copy_biotool_language {
     cp -R ${new_project_name}/${git_tmp_dir}/${language}/ ${new_project_name} || {
-        echo ${program_name}: ERROR: copy command failed: 'cp -R {new_project_name}/${git_tmp_dir}/$language/ ${new_project_name}'
-        exit 1
+        exit_with_error "copy command failed: \'cp -R {new_project_name}/${git_tmp_dir}/$language/ ${new_project_name}\'" 1
     }
 }
 
 function copy_test_data {
     cp -R ${new_project_name}/${git_tmp_dir}/test_data/ ${new_project_name}/test_data/ || {
-        echo ${program_name}: ERROR: copy command failed: 'cp -R ${new_project_name}/${git_tmp_dir}/test_data/ ${new_project_name}/test_data/'
-        exit 1
+        exit_with_error "copy command failed: \'cp -R ${new_project_name}/${git_tmp_dir}/test_data/ ${new_project_name}/test_data/\'" 1
     }
 }
 
@@ -210,8 +206,7 @@ function rename_project {
             if [ "$old" != "$new" ]; then
                 verbose_message "$old -> $new"
                 if [ -e "$new" ]; then
-                    echo "${program_name}: ERROR: cannot rename directory \"$old\" to \"$new\": \"$new\" exists. Choose a different project name."
-                    exit 1
+                    exit_with_error "cannot rename directory \"$old\" to \"$new\": \"$new\" exists. Choose a different project name." 1
                 fi
                 mv -- "$old" "$new"
             fi
@@ -227,8 +222,7 @@ function rename_project {
         if [ "$old" != "$new" ]; then
             verbose_message "$old -> $new"
             if [ -e "$new" ]; then
-                echo "${program_name}: ERROR: cannot rename file \"$old\" to \"$new\": \"$new\" exists. Choose a different project name."
-                exit 1
+                exit_with_error "cannot rename file \"$old\" to \"$new\": \"$new\" exists. Choose a different project name." 1
             fi
             mv -- "$old" "$new"
         fi
@@ -284,3 +278,4 @@ rename_project
 # 11. Create repository for new project.
 verbose_message "initialising new git repository for ${new_project_name}"
 create_project_repository
+verbose_message "done"

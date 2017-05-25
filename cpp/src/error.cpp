@@ -1,19 +1,19 @@
 /*
-File:       : error.cpp 
-Description : Utilities for error reporting 
-Copyright   : (c) Bernie Pope, 2016 
-License     : MIT 
+File:       : error.cpp
+Description : Utilities for error reporting
+Copyright   : (c) Bernie Pope, 2016
+License     : MIT
 Maintainer  : bjpope@unimelb.edu.au
-Stability   : stable 
+Stability   : stable
 Portability : POSIX
 */
 
-#include <cstdlib>
-#include <iostream>
-#include <boost/log/trivial.hpp>
 #include "error.h"
 #include "constants.h"
 #include "exit_status.h"
+#include <boost/log/trivial.hpp>
+#include <cstdlib>
+#include <iostream>
 
 using namespace std;
 
@@ -31,11 +31,12 @@ using namespace std;
     result:
         void
 */
-void exit_with_error(string message, exit_status status)
+void
+exit_with_error(string message, exit_status status)
 {
-    BOOST_LOG_TRIVIAL(error) << message;
-    print_error(message);
-    exit(status);
+  BOOST_LOG_TRIVIAL(error) << message;
+  print_error(message);
+  exit(status);
 }
 
 /*
@@ -49,7 +50,8 @@ void exit_with_error(string message, exit_status status)
     result:
         void
 */
-void print_error(string message)
+void
+print_error(string message)
 {
-    cerr << PROGRAM_NAME << " ERROR: " << message << endl;
+  cerr << PROGRAM_NAME << " ERROR: " << message << endl;
 }

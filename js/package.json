@@ -11,11 +11,16 @@
     "commander": "^2.9.0",
     "winston": "^2.3"
   },
-  "devDependencies": {},
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "devDependencies": {
+    "standard": "^10.0.2"
   },
-  "bin" : {"biotool" : "./biotool.js" },
+  "scripts": {
+    "lint": "standard",
+    "test": "standard && echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "biotool": "./biotool.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/biotool-paper/biotool.git"

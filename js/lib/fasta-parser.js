@@ -39,11 +39,11 @@ var split = require('split')
 var pumpify = require('pumpify')
 var BufferList = require('bl')
 
-module.exports = function() {
+module.exports = function () {
   return pumpify(split(), parser())
 }
 
-function parser() {
+function parser () {
   var cacheBuf
   var openID = new Buffer('{"id":"')
   var closeIDOpenSeq = new Buffer('","seq":"')
@@ -52,7 +52,7 @@ function parser() {
 
   return stream
 
-  function transform(buf, enc, next) {
+  function transform (buf, enc, next) {
     if (buf[0] === 62) { // If line starts with '>', this is an ID
       if (cacheBuf) { // If a previous object is in cache, push it
         cacheBuf.append(closeSeq)
@@ -64,17 +64,14 @@ function parser() {
       cacheBuf.append(id)
       cacheBuf.append(closeIDOpenSeq)
     } else {
-      if (buf.length==0) {
+      if (buf.length === 0) {
         // Ignore empty
-      } else if (!cacheBuf)
-        this.emit('error', {msg:'Failed fasta parsing', buf: buf})
-      else
-        cacheBuf.append(buf)
+      } else if (!cacheBuf) { this.emit('error', {msg: 'Failed fasta parsing', buf: buf}) } else { cacheBuf.append(buf) }
     }
     next()
   }
 
-  function flush() {
+  function flush () {
     if (cacheBuf) {
       cacheBuf.append(closeSeq)
       this.push(cacheBuf.slice())

@@ -45,9 +45,9 @@ module.exports = function () {
 
 function parser () {
   var cacheBuf
-  var openID = new Buffer('{"id":"')
-  var closeIDOpenSeq = new Buffer('","seq":"')
-  var closeSeq = new Buffer('"}\n')
+  var openID = Buffer.from('{"id":"')
+  var closeIDOpenSeq = Buffer.from('","seq":"')
+  var closeSeq = Buffer.from('"}\n')
   var stream = through(transform, flush)
 
   return stream

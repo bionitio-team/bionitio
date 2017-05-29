@@ -12,11 +12,18 @@
     "winston": "^2.3"
   },
   "devDependencies": {
-    "standard": "^10.0.2"
+    "mocha": "^3.4.2",
+    "standard": "^10.0.2",
+    "tmp": "0.0.31"
+  },
+  "standard": {
+    "env": [
+      "mocha"
+    ]
   },
   "scripts": {
     "lint": "standard",
-    "test": "standard && echo \"Error: no test specified\" && exit 1"
+    "test": "standard && mocha"
   },
   "bin": {
     "biotool": "./biotool.js"

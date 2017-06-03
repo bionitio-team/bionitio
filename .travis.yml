@@ -9,34 +9,34 @@ addons:
     packages:
 
 before_install:
- - ./c/.travis/install-dependencies.sh
- - ./cpp/.travis/install-dependencies.sh 
- - ./clojure/.travis/install-dependencies.sh
- - ./haskell/.travis/install-dependencies.sh  
- - ./java/.travis/install-dependencies.sh
- - ./js/.travis/install-dependencies.sh
- - ./python/.travis/install-dependencies.sh  
- - ./r/.travis/install-dependencies.sh 
- - ./ruby/.travis/install-dependencies.sh 
- - ./rust/.travis/install-dependencies.sh 
+# - ./c/.travis/install-dependencies.sh
+# - ./cpp/.travis/install-dependencies.sh 
+# - ./clojure/.travis/install-dependencies.sh
+# - ./haskell/.travis/install-dependencies.sh  
+# - ./java/.travis/install-dependencies.sh
+# - ./js/.travis/install-dependencies.sh
+# - ./python/.travis/install-dependencies.sh  
+# - ./r/.travis/install-dependencies.sh 
+# - ./ruby/.travis/install-dependencies.sh 
+# - ./rust/.travis/install-dependencies.sh 
  - ./perl5/.travis/install-dependencies.sh
 
 # commented out tests break travis, fail on empty FASTA file
 script:
 # - ./.travis/test.sh c/biotool-c
- - ./.travis/test.sh cpp/src/biotool-build/biotool-cpp
- - ./.travis/test.sh clojure/bin/biotool-clj
- - ./.travis/test.sh ~/.local/bin/biotool-hs
+# - ./.travis/test.sh cpp/src/biotool-build/biotool-cpp
+# - ./.travis/test.sh clojure/bin/biotool-clj
+# - ./.travis/test.sh ~/.local/bin/biotool-hs
 # - ./.travis/test.sh java/biotool-java
- - ./.travis/test.sh js/biotool.js
- - ./.travis/test.sh biotool-py
- - ./.travis/test.sh r/biotool.R
- - ./.travis/test.sh ruby/bin/biotool
- - ./.travis/test.sh ~/.cargo/bin/biotool-rs
+# - ./.travis/test.sh js/biotool.js
+# - ./.travis/test.sh biotool-py
+# - ./.travis/test.sh r/biotool.R
+# - ./.travis/test.sh ruby/bin/biotool
+# - ./.travis/test.sh ~/.cargo/bin/biotool-rs
  - ./.travis/test.sh perl5/biotool.pl
 # - ./c/.travis/unit-test.sh
- - ./haskell/.travis/unit-test.sh
+# - ./haskell/.travis/unit-test.sh
 #  - ./java/.travis/unit-test.sh
- - ./python/.travis/unit-test.sh
- - ./rust/.travis/unit-test.sh
- - ./ruby/.travis/unit-test.sh
+# - ./python/.travis/unit-test.sh
+# - ./rust/.travis/unit-test.sh
+# - ./ruby/.travis/unit-test.sh

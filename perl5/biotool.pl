@@ -20,7 +20,6 @@
 
 use strict;
 use warnings 'FATAL' => 'all';
-use autodie;
 use File::Spec;
 use Bio::SeqIO;
 use Bio::Root::Exception;

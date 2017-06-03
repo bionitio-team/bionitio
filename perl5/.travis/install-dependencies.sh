@@ -5,8 +5,6 @@
 echo 'Perl5 install'
 (
    sudo apt-get update
-   sudo apt-get install -y bioperl
-   sudo apt-get install -y liblog-log4perl-perl 
-   sudo apt-get install -y cpanminus 
+   sudo apt-get install -y bioperl liblog-log4perl-perl cpanminus libreadonly-perl
    sudo cpanm Getopt::ArgParse
 )

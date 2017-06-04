@@ -9,4 +9,6 @@ echo 'JS install'
    sudo apt-get install -y nodejs
    npm -v
    nodejs -v
+   cd js
+   npm install
 )

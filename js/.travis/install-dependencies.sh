@@ -5,11 +5,10 @@
 
 echo 'JS install'
 (
-   curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
    sudo apt-get install -y build-essential libssl-dev nodejs
-   npm -v
-   node -v
    curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
+   export NVM_DIR="$HOME/.nvm"
+   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
    nvm ls-remote
    nvm install 8.0.0
    nvm use 8.0.0

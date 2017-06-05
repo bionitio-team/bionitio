@@ -8,6 +8,10 @@ addons:
   apt:
     packages:
 
+# node version
+node_js:
+ - "7"
+
 before_install:
 # - ./c/.travis/install-dependencies.sh
 # - ./cpp/.travis/install-dependencies.sh 

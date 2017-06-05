@@ -28,7 +28,7 @@ script:
  - ./.travis/test.sh clojure/bin/biotool-clj
  - ./.travis/test.sh ~/.local/bin/biotool-hs
  - ./.travis/test.sh java/biotool-java
-# - ./.travis/test.sh js/biotool.js
+ - ./.travis/test.sh js/biotool.js
  - ./.travis/test.sh biotool-py
  - ./.travis/test.sh r/biotool.R
  - ./.travis/test.sh ruby/bin/biotool
@@ -36,7 +36,7 @@ script:
  - ./.travis/test.sh perl5/biotool.pl
  - ./c/.travis/unit-test.sh
  - ./haskell/.travis/unit-test.sh
-  - ./java/.travis/unit-test.sh
+ - ./java/.travis/unit-test.sh
  - ./python/.travis/unit-test.sh
  - ./rust/.travis/unit-test.sh
  - ./ruby/.travis/unit-test.sh

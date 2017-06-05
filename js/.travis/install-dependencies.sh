@@ -5,7 +5,11 @@
 
 echo 'JS install'
 (
-   sudo apt-get update && sudo apt-get install npm -y
-   cd js
-   npm install
+  OLD_NODE=$(which node)
+  . $HOME/.nvm/nvm.sh
+  cd js
+  nvm install stable
+  nvm use stable
+  npm install
+  ln -sf $(which node) $OLD_NODE # hack to get past travis
 )

@@ -4,7 +4,6 @@
 # Install node 
 
 echo 'JS install'
-(
    sudo apt-get install -y build-essential libssl-dev nodejs
    curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
    export NVM_DIR="$HOME/.nvm"
@@ -19,4 +18,3 @@ echo 'JS install'
    which nodejs
    cd js
    npm install
-)

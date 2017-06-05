@@ -15,6 +15,8 @@ echo 'JS install'
    sudo npm install -g npm
    npm -v
    node -v
+   which node
+   which nodejs
    cd js
    npm install
 )

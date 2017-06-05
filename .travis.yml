@@ -1,5 +1,5 @@
 sudo: true
-dist: trusty
+dist: xenial
 
 # Choose a lightweight base image
 language: c

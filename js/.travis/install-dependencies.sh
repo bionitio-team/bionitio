@@ -6,13 +6,13 @@
 echo 'JS install'
 (
    curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
-   sudo apt-get install -y nodejs
+   sudo apt-get install -y build-essential libssl-dev nodejs
    npm -v
    node -v
-   sudo npm install -g npm
-   npm -v
-   node -v
-   sudo npm install -g npm
+   nvm ls-remote
+   nvm install 8.0.0
+   nvm use 8.0.0
+   nvm alias default 8.0.0
    npm -v
    node -v
    which node

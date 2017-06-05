@@ -5,10 +5,10 @@
 
 echo 'JS install'
 . $HOME/.nvm/nvm.sh
+cd js
 nvm install stable
 nvm use stable
 npm install
 which npm
 which node
-cd js
 npm install

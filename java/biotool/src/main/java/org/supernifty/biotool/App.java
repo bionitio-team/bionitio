@@ -168,10 +168,9 @@ public final class App {
                                 stats.getTotal(),
                                 stats.getNumSeq(),
                                 stats.getMin(),
-                                stats.getAverage(), 
+                                stats.getAverage(),
                                 stats.getMax());
-                        }
-                        else {
+                        } else {
                             out.printf("%s\t0\t0\t-\t-\t-\n", filename);
                         }
                     } catch (java.io.IOException e) {

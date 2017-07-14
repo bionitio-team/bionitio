@@ -9,7 +9,7 @@
 #'     exit status of 3. This will only occur if the R session is
 #'     non-interactive.
 #'
-#' @return A character vector of containing sequenecs as characters. Each
+#' @return A character vector containing sequences as characters. Each
 #'     element in the vector is a sequence in the FASTA file.
 #' @export
 #'

@@ -1,11 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.supernifty.biotool</groupId>
-  <artifactId>biotool</artifactId>
+  <groupId>org.supernifty.bionitio</groupId>
+  <artifactId>bionitio</artifactId>
   <packaging>jar</packaging>
   <version>1.0</version>
-  <name>biotool</name>
+  <name>bionitio</name>
   <url>http://maven.apache.org</url>
 
   <build>
@@ -25,7 +25,7 @@
           <archive>
             <manifest>
               <addClasspath>true</addClasspath>
-              <mainClass>org.supernifty.biotool.App</mainClass>
+              <mainClass>org.supernifty.bionitio.App</mainClass>
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
               <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
             </manifest>

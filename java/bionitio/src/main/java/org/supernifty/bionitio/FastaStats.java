@@ -1,10 +1,10 @@
 /**
-* Implementation of biotool functionality
+* Implementation of bionitio functionality
 *
 * @author Peter Georgeson
 * @version 1.0
 */
-package org.supernifty.biotool;
+package org.supernifty.bionitio;
 
 import java.io.InputStream;
 import java.io.FileInputStream;

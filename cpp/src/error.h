@@ -1,5 +1,5 @@
-#ifndef BIOTOOL_ERROR_H
-#define BIOTOOL_ERROR_H
+#ifndef BIONITIO_ERROR_H
+#define BIONITIO_ERROR_H
 
 #include <string>
 #include "exit_status.h"

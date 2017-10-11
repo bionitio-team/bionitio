@@ -7,7 +7,7 @@
 
 #include "fasta.h"
 
-const char *TMPFILE="tmp-biotool-test";
+const char *TMPFILE="tmp-bionitio-test";
 
 static void createFile(const char *data) {
     FILE *tmp = fopen(TMPFILE, "w");

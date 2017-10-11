@@ -1,10 +1,10 @@
 /**
-* Implementation of biotool functionality
+* Implementation of bionitio functionality
 *
 * @author Peter Georgeson
 * @version 1.0
 */
-package org.supernifty.biotool;
+package org.supernifty.bionitio;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -19,8 +19,8 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 /**
- * Main entry point for the biotool application.
- * This class handles the command line interface for biotool,
+ * Main entry point for the bionitio application.
+ * This class handles the command line interface for bionitio,
  * by parsing any command line arguments.
  *
  * The class also handles printing help and version information.
@@ -51,7 +51,7 @@ public final class App {
             "Synopsis:\n"
             + "  Print fasta stats\n"
             + "Usage:\n"
-            + "  biotool [options] contigs.fasta [another.fa ...]\n"
+            + "  bionitio [options] contigs.fasta [another.fa ...]\n"
             + "Options:\n"
             + "  --help       Show this help\n"
             + "  --version    Print version and exit\n"
@@ -66,9 +66,9 @@ public final class App {
      * @param target where to write version
      */
     private static void printVersion(final PrintStream target) {
-        Package pkg = Package.getPackage("org.supernifty.biotool");
+        Package pkg = Package.getPackage("org.supernifty.bionitio");
         String version = pkg.getImplementationVersion();
-        target.println("biotool version " + version);
+        target.println("bionitio version " + version);
     }
 
     /**

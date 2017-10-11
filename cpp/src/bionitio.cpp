@@ -1,5 +1,5 @@
 /*
-File:       : biotool.cpp
+File:       : bionitio.cpp
 Description : The main entry point for the program.
 Copyright   : (c) Bernie Pope, 2016
 License     : MIT

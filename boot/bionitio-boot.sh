@@ -3,20 +3,20 @@
 # 1. Parse command line arguments.
 # 2. Check dependencies.
 # 3. Try to create new directory for the project.
-# 4. Clone biotool git repository into the newly created directory.
+# 4. Clone bionitio git repository into the newly created directory.
 # 5. Recursively copy source tree from the git repository into the project directory.
 # 6. Recursively copy test_data directory from the git repository into the project directory.
 # 7. Set the license for the project.
 # 8. Copy the .travis/test.sh script into the project directory.
 # 9. Remove the cloned git repository.
-# 10. Rename biotool to the new project name.
+# 10. Rename bionitio to the new project name.
 # 11. Create repository for new project.
 
 #set -x
 
-program_name="biotool-boot.sh"
+program_name="bionitio-boot.sh"
 # The name of the programming language that the user wants to use from the
-# available biotool implementations
+# available bionitio implementations
 language=""
 # The license used for the new project. It defaults to MIT.
 license="MIT"
@@ -24,14 +24,14 @@ license="MIT"
 new_project_name=""
 # Verbose output
 verbose=""
-# Name of temporary sub-directory to store biotool git repository
-git_tmp_dir="biotool-boot-git-tmp"
+# Name of temporary sub-directory to store bionitio git repository
+git_tmp_dir="bionitio-boot-git-tmp"
 
 # Help message for using the program.
 function show_help {
 cat << UsageMessage
 
-${program_name}: initialise a new bioinformatics project, starting from biotool
+${program_name}: initialise a new bioinformatics project, starting from bionitio
 
 Usage:
     ${program_name} [-h] [-v] [-c license] -l language -n new_project_name
@@ -40,7 +40,7 @@ Example:
     ${program_name} -c BSD-3-Clause -l python -n skynet
 
 The above example will try to initialise a new project in directory 'skynet'
-based on the 'python' biotool implementation, using the BSD-3-Clause license.
+based on the 'python' bionitio implementation, using the BSD-3-Clause license.
 
 If a directory already exists in the current working directory with the same
 name as the new_project_name then this installer will not continue.
@@ -141,14 +141,14 @@ function create_project_directory {
     fi
 }
 
-function clone_biotool_repository {
+function clone_bionitio_repository {
     # XXX check if git is executable, catch output from git in case we need to report an error
-    git clone https://github.com/biotool-paper/biotool ${new_project_name}/${git_tmp_dir} > /dev/null 2>&1 || {
-        exit_with_error "git command failed: \'git clone https://github.com/biotool-paper/biotool ${new_project_name}/${git_tmp_dir}\'" 1
+    git clone https://github.com/bionitio-paper/bionitio ${new_project_name}/${git_tmp_dir} > /dev/null 2>&1 || {
+        exit_with_error "git command failed: \'git clone https://github.com/bionitio-paper/bionitio ${new_project_name}/${git_tmp_dir}\'" 1
     }
 }
 
-function copy_biotool_language {
+function copy_bionitio_language {
     cp -R ${new_project_name}/${git_tmp_dir}/${language}/ ${new_project_name} || {
         exit_with_error "copy command failed: \'cp -R {new_project_name}/${git_tmp_dir}/$language/ ${new_project_name}\'" 1
     }
@@ -168,7 +168,7 @@ function copy_travis_test {
     cp ${new_project_name}/${git_tmp_dir}/.travis/test.sh ${new_project_name}/.travis/test.sh
 }
 
-function remove_biotool_repository {
+function remove_bionitio_repository {
     /bin/rm -fr "${new_project_name}/${git_tmp_dir}"
 }
 
@@ -186,23 +186,23 @@ function rename_project {
     # project name with all characters upper case
     all_upper_project_name="$(tr '[:lower:]' '[:upper:]' <<< ${new_project_name})"
     
-    # substitute all occurrences of biotool in content
-    find ${new_project_name} -type f -print0 | xargs -0 sed -i.temporary  "s/biotool/${new_project_name}/g"
+    # substitute all occurrences of bionitio in content
+    find ${new_project_name} -type f -print0 | xargs -0 sed -i.temporary  "s/bionitio/${new_project_name}/g"
     find ${new_project_name} -name "*.temporary" -type f -delete
     
-    find ${new_project_name} -type f -print0 | xargs -0 sed -i.temporary  "s/Biotool/${first_upper_project_name}/g"
+    find ${new_project_name} -type f -print0 | xargs -0 sed -i.temporary  "s/Bionitio/${first_upper_project_name}/g"
     find ${new_project_name} -name "*.temporary" -type f -delete
     
-    find ${new_project_name} -type f -print0 | xargs -0 sed -i.temporary  "s/BIOTOOL/${all_upper_project_name}/g"
+    find ${new_project_name} -type f -print0 | xargs -0 sed -i.temporary  "s/BIONITIO/${all_upper_project_name}/g"
     find ${new_project_name} -name "*.temporary" -type f -delete
 
     # rename directories and files
     verbose_message "renaming directories..."
     (shopt -s nullglob && recursive_rename() {
         for old in "$1"*/; do
-            new1="${old//biotool/${new_project_name}}"
-            new2="${new1//Biotool/${first_upper_project_name}}"
-            new="${new2//BIOTOOL/${all_upper_project_name}}"
+            new1="${old//bionitio/${new_project_name}}"
+            new2="${new1//Bionitio/${first_upper_project_name}}"
+            new="${new2//BIONITIO/${all_upper_project_name}}"
             if [ "$old" != "$new" ]; then
                 verbose_message "$old -> $new"
                 if [ -e "$new" ]; then
@@ -216,9 +216,9 @@ function rename_project {
 
     verbose_message "renaming files..."
     for old in $(find ${new_project_name} -type f); do
-        new1="${old//biotool/${new_project_name}}"
-        new2="${new1//Biotool/${first_upper_project_name}}"
-        new="${new2//BIOTOOL/${all_upper_project_name}}"
+        new1="${old//bionitio/${new_project_name}}"
+        new2="${new1//Bionitio/${first_upper_project_name}}"
+        new="${new2//BIONITIO/${all_upper_project_name}}"
         if [ "$old" != "$new" ]; then
             verbose_message "$old -> $new"
             if [ -e "$new" ]; then
@@ -235,7 +235,7 @@ function create_project_repository {
         cd ${new_project_name}
         git init
         git add .
-        git commit -m "Initial commit of ${new_project_name}; starting from biotool (${language})"
+        git commit -m "Initial commit of ${new_project_name}; starting from bionitio (${language})"
     ) > /dev/null 2>&1
 }
 
@@ -254,12 +254,12 @@ check_dependencies
 # 3. Try to create new directory for the project.
 verbose_message "creating project directory ${new_project_name}"
 create_project_directory
-# 4. Clone biotool git repository into the newly created directory.
-verbose_message "cloning biotool repository into ${new_project_name}/${git_tmp_dir}"
-clone_biotool_repository
+# 4. Clone bionitio git repository into the newly created directory.
+verbose_message "cloning bionitio repository into ${new_project_name}/${git_tmp_dir}"
+clone_bionitio_repository
 # 5. Recursively copy source tree from the git repository into the project directory.
 verbose_message "copying ${language} source tree into ${new_project_name}"
-copy_biotool_language
+copy_bionitio_language
 # 6. Recursively copy test_data directory from the git repository into the project directory.
 verbose_message "copying test_data into ${new_project_name}"
 copy_test_data
@@ -271,9 +271,9 @@ verbose_message "copying .travis/test.sh into the project directory"
 copy_travis_test
 # 9. remove the cloned git repository.
 verbose_message "removing ${new_project_name}/${git_tmp_dir}"
-remove_biotool_repository
-# 10. Rename biotool to the new project name.
-verbose_message "renaming references to biotool to new project name ${new_project_name}" 
+remove_bionitio_repository
+# 10. Rename bionitio to the new project name.
+verbose_message "renaming references to bionitio to new project name ${new_project_name}" 
 rename_project
 # 11. Create repository for new project.
 verbose_message "initialising new git repository for ${new_project_name}"

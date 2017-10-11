@@ -4,7 +4,7 @@
 * @author Peter Georgeson
 * @version 1.0
 */
-package org.supernifty.biotool;
+package org.supernifty.bionitio;
 
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;

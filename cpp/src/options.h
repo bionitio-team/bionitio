@@ -1,5 +1,5 @@
-#ifndef BIOTOOL_OPTIONS_H
-#define BIOTOOL_OPTIONS_H
+#ifndef BIONITIO_OPTIONS_H
+#define BIONITIO_OPTIONS_H
 
 #include <vector>
 #include <string>

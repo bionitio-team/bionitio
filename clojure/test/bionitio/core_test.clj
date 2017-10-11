@@ -1,12 +1,12 @@
-;;; Unit tests for biotool.
+;;; Unit tests for bionitio.
 ;;;
 ;;; Usage: lein test
 
-(ns biotool.core-test
+(ns bionitio.core-test
   (:require [clojure.test :refer :all]
             [clj-biosequence.core :as bs]
             [clojure.java.io :as io]
-            [biotool.core :refer :all]))
+            [bionitio.core :refer :all]))
 
 ; Convenience wrapper for testing process-fasta-reader
 (defn do-test

@@ -2,7 +2,7 @@ module Main where
 
 {-|
 Module      : Main 
-Description : Unit tests for biotool-hs 
+Description : Unit tests for bionitio-hs 
 Copyright   : (c) Bernie Pope, 2016 
 License     : MIT 
 Maintainer  : bjpope@unimelb.edu.au

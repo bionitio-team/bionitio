@@ -24,7 +24,7 @@ void printUsage() {
     puts("Synopsis:\n"
          "  Print fasta stats\n"
          "Usage:\n"
-         "  biotool [options] contigs.fasta [another.fa ...]\n"
+         "  bionitio [options] contigs.fasta [another.fa ...]\n"
          "Options:\n"
          "  --help         Show this help\n"
          "  --version      Print version and exit\n"
@@ -37,7 +37,7 @@ void printUsage() {
  * print version information to stdout
  */
 void printVersion() {
-    printf("biotool version %s\n", VERSION);
+    printf("bionitio version %s\n", VERSION);
 }
 
 /**
@@ -49,11 +49,11 @@ void printVersion() {
  * @return 0 if no errors encountered
  */
 int processFiles(FILE *logFile, int minlen, char **files, int fileCount) {
-    biotool_log(logFile, "biotool version %s starting.", VERSION);
-    biotool_log(logFile, "processing %i file(s) with minlen %i...", fileCount, minlen);
+    bionitio_log(logFile, "bionitio version %s starting.", VERSION);
+    bionitio_log(logFile, "processing %i file(s) with minlen %i...", fileCount, minlen);
     puts(HEADER);
     if (fileCount == 0) {
-        biotool_log(logFile, "reading stdin...");
+        bionitio_log(logFile, "reading stdin...");
         struct FastaStats result = processFasta(stdin, logFile, minlen);
         if (result.total_sequences == 0 && !result.is_empty) { // no sequences at all is an error
             fprintf(stderr, "Invalid fasta file format\n");
@@ -65,12 +65,12 @@ int processFiles(FILE *logFile, int minlen, char **files, int fileCount) {
         else {
             fprintf(stdout, "stdin\t%lu\t%lu\t%lu\t%.0f\t%lu\n", result.sequences, result.bases, result.min, result.average, result.max);
         }
-        biotool_log(logFile, "reading stdin: done");
+        bionitio_log(logFile, "reading stdin: done");
     }
     else {
-        biotool_log(logFile, "reading %i file(s)...", fileCount);
+        bionitio_log(logFile, "reading %i file(s)...", fileCount);
         for (int current = 0; current < fileCount; current++) {
-            biotool_log(logFile, "reading %s...", files[current]);
+            bionitio_log(logFile, "reading %s...", files[current]);
             FILE *fh = fopen(files[current], "r");
             if (!fh) {
                 fprintf(stderr, "Failed to open '%s'\n", files[current]);
@@ -87,9 +87,9 @@ int processFiles(FILE *logFile, int minlen, char **files, int fileCount) {
             else {
                 fprintf(stdout, "%s\t%lu\t%lu\t%lu\t%.0f\t%lu\n", files[current], result.sequences, result.bases, result.min, result.average, result.max);
             }
-            biotool_log(logFile, "reading %s: done", files[current]);
+            bionitio_log(logFile, "reading %s: done", files[current]);
         }
-        biotool_log(logFile, "reading %i file(s): done", fileCount);
+        bionitio_log(logFile, "reading %i file(s): done", fileCount);
     }
     return EXIT_OK;
 }

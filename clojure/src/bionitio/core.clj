@@ -1,4 +1,4 @@
-;;; Module:      biotool.core
+;;; Module:      bionitio.core
 ;;; Description: Reads one or more FASTA files and computes various
 ;;;              simple statistics about them. Intended as an example
 ;;;              bioinformatics command line tool.
@@ -16,7 +16,7 @@
 ;;; If no FASTA filenames are specified on the command line then the program
 ;;; will try to read a FASTA file from standard input.
 
-(ns biotool.core
+(ns bionitio.core
   (:require [clj-biosequence.core :as bs]
             [clojure.string :as string]
             [clojure.tools.cli :refer [parse-opts]]
@@ -228,7 +228,7 @@
   [options-summary]
   (->> ["Print fasta stats"
         ""
-        "Usage: biotool-clj [options] FILES"
+        "Usage: bionitio-clj [options] FILES"
         ""
         "Options:"
         options-summary]

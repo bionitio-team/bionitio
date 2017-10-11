@@ -89,7 +89,7 @@ operator<<(ostream& out, const FastaStats& stats)
 
 /*
     Render a FastaStats object as a string in a format required
-    by biotool. The average length of sequences is computed at this
+    by bionitio. The average length of sequences is computed at this
     point, and included in the output.
 
     The fields in the output are tab separated.

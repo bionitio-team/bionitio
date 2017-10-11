@@ -2,10 +2,10 @@
 cmake_minimum_required (VERSION 3.0.0)
 
 # Name of project and that it is C++ only.
-project (biotool-cpp CXX)
-set(BIOTOOL_LIB_SRC options.cpp fasta_stats.cpp error.cpp)  
+project (bionitio-cpp CXX)
+set(BIONITIO_LIB_SRC options.cpp fasta_stats.cpp error.cpp)  
 
-add_library(biotool-lib STATIC ${BIOTOOL_LIB_SRC})
+add_library(bionitio-lib STATIC ${BIONITIO_LIB_SRC})
 
 # ----------------------------------------------------------------------------
 # Dependencies
@@ -23,8 +23,8 @@ find_package(Boost COMPONENTS program_options log log_setup thread filesystem sy
 
 add_library(Catch INTERFACE)
 target_include_directories(Catch INTERFACE ${CMAKE_SOURCE_DIR}/catch/)
-add_executable(biotool-test test.cpp)
-target_link_libraries (biotool-test biotool-lib Catch ${SEQAN_LIBRARIES} ${Boost_LIBRARIES})
+add_executable(bionitio-test test.cpp)
+target_link_libraries (bionitio-test bionitio-lib Catch ${SEQAN_LIBRARIES} ${Boost_LIBRARIES})
 
 # ----------------------------------------------------------------------------
 # Build Setup
@@ -44,8 +44,8 @@ endif()
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SEQAN_CXX_FLAGS}")
 
 # Add executable and link against SeqAn dependencies.
-add_executable (biotool-cpp biotool.cpp)
-target_link_libraries (biotool-cpp biotool-lib ${SEQAN_LIBRARIES} ${Boost_LIBRARIES})
+add_executable (bionitio-cpp bionitio.cpp)
+target_link_libraries (bionitio-cpp bionitio-lib ${SEQAN_LIBRARIES} ${Boost_LIBRARIES})
 
 enable_testing()
-add_test(NAME biotool-unit-tests COMMAND biotool-test)
+add_test(NAME bionitio-unit-tests COMMAND bionitio-test)

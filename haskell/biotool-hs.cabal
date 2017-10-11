@@ -1,10 +1,10 @@
-name:                biotool-hs
+name:                bionitio-hs
 version:             0.1.0.0
 synopsis:            Demonstration bioinformatics tool 
 description:         The program reads one or more input FASTA files. For
                      each file it computes a variety of statistics, and then
                      prints a summary of the statistics as output. 
-homepage:            https://github.com/bjpop/biotool
+homepage:            https://github.com/bjpop/bionitio
 license:             MIT 
 license-file:        LICENSE
 author:              Bernie Pope 
@@ -22,23 +22,23 @@ library
                      , biofasta
   default-language:    Haskell2010
 
-executable biotool-hs
+executable bionitio-hs
   hs-source-dirs:      src 
   main-is:             Main.hs
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
   build-depends:       base
                      , biofasta
                      , optparse-applicative
-                     , biotool-hs
+                     , bionitio-hs
                      , hslogger 
   default-language:    Haskell2010
 
-test-suite biotool-hs-test
+test-suite bionitio-hs-test
   type:                exitcode-stdio-1.0
   hs-source-dirs:      test 
   main-is:             Test.hs
   build-depends:       base
-                     , biotool-hs
+                     , bionitio-hs
                      , hspec
                      , biofasta
                      , bytestring
@@ -47,4 +47,4 @@ test-suite biotool-hs-test
 
 source-repository head
   type:     git
-  location: https://github.com/bjpop/biotool
+  location: https://github.com/bjpop/bionitio

@@ -1,4 +1,4 @@
-package org.supernifty.biotool;
+package org.supernifty.bionitio;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -10,7 +10,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
- * Unit tests for the biotool application
+ * Unit tests for the bionitio application
  */
 public class AppTest 
     extends TestCase {

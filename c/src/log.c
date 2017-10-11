@@ -8,7 +8,7 @@
 /**
  * log a message to stderr if verbose is true
  */
-void biotool_log(FILE* log, const char *msg, ...) {
+void bionitio_log(FILE* log, const char *msg, ...) {
     if (log) {
         time_t current_time = time(NULL);
         char time_str[80];

@@ -1,5 +1,5 @@
-#ifndef BIOTOOL_EXIT_STATUS_H
-#define BIOTOOL_EXIT_STATUS_H
+#ifndef BIONITIO_EXIT_STATUS_H
+#define BIONITIO_EXIT_STATUS_H
 // Program exit status values
 typedef enum {
   Success = 0 // Program succeeded

@@ -1,5 +1,5 @@
-#ifndef BIOTOOL_FASTA_STATS_H
-#define BIOTOOL_FASTA_STATS_H
+#ifndef BIONITIO_FASTA_STATS_H
+#define BIONITIO_FASTA_STATS_H
 
 #include <seqan/seq_io.h>
 

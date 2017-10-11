@@ -1,16 +1,16 @@
 #!/usr/bin/env perl
 
-# Unit tests for biotool.
+# Unit tests for bionitio.
 #
-# usage: perl biotool_test.pl
+# usage: perl bionitio_test.pl
 
 use strict;
 use warnings 'FATAL' => 'all';
 use Test::More;
 use IO::String;
-require 'biotool.pl';
+require 'bionitio.pl';
 
-# Test wrapper for the process_file function from biotool.
+# Test wrapper for the process_file function from bionitio.
 #
 # Arguments:
 #     contents: a string containing the contents of the FASTA file to test

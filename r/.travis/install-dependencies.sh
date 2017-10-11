@@ -11,5 +11,5 @@ echo 'R install'
    sudo Rscript -e "install.packages('seqinr', repos='http://cran.rstudio.org')"
    sudo Rscript -e "install.packages('logging', repos='http://cran.rstudio.org')"
    cd r
-   sudo R CMD INSTALL biotool
+   sudo R CMD INSTALL bionitio
 )

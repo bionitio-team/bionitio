@@ -7,5 +7,5 @@ before_install:
   - ./.travis/install-dependencies.sh
 
 script:
-  - ./.travis/test.sh biotool.pl
+  - ./.travis/test.sh bionitio.pl
   - ./.travis/unit-test.sh

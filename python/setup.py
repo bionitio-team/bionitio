@@ -12,16 +12,16 @@ and is an ideal starting place for new projects.'''
 
 
 setup(
-    name='biotool-py',
+    name='bionitio-py',
     version='0.1.0.0',
     author='Bernie Pope',
     author_email='bjpope@unimelb.edu.au',
-    packages=['biotool'],
-    package_dir={'biotool': 'biotool'},
+    packages=['bionitio'],
+    package_dir={'bionitio': 'bionitio'},
     entry_points={
-        'console_scripts': ['biotool-py = biotool.biotool:main']
+        'console_scripts': ['bionitio-py = bionitio.bionitio:main']
     },
-    url='https://github.com/bjpop/biotool',
+    url='https://github.com/bjpop/bionitio',
     license='LICENSE',
     description=('A prototypical bioinformatics command line tool'),
     long_description=(LONG_DESCRIPTION),

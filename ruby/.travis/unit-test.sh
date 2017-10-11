@@ -4,8 +4,8 @@ set -e
 errors=0
 
 # Run unit tests
-ruby ruby/test/test_biotool.rb || {
-    echo "'ruby/test/test_biotool.rb' failed"
+ruby ruby/test/test_bionitio.rb || {
+    echo "'ruby/test/test_bionitio.rb' failed"
     let errors+=1
 }
 

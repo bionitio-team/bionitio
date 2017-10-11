@@ -14,7 +14,7 @@
 #' @export
 #'
 #' @examples
-#' my_fasta_file <- system.file("extdata", "two_sequence.fasta", package = "biotool")
+#' my_fasta_file <- system.file("extdata", "two_sequence.fasta", package = "bionitio")
 #' load_fasta_file(filename = my_fasta_file)
 load_fasta_file <- function(filename, quit_on_error = TRUE) {
   sequences <- tryCatch(
@@ -62,7 +62,7 @@ load_fasta_file <- function(filename, quit_on_error = TRUE) {
 #' @export
 #'
 #' @examples
-#' my_fasta_file <- system.file("extdata", "two_sequence.fasta", package = "biotool")
+#' my_fasta_file <- system.file("extdata", "two_sequence.fasta", package = "bionitio")
 #' sequences <- load_fasta_file(filename = my_fasta_file)
 #' get_seq_stats(sequences, filename = my_fasta_file)
 get_seq_stats <- function(sequences, filename = NULL, min_len = 0) {
@@ -94,7 +94,7 @@ get_seq_stats <- function(sequences, filename = NULL, min_len = 0) {
 #' @export
 #'
 #' @examples
-#' my_fasta_file <- system.file("extdata", "empty_file", package = "biotool")
+#' my_fasta_file <- system.file("extdata", "empty_file", package = "bionitio")
 #' sequences <- load_fasta_file(filename = my_fasta_file)
 #' stats <- get_seq_stats(sequences, filename = my_fasta_file)
 #' pretty_output(stats)
@@ -108,7 +108,7 @@ pretty_output <- function(stats) {
 }
 
 
-#' Biotool
+#' Bionitio
 #'
 #' @description For the given fasta files, calculate statistics and return
 #'     results in a data frame.
@@ -128,10 +128,10 @@ pretty_output <- function(stats) {
 #'
 #' @examples
 #' my_fasta_files <- c(
-#'     system.file("extdata", "one_sequence.fasta", package = "biotool"),
-#'     system.file("extdata", "two_sequence.fasta", package = "biotool"))
-#' run_biotool(my_fasta_files)
-run_biotool <- function(fasta_files, min_len = 0, pretty = TRUE,
+#'     system.file("extdata", "one_sequence.fasta", package = "bionitio"),
+#'     system.file("extdata", "two_sequence.fasta", package = "bionitio"))
+#' run_bionitio(my_fasta_files)
+run_bionitio <- function(fasta_files, min_len = 0, pretty = TRUE,
                         quit_on_error = TRUE) {
   # Check existance and read permission
   stopifnot(fasta_exists(fasta_files) & fasta_permission(fasta_files))

@@ -1,4 +1,4 @@
-# biotool.js
+# bionitio.js
 
 ## How to build
 
@@ -9,5 +9,5 @@
 ## Usage
 
 ```
-./biotool.js FASTA_FILE
+./bionitio.js FASTA_FILE
 ```

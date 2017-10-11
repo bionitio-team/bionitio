@@ -3,7 +3,7 @@
 set -e
 errors=0
 
-cd java/biotool
+cd java/bionitio
 
 # Run unit tests
 mvn --quiet test > /dev/null 2>&1 || {

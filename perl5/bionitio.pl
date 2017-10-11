@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Module      : biotool.pl
+# Module      : bionitio.pl
 # Description : The main entry point for the program.
 # Copyright   : (c) Torsten Seemann and Bernie Pope, 2016 - 2017
 # License     : MIT
@@ -33,10 +33,10 @@ use version; our $VERSION = qv('1.0');
 # 0: Success
 # 1: File I/O error. This can occur if at least one of the input FASTA
 #        files cannot be opened for reading. This can occur because the file
-#        does not exist at the specified path, or biotool does not have permission
+#        does not exist at the specified path, or bionitio does not have permission
 #        to read from the file.
 # 2: A command line error occurred. This can happen if the user specifies
-#        an incorrect command line argument. In this circumstance biotool will
+#        an incorrect command line argument. In this circumstance bionitio will
 #        also print a usage message to the standard error device (stderr).
 # 3: FASTA file error. This can occur when the input FASTA file is
 #        incorrectly formatted, and cannot be parsed.
@@ -93,7 +93,7 @@ sub init_logging {
     }
 
     # Obtain a logger instance
-    $logger = get_logger('Biotool');
+    $logger = get_logger('Bionitio');
     $logger->info('program started');
 
     # Log the program name and command line arguments
@@ -266,7 +266,7 @@ sub pretty_output {
 # will print a usage message and exit the program with an error.
 sub get_options {
     my $parser = Getopt::ArgParse->new_parser(
-        prog => 'biotool.pl',
+        prog => 'bionitio.pl',
         description =>
           'Read one or more FASTA files, compute simple stats for each file',
     );

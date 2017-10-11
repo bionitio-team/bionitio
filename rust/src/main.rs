@@ -46,21 +46,21 @@ use log::LogLevelFilter;
 
 // File I/O error. This can occur if at least one of the input FASTA
 // files cannot be opened for reading. This can occur because the file
-// does not exist at the specified path, or biotool does not have
+// does not exist at the specified path, or bionitio does not have
 // permission to read from the file.
 const EXIT_FILE_IO_ERROR: i32 = 1;
 
 // A command line error occurred. This can happen if the user specifies
-// an incorrect command line argument. In this circumstance biotool will
+// an incorrect command line argument. In this circumstance bionitio will
 // also print a usage message to the standard error device (stderr).
 const EXIT_COMMAND_LINE_ERROR: i32 = 2;
 
-// Input FASTA file is invalid. This can occur if biotool can read an
+// Input FASTA file is invalid. This can occur if bionitio can read an
 // input file but the file format is invalid.
 const EXIT_FASTA_PARSE_ERROR: i32 = 3;
 
 // Name of the program, to be used in diagnostic messages.
-static PROGRAM_NAME: &'static str = "biotool";
+static PROGRAM_NAME: &'static str = "bionitio";
 
 /// Exit the program, printing an error message on stderr, and returning
 /// a specific error code. The program name is prefixed onto the front of

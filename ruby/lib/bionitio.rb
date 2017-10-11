@@ -1,9 +1,9 @@
 require 'logger'
 require 'bio'
 
-require 'biotool/version'
+require 'bionitio/version'
 
-module Biotool
+module Bionitio
     # Class to parse, filter and format stats on a fasta file
     class FastaSummary
         # Parse and filter the given fasta file.

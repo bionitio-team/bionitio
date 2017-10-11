@@ -6,7 +6,7 @@
 var opts = require('commander')
 var winston = require('winston')
 
-var biotool = require('./lib/fasta-stats')
+var bionitio = require('./lib/fasta-stats')
 
 // Override handling of unknown options - someone decided exit code 2 was better than the default 1
 opts.unknownOption = function (flag) {
@@ -42,6 +42,6 @@ if (opts.log !== undefined) {
 logger.info('Command line: %s', process.argv.join(' '))
 
 console.log('FILENAME\tNUMSEQ\tTOTAL\tMIN\tAVG\tMAX')
-biotool.processFiles(opts.args, opts.minlen, logger, function (file, stats) {
+bionitio.processFiles(opts.args, opts.minlen, logger, function (file, stats) {
   console.log([file].concat(stats).join('\t'))
 })

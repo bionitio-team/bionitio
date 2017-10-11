@@ -1,8 +1,8 @@
 {
-  "name": "biotool",
+  "name": "bionitio",
   "version": "0.1.0",
   "description": "Print fasta stats",
-  "main": "biotool.js",
+  "main": "bionitio.js",
   "dependencies": {
     "through2": "~0.6.0",
     "split": "^0.3.0",
@@ -26,16 +26,16 @@
     "test": "standard && mocha"
   },
   "bin": {
-    "biotool": "./biotool.js"
+    "bionitio": "./bionitio.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/biotool-paper/biotool.git"
+    "url": "git+https://github.com/bionitio-paper/bionitio.git"
   },
   "author": "David R. Powell",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/biotool-paper/biotool/issues"
+    "url": "https://github.com/bionitio-paper/bionitio/issues"
   },
-  "homepage": "https://github.com/biotool-paper/biotool#readme"
+  "homepage": "https://github.com/bionitio-paper/bionitio#readme"
 }

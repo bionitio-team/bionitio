@@ -7,5 +7,5 @@ before_install:
   - ./.travis/install-dependencies.sh 
 
 script:
-  - ./.travis/test.sh bin/biotool-clj
+  - ./.travis/test.sh bin/bionitio-clj
   - ./.travis/unit-test.sh

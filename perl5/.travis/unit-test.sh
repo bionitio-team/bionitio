@@ -6,8 +6,8 @@ errors=0
 # Run unit tests
 (
   cd perl5
-  ./biotool_test.pl || {
-    echo "'perl perl5/biotool/biotool_test.pl' failed"
+  ./bionitio_test.pl || {
+    echo "'perl perl5/bionitio/bionitio_test.pl' failed"
     let errors+=1
   }
 )

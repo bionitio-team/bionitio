@@ -7,5 +7,5 @@ before_install:
   - ./.travis/install-dependencies.sh  
 
 script:
-  - ./.travis/test.sh ~/.local/bin/biotool-hs
+  - ./.travis/test.sh ~/.local/bin/bionitio-hs
   - ./.travis/unit-test.sh

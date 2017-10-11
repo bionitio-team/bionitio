@@ -1,22 +1,22 @@
-# Ruby biotool
+# Ruby bionitio
 
-Run without installing: `./bin/biotool`
+Run without installing: `./bin/bionitio`
 
 ## How to build & install
 
 1. Ensure you have ruby installed
-2. `gem build biotool.gemspec`
-3. `gem install --user-install biotool`
+2. `gem build bionitio.gemspec`
+3. `gem install --user-install bionitio`
 4. `export PATH=$(ruby -rubygems -e 'puts Gem.user_dir')/bin:$PATH`
 
 ## Running tests
 
-`ruby test/test_biotool.rb`
+`ruby test/test_bionitio.rb`
 
 ## Usage
 
 ```
-biotool --help
+bionitio --help
 
-biotool FASTA_FILE
+bionitio FASTA_FILE
 ```

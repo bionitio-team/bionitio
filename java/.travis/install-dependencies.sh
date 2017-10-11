@@ -4,7 +4,7 @@
 
 echo 'Java install'
 (
-   cd java/biotool
+   cd java/bionitio
    mvn --quiet compile
    mvn --quiet package
 

@@ -1,7 +1,7 @@
 context("read_file")
 
 test_that("load_fasta_file can read in valid fasta files", {
-  filename <- system.file("extdata", "two_sequence.fasta", package = "biotool")
+  filename <- system.file("extdata", "two_sequence.fasta", package = "bionitio")
   seq <- load_fasta_file(filename)
 
   expect_length(seq, 2)
@@ -15,7 +15,7 @@ test_that("load_fasta_file can read in valid fasta files", {
 })
 
 test_that("load_fasta_file returns NULL for empty files", {
-  filename <- system.file("extdata", "empty_file", package = "biotool")
+  filename <- system.file("extdata", "empty_file", package = "bionitio")
   expect_null(load_fasta_file(filename))
 })
 

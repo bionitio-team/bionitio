@@ -1,4 +1,4 @@
-Package: biotool
+Package: bionitio
 Type: Package
 Title: Calculate FASTA statistics
 Version: 0.1.0

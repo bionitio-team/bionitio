@@ -22,17 +22,17 @@ describe('FastaParser', function () {
   })
 })
 
-describe('Biotool', function () {
+describe('Bionitio', function () {
   describe('#processFiles()', function () {
     it('should read a file and report statistics', function (done) {
       var tmpobj = tmp.fileSync()
-      var biotool = require('../lib/fasta-stats')
+      var bionitio = require('../lib/fasta-stats')
       var fs = require('fs')
       var winston = require('winston')
       var logger = new (winston.Logger)()
       fs.writeSync(tmpobj.fd, '>s1\nATCG\n')
       fs.closeSync(tmpobj.fd)
-      biotool.processFiles([tmpobj.name], 0, logger, function (file, stats) {
+      bionitio.processFiles([tmpobj.name], 0, logger, function (file, stats) {
         assert.equal(tmpobj.name, file)
         assert.deepEqual([1, 4, 4, 4, 4], stats)
         done()

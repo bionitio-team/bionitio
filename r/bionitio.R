@@ -1,14 +1,14 @@
 #!/usr/bin/env Rscript
 
-# Wrapper for the biotool package
+# Wrapper for the bionitio package
 
 suppressPackageStartupMessages({
   library(optparse, quietly = TRUE)
-  library(biotool, quietly = TRUE)
+  library(bionitio, quietly = TRUE)
   library(logging, quietly = TRUE)
 })
 
-VERSION <- packageVersion("biotool")
+VERSION <- packageVersion("bionitio")
 DEFAULT_MIN_LEN <- 0
 DEFAULT_LOG <- ""
 
@@ -82,7 +82,7 @@ if (length(args) == 0) {
 fasta_files <- args
 
 # Process each FASTA file
-results <- run_biotool(fasta_files = fasta_files, min_len = opts$minlen)
+results <- run_bionitio(fasta_files = fasta_files, min_len = opts$minlen)
 colnames(results) <- toupper(colnames(results))
 
 # Write to stdout

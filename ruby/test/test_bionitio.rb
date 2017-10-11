@@ -5,11 +5,11 @@ require 'stringio'
 libdir = File.dirname(__FILE__) + "/../lib"
 $LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
 
-require 'biotool'
+require 'bionitio'
 
-class BiotoolTest < Test::Unit::TestCase
+class BionitioTest < Test::Unit::TestCase
   def check(str_in, expect, opts={})
-    assert_equal Biotool::FastaSummary.new(StringIO.new(str_in),opts).pretty(''), expect
+    assert_equal Bionitio::FastaSummary.new(StringIO.new(str_in),opts).pretty(''), expect
   end
 
   def test_zero_bytes

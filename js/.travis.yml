@@ -12,5 +12,5 @@ before_install:
   - ./.travis/install-dependencies.sh 
 
 script:
-  - ./.travis/test.sh biotool.js
+  - ./.travis/test.sh bionitio.js
   - ./.travis/unit-test.sh

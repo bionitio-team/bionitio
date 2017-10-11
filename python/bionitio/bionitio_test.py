@@ -1,13 +1,13 @@
 '''
-Unit tests for biotool.
+Unit tests for bionitio.
 
-Usage: python -m unittest -v biotool_test
+Usage: python -m unittest -v bionitio_test
 '''
 
 import unittest
 from StringIO import StringIO
 from Bio import SeqIO
-from biotool import FastaStats
+from bionitio import FastaStats
 
 class TestFastaStats(unittest.TestCase):
     '''Unit tests for FastaStats'''

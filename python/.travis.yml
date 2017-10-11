@@ -9,5 +9,5 @@ before_install:
   - ./.travis/install-dependencies.sh  
 
 script:
-  - ./.travis/test.sh biotool-py
+  - ./.travis/test.sh bionitio-py
   - ./.travis/unit-test.sh

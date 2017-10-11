@@ -143,8 +143,8 @@ function create_project_directory {
 
 function clone_bionitio_repository {
     # XXX check if git is executable, catch output from git in case we need to report an error
-    git clone https://github.com/bionitio-paper/bionitio ${new_project_name}/${git_tmp_dir} > /dev/null 2>&1 || {
-        exit_with_error "git command failed: \'git clone https://github.com/bionitio-paper/bionitio ${new_project_name}/${git_tmp_dir}\'" 1
+    git clone https://github.com/bionitio-team/bionitio ${new_project_name}/${git_tmp_dir} > /dev/null 2>&1 || {
+        exit_with_error "git command failed: \'git clone https://github.com/bionitio-team/bionitio ${new_project_name}/${git_tmp_dir}\'" 1
     }
 }
 

@@ -1,4 +1,4 @@
-[![travis](https://travis-ci.org/bionitio-paper/bionitio.svg?branch=master)](https://travis-ci.org/bionitio-paper/bionitio)
+[![travis](https://travis-ci.org/bionitio-team/bionitio.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio)
 
 # Overview 
 
@@ -27,7 +27,7 @@ Where possible we have tried to follow the recommended conventions for programmi
 
 # License
 
-The bionitio project is released as open source software under the terms of [MIT License](https://raw.githubusercontent.com/bionitio-paper/bionitio/master/LICENSE).
+The bionitio project is released as open source software under the terms of [MIT License](https://raw.githubusercontent.com/bionitio-team/bionitio/master/LICENSE).
 However, we grant permission to users who derive their own projects from bionitio to apply their own license to their derived works. Licenses applied to projects deriving from bionitio do not affect in any way the license of the overall bionitio project, or licenses applied to other independent derivations.
 
 # Starting a new project from bionitio
@@ -54,7 +54,7 @@ Optional:
 If you don't have a local copy of the script, you can run it from the web like so, using curl:
 
 ```
-curl -sSf https://raw.githubusercontent.com/bionitio-paper/bionitio/master/boot/bionitio-boot.sh \
+curl -sSf https://raw.githubusercontent.com/bionitio-team/bionitio/master/boot/bionitio-boot.sh \
  | bash -s -- -l rust -n skynet -c BSD-3-Clause
 ```
 
@@ -62,7 +62,7 @@ If you prefer not to run a shell script from the web, then you can either clone 
 
 ```
 # Copy the script to your local computer
-curl https://raw.githubusercontent.com/bionitio-paper/bionitio/master/boot/bionitio-boot.sh > bionitio-boot.sh
+curl https://raw.githubusercontent.com/bionitio-team/bionitio/master/boot/bionitio-boot.sh > bionitio-boot.sh
 # Run the script on your local computer
 bash bionitio-boot.sh -l rust -n skynet -c BSD-3-Clause
 ```
@@ -228,7 +228,7 @@ A set of sample test input files is provided in the `test_data` folder. Addition
 
 # Bugs
 
-File at our [Issue Tracker](https://github.com/bionitio-paper/bionitio/issues)
+File at our [Issue Tracker](https://github.com/bionitio-team/bionitio/issues)
 
 # Authors
 

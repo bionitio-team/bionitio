@@ -11,7 +11,7 @@ variety of statistics, and then prints a summary of the statistics as output."
   s.files       = ["lib/bionitio.rb","lib/bionitio/version.rb"]
   s.executables = ["bionitio"]
   s.license     = 'MIT'
-  s.homepage    = 'https://github.com/bionitio-paper/bionitio'
+  s.homepage    = 'https://github.com/bionitio-team/bionitio'
 
   s.add_dependency 'bio', '~> 1.5'
 end

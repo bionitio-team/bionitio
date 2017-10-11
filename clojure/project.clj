@@ -1,6 +1,6 @@
 (defproject bionitio "0.1.0-SNAPSHOT"
   :description "An example bioinformatics tool to demonstrate good programming practices"
-  :url "https://github.com/bionitio-paper/bionitio"
+  :url "https://github.com/bionitio-team/bionitio"
   :license {:name "MIT"
             :url "https://opensource.org/licenses/MIT"}
   :dependencies [[org.clojure/clojure "1.8.0"]

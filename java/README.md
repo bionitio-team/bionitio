@@ -4,7 +4,7 @@ The program reads one or more input FASTA files. For each file it computes a var
 The goal is to provide a solid foundation for new bioinformatics command line tools, and is an ideal starting place for new projects.
 
 # Licence
-This program is released as open source software under the terms of [MIT License](https://raw.githubusercontent.com/bionitio-paper/bionitio/master/LICENSE)
+This program is released as open source software under the terms of [MIT License](https://raw.githubusercontent.com/bionitio-team/bionitio/master/LICENSE)
 
 # Compiling
 Building bionitio requires [Java](https://java.com/download/) and [Maven](https://www.apache.org/).
@@ -128,7 +128,7 @@ Bionitio returns the following exit status values:
 
 # Bugs
 
-File at our [Issue Tracker](https://github.com/bionitio-paper/bionitio/issues)
+File at our [Issue Tracker](https://github.com/bionitio-team/bionitio/issues)
 
 Notes
 =====

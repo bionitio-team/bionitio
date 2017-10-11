@@ -8,7 +8,7 @@ The goal is to provide a solid foundation for new bioinformatics command line to
 
 # Licence
 
-This program is released as open source software under the terms of [MIT License](https://raw.githubusercontent.com/bionitio-paper/bionitio/master/LICENSE)
+This program is released as open source software under the terms of [MIT License](https://raw.githubusercontent.com/bionitio-team/bionitio/master/LICENSE)
 
 # Installing
 
@@ -189,5 +189,5 @@ FILENAME	TOTAL	NUMSEQ	MIN	AVG	MAX
 
 # Bugs
 
-File at our [Issue Tracker](https://github.com/bionitio-paper/bionitio/issues)
+File at our [Issue Tracker](https://github.com/bionitio-team/bionitio/issues)
 

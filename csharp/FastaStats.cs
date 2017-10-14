@@ -1,56 +1,118 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Bio;
 using Bio.IO.FastA;
 
 namespace csharp
 {
+    public class FastaException : System.IO.IOException
+    {
+        public FastaException(string filename, Exception inner)
+            : base($"Error parsing fasta file {filename}", inner)
+        {
+        }
+    }
+
     public class FastaStats
     {
-        public long numSeqs;
-        public long numBases;
-        public long minLength;
-        public long maxLength;
-        public double average;
+        public string Filename { get; private set; } = "<UNKNOWN>";
+        public long NumSeqs { get; private set; }
+        public long NumBases { get; private set; }
+        public long? MinLength { get; private set; }
+        public long? MaxLength { get; private set; }
+        public double? Average { get; private set; }
 
-        public FastaStats()
+        /// <summary>
+        /// Converts a nullable struct to a string for the sake of CSV printing
+        /// </summary>
+        /// <param name="nullable"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        private string NullableCsvString<T>(T? nullable) where T : struct
         {
+            if (nullable.HasValue)
+                return nullable.ToString();
+            else
+                return "-";
         }
 
         public override string ToString()
         {
-            return $@"Number of Sequences: {numSeqs}
-Number of Bases: {numBases}
-Minimum Sequence Length: {minLength}
-Maximum Sequence Length: {maxLength}
-Average Sequence Length: {average}";
+            return
+                $"{Filename}	{NumSeqs}	{NumBases}	{NullableCsvString(MinLength)}	{NullableCsvString(Average)}	{NullableCsvString(MaxLength)}";
         }
 
-        public static FastaStats Calculate(string filename)
+        /// <summary>
+        /// Calculates a set of CSV stats from the file provided as a filename
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="minlen">Minimum sequence length. Sequences smaller than this are ignored</param>
+        /// <returns></returns>
+        /// <exception cref="IOException"></exception>
+        public static FastaStats Calculate(string filename, long minlen = 0)
         {
-            var fileStream = new FileStream(filename, FileMode.Open);
-            return Calculate(fileStream);
+            FileStream fileStream;
+            try
+            {
+                fileStream = new FileStream(filename, FileMode.Open);
+            }
+            catch (Exception e)
+            {
+                throw new IOException(filename, e);
+            }
+            return Calculate(fileStream, minlen, filename);
         }
 
-        public static FastaStats Calculate(FileStream stream)
+        /// <summary>
+        /// Calculates a set of CSV stats from the file provided as a stream
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="minlen">Minimum sequence length. Sequences smaller than this are ignored</param>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        /// <exception cref="FastaException"></exception>
+        public static FastaStats Calculate(Stream stream, long minlen = 0, string filename = "<UNKNOWN>")
         {
             var parser = new FastAParser();
-            var sequences = parser.Parse(stream);
-            return Calculate(sequences);
+            IEnumerable<ISequence> sequences;
+
+            try
+            {
+                sequences = parser.Parse(stream);
+            }
+            catch (Exception e)
+            {
+                throw new FastaException(filename, e);
+            }
+            return Calculate(sequences, minlen, filename);
         }
 
-        public static FastaStats Calculate(IEnumerable<Bio.ISequence> sequences)
+        /// <summary>
+        /// Calculates a set of CSV stats from the list of sequences provided
+        /// </summary>
+        /// <param name="sequences"></param>
+        /// <param name="minlen">Minimum sequence length. Sequences smaller than this are ignored</param>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        public static FastaStats Calculate(IEnumerable<ISequence> sequences, long minlen = 0,
+            string filename = "<UNKNOWN>")
         {
             return sequences
+                .Where(sequence => sequence.Count > minlen)
                 .GroupBy(sequence => "")
                 .Select(grouping => new FastaStats
                 {
-                    numSeqs = grouping.Count(),
-                    numBases = grouping.Sum(sequence => sequence.Count),
-                    minLength = grouping.Min(sequence => sequence.Count),
-                    maxLength = grouping.Min(sequence => sequence.Count),
-                    average = grouping.Average(sequence => sequence.Count)
-                }).First();
+                    NumSeqs = grouping.Count(),
+                    NumBases = grouping.Sum(sequence => sequence.Count),
+                    MinLength = grouping.Min(sequence => sequence.Count),
+                    MaxLength = grouping.Min(sequence => sequence.Count),
+                    Average = grouping.Average(sequence => sequence.Count),
+                    Filename = filename
+                })
+                .DefaultIfEmpty(new FastaStats {Filename = filename})
+                .First();
         }
     }
 }

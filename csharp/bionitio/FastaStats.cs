@@ -53,15 +53,7 @@ namespace csharp
         /// <exception cref="IOException"></exception>
         public static FastaStats Calculate(string filename, long minlen = 0)
         {
-            FileStream fileStream;
-            try
-            {
-                fileStream = new FileStream(filename, FileMode.Open);
-            }
-            catch (Exception e)
-            {
-                throw new IOException(filename, e);
-            }
+            var fileStream = new FileStream(filename, FileMode.Open);
             return Calculate(fileStream, minlen, filename);
         }
 
@@ -99,20 +91,27 @@ namespace csharp
         public static FastaStats Calculate(IEnumerable<ISequence> sequences, long minlen = 0,
             string filename = "<UNKNOWN>")
         {
-            return sequences
-                .Where(sequence => sequence.Count > minlen)
-                .GroupBy(sequence => "")
-                .Select(grouping => new FastaStats
-                {
-                    NumSeqs = grouping.Count(),
-                    NumBases = grouping.Sum(sequence => sequence.Count),
-                    MinLength = grouping.Min(sequence => sequence.Count),
-                    MaxLength = grouping.Min(sequence => sequence.Count),
-                    Average = grouping.Average(sequence => sequence.Count),
-                    Filename = filename
-                })
-                .DefaultIfEmpty(new FastaStats {Filename = filename})
-                .First();
+            try
+            {
+                return sequences
+                    .Where(sequence => sequence.Count > minlen)
+                    .GroupBy(sequence => "")
+                    .Select(grouping => new FastaStats
+                    {
+                        NumSeqs = grouping.Count(),
+                        NumBases = grouping.Sum(sequence => sequence.Count),
+                        MinLength = grouping.Min(sequence => sequence.Count),
+                        MaxLength = grouping.Min(sequence => sequence.Count),
+                        Average = grouping.Average(sequence => sequence.Count),
+                        Filename = filename
+                    })
+                    .DefaultIfEmpty(new FastaStats {Filename = filename})
+                    .First();
+            }
+            catch (Exception e)
+            {
+                throw new IOException(filename, e);
+            }
         }
     }
 }

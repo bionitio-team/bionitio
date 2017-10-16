@@ -4,7 +4,7 @@ using Serilog;
 using Microsoft.Extensions.CommandLineUtils;
 using Serilog.Core;
 
-namespace csharp
+namespace bionitio
 {
     class Program
     {
@@ -28,7 +28,7 @@ namespace csharp
 
             // Args
             cli.HelpOption("-?|-h|--help");
-            var fastqs = cli.Argument("fastqs", "Input FASTA files", true);
+            var fastas = cli.Argument("fastqs", "Input FASTA files", true);
             var minlen = cli.Option("--minlen", "Minimum length sequence to include in stats (default 0)",
                 CommandOptionType.SingleValue);
             var log = cli.Option("--log", "record program progress in LOG_FILE", CommandOptionType.SingleValue);
@@ -47,7 +47,7 @@ namespace csharp
                 Console.WriteLine("FILENAME	NUMSEQ	TOTAL	MIN	AVG	MAX");
                 try
                 {
-                    if (fastqs.Values.Count == 0)
+                    if (fastas.Values.Count == 0)
                     {
                         logger.Information("Processing FASTA file from stdin");
                         var stats = FastaStats.Calculate(Console.OpenStandardInput(), length, "STDIN");
@@ -55,7 +55,7 @@ namespace csharp
                     }
                     else
                     {
-                        foreach (var fasta in fastqs.Values)
+                        foreach (var fasta in fastas.Values)
                         {
                             logger.Information($"Processing FASTA file from {fasta}");
                             var stats = FastaStats.Calculate(fasta, length);

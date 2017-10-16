@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Bio;
 using Bio.IO.FastA;
 
-namespace csharp
+[assembly: InternalsVisibleTo("test")]
+
+namespace bionitio
 {
     public class FastaException : System.IO.IOException
     {
@@ -15,14 +18,14 @@ namespace csharp
         }
     }
 
-    public class FastaStats
+    public class FastaStats : IEquatable<FastaStats>
     {
-        public string Filename { get; private set; } = "<UNKNOWN>";
-        public long NumSeqs { get; private set; }
-        public long NumBases { get; private set; }
-        public long? MinLength { get; private set; }
-        public long? MaxLength { get; private set; }
-        public double? Average { get; private set; }
+        public string Filename { get; internal set; } = "<UNKNOWN>";
+        public long NumSeqs { get; internal set; }
+        public long NumBases { get; internal set; }
+        public long? MinLength { get; internal set; }
+        public long? MaxLength { get; internal set; }
+        public double? Average { get; internal set; }
 
         /// <summary>
         /// Converts a nullable struct to a string for the sake of CSV printing
@@ -36,6 +39,24 @@ namespace csharp
                 return nullable.ToString();
             else
                 return "-";
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is FastaStats)
+                return Equals((FastaStats) obj);
+            else
+                return base.Equals(obj);
+        }
+
+        public bool Equals(FastaStats other)
+        {
+            return Filename == other.Filename &&
+                   NumSeqs == other.NumSeqs &&
+                   NumBases == other.NumBases &&
+                   MinLength == other.MinLength &&
+                   Average == other.Average &&
+                   MaxLength == other.MaxLength;
         }
 
         public override string ToString()
@@ -94,14 +115,14 @@ namespace csharp
             try
             {
                 return sequences
-                    .Where(sequence => sequence.Count > minlen)
+                    .Where(sequence => sequence.Count >= minlen)
                     .GroupBy(sequence => "")
                     .Select(grouping => new FastaStats
                     {
                         NumSeqs = grouping.Count(),
                         NumBases = grouping.Sum(sequence => sequence.Count),
                         MinLength = grouping.Min(sequence => sequence.Count),
-                        MaxLength = grouping.Min(sequence => sequence.Count),
+                        MaxLength = grouping.Max(sequence => sequence.Count),
                         Average = grouping.Average(sequence => sequence.Count),
                         Filename = filename
                     })
@@ -110,7 +131,7 @@ namespace csharp
             }
             catch (Exception e)
             {
-                throw new IOException(filename, e);
+                throw new FastaException(filename, e);
             }
         }
     }

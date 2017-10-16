@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace csharp
+namespace bionitio
 {
     public class IOException : BionitioException
     {
@@ -9,13 +9,9 @@ namespace csharp
         {
         }
     }
-    
+
     public class BionitioException : Exception
     {
-        public BionitioException(string message) : base(message)
-        {
-        }
-
         public BionitioException(string message, Exception inner) : base(message, inner)
         {
         }

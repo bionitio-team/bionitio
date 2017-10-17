@@ -25,7 +25,7 @@ namespace bionitio
         public long NumBases { get; internal set; }
         public long? MinLength { get; internal set; }
         public long? MaxLength { get; internal set; }
-        public double? Average { get; internal set; }
+        public long? Average { get; internal set; }
 
         /// <summary>
         /// Converts a nullable struct to a string for the sake of CSV printing
@@ -123,7 +123,7 @@ namespace bionitio
                         NumBases = grouping.Sum(sequence => sequence.Count),
                         MinLength = grouping.Min(sequence => sequence.Count),
                         MaxLength = grouping.Max(sequence => sequence.Count),
-                        Average = grouping.Average(sequence => sequence.Count),
+                        Average = Convert.ToInt64(Math.Floor(grouping.Average(sequence => sequence.Count))),
                         Filename = filename
                     })
                     .DefaultIfEmpty(new FastaStats {Filename = filename})

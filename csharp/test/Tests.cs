@@ -65,7 +65,7 @@ namespace test
                 NumSeqs = 2,
                 NumBases = 9,
                 MinLength = 2,
-                Average = 4.5,
+                Average = 4,
                 MaxLength = 7
             });
         }
@@ -88,7 +88,7 @@ namespace test
                 NumSeqs = 2,
                 NumBases = 9,
                 MinLength = 2,
-                Average = 4.5,
+                Average = 4,
                 MaxLength = 7
             });
         }

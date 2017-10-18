@@ -9,38 +9,38 @@ addons:
     packages:
 
 before_install:
-# - ./c/.travis/install-dependencies.sh
-# - ./cpp/.travis/install-dependencies.sh 
-# - ./clojure/.travis/install-dependencies.sh
-# - ./haskell/.travis/install-dependencies.sh  
-# - ./java/.travis/install-dependencies.sh
-# - ./js/.travis/install-dependencies.sh
-# - ./python/.travis/install-dependencies.sh  
-# - ./r/.travis/install-dependencies.sh 
-# - ./ruby/.travis/install-dependencies.sh 
-# - ./rust/.travis/install-dependencies.sh 
-# - ./perl5/.travis/install-dependencies.sh
+ - ./c/.travis/install-dependencies.sh
+ - ./cpp/.travis/install-dependencies.sh 
+ - ./clojure/.travis/install-dependencies.sh
+ - ./haskell/.travis/install-dependencies.sh  
+ - ./java/.travis/install-dependencies.sh
+ - ./js/.travis/install-dependencies.sh
+ - ./python/.travis/install-dependencies.sh  
+ - ./r/.travis/install-dependencies.sh 
+ - ./ruby/.travis/install-dependencies.sh 
+ - ./rust/.travis/install-dependencies.sh 
+ - ./perl5/.travis/install-dependencies.sh
  - ./csharp/.travis/install-dependencies.sh
 
 # commented out tests break travis, fail on empty FASTA file
 script:
-# - ./.travis/test.sh c/bionitio-c
-# - ./.travis/test.sh cpp/src/bionitio-build/bionitio-cpp
-# - ./.travis/test.sh clojure/bin/bionitio-clj
-# - ./.travis/test.sh ~/.local/bin/bionitio-hs
-# - ./.travis/test.sh java/bionitio-java
-# - ./.travis/test.sh js/bionitio.js
-# - ./.travis/test.sh bionitio-py
-# - ./.travis/test.sh r/bionitio.R
-# - ./.travis/test.sh ruby/bin/bionitio
-# - ./.travis/test.sh ~/.cargo/bin/bionitio-rs
-# - ./.travis/test.sh perl5/bionitio.pl
- - ./.travis/test.sh csharp/bionitio/bin/Debug/netcoreapp2.0/linux-x64/publish/bionitio
-# - ./c/.travis/unit-test.sh
-# - ./haskell/.travis/unit-test.sh
-# - ./java/.travis/unit-test.sh
-# - ./python/.travis/unit-test.sh
-## XXX This is failing with a panic, the single > test.
-## - ./rust/.travis/unit-test.sh
-# - ./ruby/.travis/unit-test.sh
+ - ./.travis/test.sh c/bionitio-c
+ - ./.travis/test.sh cpp/src/bionitio-build/bionitio-cpp
+ - ./.travis/test.sh clojure/bin/bionitio-clj
+ - ./.travis/test.sh ~/.local/bin/bionitio-hs
+ - ./.travis/test.sh java/bionitio-java
+ - ./.travis/test.sh js/bionitio.js
+ - ./.travis/test.sh bionitio-py
+ - ./.travis/test.sh r/bionitio.R
+ - ./.travis/test.sh ruby/bin/bionitio
+ - ./.travis/test.sh ~/.cargo/bin/bionitio-rs
+ - ./.travis/test.sh perl5/bionitio.pl
+- ./.travis/test.sh csharp/bionitio/bin/Debug/netcoreapp2.0/linux-x64/publish/bionitio
+ - ./c/.travis/unit-test.sh
+ - ./haskell/.travis/unit-test.sh
+ - ./java/.travis/unit-test.sh
+ - ./python/.travis/unit-test.sh
+# XXX This is failing with a panic, the single > test.
+# - ./rust/.travis/unit-test.sh
+ - ./ruby/.travis/unit-test.sh
  - ./csharp/.travis/unit-test.sh

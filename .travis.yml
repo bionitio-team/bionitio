@@ -35,7 +35,7 @@ script:
  - ./.travis/test.sh ruby/bin/bionitio
  - ./.travis/test.sh ~/.cargo/bin/bionitio-rs
  - ./.travis/test.sh perl5/bionitio.pl
-- ./.travis/test.sh csharp/bionitio/bin/Debug/netcoreapp2.0/linux-x64/publish/bionitio
+ - ./.travis/test.sh csharp/bionitio/bin/Debug/netcoreapp2.0/linux-x64/publish/bionitio
  - ./c/.travis/unit-test.sh
  - ./haskell/.travis/unit-test.sh
  - ./java/.travis/unit-test.sh

@@ -20,6 +20,6 @@ test_that("load_fasta_file returns NULL for empty files", {
 })
 
 test_that("load_fasta_file errors on invalid fasta files", {
-  expect_error(load_fasta_file("single_greather_than.fasta",
+  expect_error(load_fasta_file("single_greater_than.fasta",
                                quit_on_error = FALSE))
 })

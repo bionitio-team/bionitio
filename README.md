@@ -216,6 +216,7 @@ A set of sample test input files is provided in the `test_data` folder. Addition
 
 * C
 * C++
+* C#
 * Clojure
 * Java
 * Javascript
@@ -238,6 +239,7 @@ Alphabetically:
 * Harriet Dashnow
 * Peter Georgeson
 * Andrew Lonsdale
+* Michael Milton
 * Bernie Pope
 * David R Powell
 * Torsten Seemann

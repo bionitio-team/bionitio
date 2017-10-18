@@ -35,7 +35,7 @@ However, we grant permission to users who derive their own projects from bioniti
 One of the main goals of bionitio is to provide a good place to start writing bioinformatics command line tools. To make that easy we've provided a shell script called `bionitio-boot.sh` to help you start a new project, which is run like so:
 
 ```
-bionitio-boot.sh -l rust -n skynet -c BSD-3-Clause
+boot/bionitio-boot.sh -l rust -n skynet -c BSD-3-Clause
 ```
 
 The example above starts a fresh project called `skynet` using Rust as the implementation language. A new git repository will be created in a sub-directory called `skynet`, and the project using the BSD 3 Clause license.

@@ -1,3 +1,3 @@
 #!/bin/bash
-cd test
+cd csharp/test
 dotnet test

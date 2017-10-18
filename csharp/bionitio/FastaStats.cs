@@ -74,7 +74,15 @@ namespace bionitio
         /// <exception cref="IOException"></exception>
         public static FastaStats Calculate(string filename, long minlen = 0)
         {
-            var fileStream = new FileStream(filename, FileMode.Open);
+            FileStream fileStream;
+            try
+            {
+                fileStream = new FileStream(filename, FileMode.Open);
+            }
+            catch (Exception e)
+            {
+                throw new bionitio.IOException(filename, e);
+            }
             return Calculate(fileStream, minlen, filename);
         }
 

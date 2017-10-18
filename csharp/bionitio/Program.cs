@@ -12,7 +12,7 @@ namespace bionitio
         {
             var config = new LoggerConfiguration();
             if (filename != null)
-                config.WriteTo.RollingFile(filename);
+                config.WriteTo.File(filename);
             var logger = config.CreateLogger();
             logger.Information("Program started");
             return logger;
@@ -84,7 +84,7 @@ namespace bionitio
             var cli = CreateCli(args);
             try
             {
-                cli.Execute(args);
+                return cli.Execute(args);
             }
             catch (CommandParsingException)
             {

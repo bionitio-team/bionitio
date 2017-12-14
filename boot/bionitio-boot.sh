@@ -58,7 +58,10 @@ choose another, if you so desire.
 
 Dependencies:
 
-   - git must be installed on your computer to use this script.
+   The following tools must be installed on your computer to use this script,
+   and be accessible via the PATH environment variable:
+   - git 
+   - wget 
 
 UsageMessage
 }
@@ -125,6 +128,10 @@ function check_dependencies {
     git --version > /dev/null || {
        exit_with_error "git is not installed in the PATH\nPlease install git, and ensure it can be found in your PATH variable." 1
     }
+    # Check for wget 
+    wget --version > /dev/null || {
+       exit_with_error "wget is not installed in the PATH\nPlease install wget, and ensure it can be found in your PATH variable." 1
+    }
 }
 
 function check_if_directory_exists {
@@ -142,10 +149,9 @@ function clone_bionitio_repository {
 }
 
 function set_license {
-    echo "XXX Need to fix the license setting"
-    # cp ${new_project_name}/license_options/${license} ${new_project_name}/LICENSE || {
-    #    exit_with_error "cp failed: \'cp ${new_project_name}/license_options/${license} ${new_project_name}/LICENSE\'"
-    # }
+    wget -q https://raw.githubusercontent.com/bionitio-team/bionitio/master/license_options/${license} -O ${new_project_name}/LICENSE || {
+        exit_with_error "wget failed: \'wget -q https://raw.githubusercontent.com/bionitio-team/bionitio/master/license_options/${license} -O ${new_project_name}/LICENSE'"
+    }
 }
 
 function rename_project {

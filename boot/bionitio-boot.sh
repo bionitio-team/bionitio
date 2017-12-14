@@ -70,7 +70,7 @@ UsageMessage
 # echo an error message $1 and exit with status $2
 function exit_with_error {
     printf "${program_name}: ERROR: $1\n"
-	exit $2
+    exit $2
 }
 
 # Parse the command line arguments and set the global variables language and new_project_name

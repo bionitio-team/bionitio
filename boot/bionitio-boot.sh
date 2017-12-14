@@ -2,15 +2,11 @@
 
 # 1. Parse command line arguments.
 # 2. Check dependencies.
-# 3. Try to create new directory for the project.
-# 4. Clone bionitio git repository into the newly created directory.
-# 5. Recursively copy source tree from the git repository into the project directory.
-# 6. Recursively copy test_data directory from the git repository into the project directory.
-# 7. Set the license for the project.
-# 8. Copy the .travis/test.sh script into the project directory.
-# 9. Remove the cloned git repository.
-# 10. Rename bionitio to the new project name.
-# 11. Create repository for new project.
+# 3. Check if the new directory already exists, and exit if it does. 
+# 4. Clone language specific bionitio git repository into a new directory.
+# 5. Set the license for the project.
+# 6. Rename bionitio to the new project name.
+# 7. Create repository for new project.
 
 #set -x
 
@@ -48,7 +44,7 @@ name as the new_project_name then this installer will not continue.
 If no license is supplied, it will default to using the MIT license.
 
 Valid languages are:
-c, clojure, cpp, haskell, java, js, perl5, python, r, ruby, rust
+c, clojure, cpp, csharp, haskell, java, js, perl5, python, r, ruby, rust
 
 Valid licenses are:
 Apache-2.0, BSD-2-Clause, BSD-3-Clause, GPL-2.0, GPL-3.0, MIT
@@ -104,7 +100,7 @@ function parse_args {
     fi
 
     case ${language} in
-        c|clojure|cpp|haskell|java|js|perl5|python|r|ruby|rust)
+        c|clojure|cpp|csharp|haskell|java|js|perl5|python|r|ruby|rust)
             # this is an allowed language
             ;;
         *)
@@ -131,45 +127,25 @@ function check_dependencies {
     }
 }
 
-function create_project_directory {
+function check_if_directory_exists {
     if [[ -d ${new_project_name} ]]; then
         exit_with_error "directory ${new_project_name} already exists, try another name or location, or rename the existing directory" 1
-    else
-        mkdir ${new_project_name} || {
-            exit_with_error "failed to create directory ${new_project_name}" 1
-        }
     fi
 }
 
 function clone_bionitio_repository {
-    # XXX check if git is executable, catch output from git in case we need to report an error
-    git clone https://github.com/bionitio-team/bionitio ${new_project_name}/${git_tmp_dir} > /dev/null 2>&1 || {
-        exit_with_error "git command failed: \'git clone https://github.com/bionitio-team/bionitio ${new_project_name}/${git_tmp_dir}\'" 1
+    git clone --recursive https://github.com/bionitio-team/bionitio-${language} ${new_project_name} > /dev/null 2>&1 || {
+        exit_with_error "git command failed: \'git clone https://github.com/bionitio-team/bionitio-${language} ${new_project_name}/${git_tmp_dir}\'" 1
     }
-}
-
-function copy_bionitio_language {
-    cp -R ${new_project_name}/${git_tmp_dir}/${language}/ ${new_project_name} || {
-        exit_with_error "copy command failed: \'cp -R {new_project_name}/${git_tmp_dir}/$language/ ${new_project_name}\'" 1
-    }
-}
-
-function copy_test_data {
-    cp -R ${new_project_name}/${git_tmp_dir}/test_data/ ${new_project_name}/test_data/ || {
-        exit_with_error "copy command failed: \'cp -R ${new_project_name}/${git_tmp_dir}/test_data/ ${new_project_name}/test_data/\'" 1
-    }
+    # Remove the .git sub-directory, because we are starting a new repository
+    /bin/rm -fr ${new_project_name}/.git/
 }
 
 function set_license {
-    cp ${new_project_name}/${git_tmp_dir}/license_options/${license} ${new_project_name}/LICENSE
-}
-
-function copy_travis_test {
-    cp ${new_project_name}/${git_tmp_dir}/.travis/test.sh ${new_project_name}/.travis/test.sh
-}
-
-function remove_bionitio_repository {
-    /bin/rm -fr "${new_project_name}/${git_tmp_dir}"
+    echo "XXX Need to fix the license setting"
+    # cp ${new_project_name}/license_options/${license} ${new_project_name}/LICENSE || {
+    #    exit_with_error "cp failed: \'cp ${new_project_name}/license_options/${license} ${new_project_name}/LICENSE\'"
+    # }
 }
 
 function rename_project {
@@ -252,30 +228,18 @@ parse_args $@
 verbose_message "checking for dependencies"
 check_dependencies
 # 3. Try to create new directory for the project.
-verbose_message "creating project directory ${new_project_name}"
-create_project_directory
+verbose_message "Checking if ${new_project_name} already exists"
+check_if_directory_exists
 # 4. Clone bionitio git repository into the newly created directory.
-verbose_message "cloning bionitio repository into ${new_project_name}/${git_tmp_dir}"
+verbose_message "cloning bionitio repository into ${new_project_name}"
 clone_bionitio_repository
-# 5. Recursively copy source tree from the git repository into the project directory.
-verbose_message "copying ${language} source tree into ${new_project_name}"
-copy_bionitio_language
-# 6. Recursively copy test_data directory from the git repository into the project directory.
-verbose_message "copying test_data into ${new_project_name}"
-copy_test_data
-# 7. Set the license for the project
+# 5. Set the license for the project
 verbose_message "setting the license to ${license}"
 set_license
-# 8. Copy the .travis/test.sh script into the project directory.
-verbose_message "copying .travis/test.sh into the project directory"
-copy_travis_test
-# 9. remove the cloned git repository.
-verbose_message "removing ${new_project_name}/${git_tmp_dir}"
-remove_bionitio_repository
-# 10. Rename bionitio to the new project name.
+# 6. Rename bionitio to the new project name.
 verbose_message "renaming references to bionitio to new project name ${new_project_name}" 
 rename_project
-# 11. Create repository for new project.
+# 7. Create repository for new project.
 verbose_message "initialising new git repository for ${new_project_name}"
 create_project_repository
 verbose_message "done"

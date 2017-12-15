@@ -7,23 +7,21 @@ demonstrating best practice using a toy example called `bionitio`.
 
 ## Languages
 
-
 | Language | Travis Testing Status |
 |----------|-----------------------|
 | C        | [![travis](https://travis-ci.org/bionitio-team/bionitio-c.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-c) || 
+| C++      | [![travis](https://travis-ci.org/bionitio-team/bionitio-c.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-c) || 
+| C#       | [![travis](https://travis-ci.org/bionitio-team/bionitio-c.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-c) || 
+| Clojure  | [![travis](https://travis-ci.org/bionitio-team/bionitio-c.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-c) || 
+| Java     | [![travis](https://travis-ci.org/bionitio-team/bionitio-c.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-c) || 
+| Javascript | [![travis](https://travis-ci.org/bionitio-team/bionitio-c.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-c) || 
+| Haskell  | [![travis](https://travis-ci.org/bionitio-team/bionitio-c.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-c) || 
+| Perl5    | [![travis](https://travis-ci.org/bionitio-team/bionitio-c.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-c) || 
+| Python   | [![travis](https://travis-ci.org/bionitio-team/bionitio-c.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-c) || 
+| R        | [![travis](https://travis-ci.org/bionitio-team/bionitio-c.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-c) || 
+| Ruby     | [![travis](https://travis-ci.org/bionitio-team/bionitio-c.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-c) || 
+| Rust     | [![travis](https://travis-ci.org/bionitio-team/bionitio-c.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-c) || 
 
-
-* C++
-* C#
-* Clojure
-* Java
-* Javascript
-* Haskell
-* Perl5
-* Python
-* R
-* Ruby
-* Rustk
 
 The program reads one or more input FASTA files. For each file it computes a variety of simple statistics, and then prints a summary output.
 
@@ -231,21 +229,6 @@ Bionitio returns the following exit status values:
 # Testing
 
 A set of sample test input files is provided in the `test_data` folder. Additionally, each implementation of bionitio comes with its own testing facilities which utilise features and libraries of the particular programming language. Instructions for language-specific testing are provided in the README.md files for each implementation.
-
-# Programming languages used to implement bionitio
-
-* C
-* C++
-* C#
-* Clojure
-* Java
-* Javascript
-* Haskell
-* Perl5
-* Python
-* R
-* Ruby
-* Rust
 
 # Bugs
 

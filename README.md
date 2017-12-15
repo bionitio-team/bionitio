@@ -7,20 +7,20 @@ demonstrating best practice using a toy example called `bionitio`.
 
 ## Languages
 
-| Language | Travis Testing Status |
+| Language | Repository | Travis Testing Status |
 |----------|-----------------------|
-| [C](https://github.com/bionitio-team/bionitio-c) | [![travis](https://travis-ci.org/bionitio-team/bionitio-c.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-c) | 
-| C++      | [![travis](https://travis-ci.org/bionitio-team/bionitio-cpp.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-cpp) | 
-| C#       | [![travis](https://travis-ci.org/bionitio-team/bionitio-csharp.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-csharp) | 
-| Clojure  | [![travis](https://travis-ci.org/bionitio-team/bionitio-clojure.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-clojure) | 
-| Java     | [![travis](https://travis-ci.org/bionitio-team/bionitio-java.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-java) | 
-| Javascript | [![travis](https://travis-ci.org/bionitio-team/bionitio-js.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-js) | 
-| Haskell  | [![travis](https://travis-ci.org/bionitio-team/bionitio-haskell.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-haskell) | 
-| Perl 5   | [![travis](https://travis-ci.org/bionitio-team/bionitio-perl5.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-perl5) | 
-| Python   | [![travis](https://travis-ci.org/bionitio-team/bionitio-python.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-python) | 
-| R        | [![travis](https://travis-ci.org/bionitio-team/bionitio-r.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-r) | 
-| Ruby     | [![travis](https://travis-ci.org/bionitio-team/bionitio-ruby.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-ruby) | 
-| Rust     | [![travis](https://travis-ci.org/bionitio-team/bionitio-rust.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-rust) | 
+| C        | <https://github.com/bionitio-team/bionitio-c> | [![travis](https://travis-ci.org/bionitio-team/bionitio-c.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-c) | 
+| C++      | <https://github.com/bionitio-team/bionitio-cpp> | [![travis](https://travis-ci.org/bionitio-team/bionitio-cpp.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-cpp) | 
+| C#       | <https://github.com/bionitio-team/bionitio-csharp> | [![travis](https://travis-ci.org/bionitio-team/bionitio-csharp.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-csharp) | 
+| Clojure  | <https://github.com/bionitio-team/bionitio-clojure> | [![travis](https://travis-ci.org/bionitio-team/bionitio-clojure.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-clojure) | 
+| Java     | <https://github.com/bionitio-team/bionitio-java> | [![travis](https://travis-ci.org/bionitio-team/bionitio-java.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-java) | 
+| Javascript | <https://github.com/bionitio-team/bionitio-js> | [![travis](https://travis-ci.org/bionitio-team/bionitio-js.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-js) | 
+| Haskell  | <https://github.com/bionitio-team/bionitio-haskell> | [![travis](https://travis-ci.org/bionitio-team/bionitio-haskell.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-haskell) | 
+| Perl 5   | <https://github.com/bionitio-team/bionitio-perl5> | [![travis](https://travis-ci.org/bionitio-team/bionitio-perl5.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-perl5) | 
+| Python   | <https://github.com/bionitio-team/bionitio-python> | [![travis](https://travis-ci.org/bionitio-team/bionitio-python.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-python) | 
+| R        | <https://github.com/bionitio-team/bionitio-r> | [![travis](https://travis-ci.org/bionitio-team/bionitio-r.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-r) | 
+| Ruby     | <https://github.com/bionitio-team/bionitio-ruby> | [![travis](https://travis-ci.org/bionitio-team/bionitio-ruby.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-ruby) | 
+| Rust     | <https://github.com/bionitio-team/bionitio-rust> | [![travis](https://travis-ci.org/bionitio-team/bionitio-rust.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-rust) | 
 
 
 The program reads one or more input FASTA files. For each file it computes a variety of simple statistics, and then prints a summary output.

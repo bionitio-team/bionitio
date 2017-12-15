@@ -61,7 +61,7 @@ Dependencies:
    The following tools must be installed on your computer to use this script,
    and be accessible via the PATH environment variable:
    - git 
-   - wget 
+   - curl 
 
 UsageMessage
 }
@@ -128,9 +128,16 @@ function check_dependencies {
     git --version > /dev/null || {
        exit_with_error "git is not installed in the PATH\nPlease install git, and ensure it can be found in your PATH variable." 1
     }
-    # Check for wget 
-    wget --version > /dev/null || {
-       exit_with_error "wget is not installed in the PATH\nPlease install wget, and ensure it can be found in your PATH variable." 1
+    # Check for curl 
+    curl --version > /dev/null || {
+       exit_with_error "curl is not installed in the PATH\nPlease install curl, and ensure it can be found in your PATH variable." 1
+    }
+}
+
+# Execute a string as a shell command and exit with an error if the command fails
+function run_command_exit_on_error {
+    eval "$@" || {
+        exit_with_error "command failed: \'$@\'" 1
     }
 }
 
@@ -141,17 +148,21 @@ function check_if_directory_exists {
 }
 
 function clone_bionitio_repository {
-    git clone --recursive https://github.com/bionitio-team/bionitio-${language} ${new_project_name} > /dev/null 2>&1 || {
-        exit_with_error "git command failed: \'git clone https://github.com/bionitio-team/bionitio-${language} ${new_project_name}/${git_tmp_dir}\'" 1
-    }
+    CMD='git clone --recursive https://github.com/bionitio-team/bionitio-${language} ${new_project_name} > /dev/null 2>&1' 
+    run_command_exit_on_error $CMD
+    #eval $CMD || {
+    #    exit_with_error "command failed: \'$CMD\'" 1
+    #}
     # Remove the .git sub-directory, because we are starting a new repository
     /bin/rm -fr ${new_project_name}/.git/
 }
 
 function set_license {
-    wget -q https://raw.githubusercontent.com/bionitio-team/bionitio/master/license_options/${license} -O ${new_project_name}/LICENSE || {
-        exit_with_error "wget failed: \'wget -q https://raw.githubusercontent.com/bionitio-team/bionitio/master/license_options/${license} -O ${new_project_name}/LICENSE'"
-    }
+    CMD='curl -s https://raw.githubusercontent.com/bionitio-team/bionitio/master/license_options/${license} > ${new_project_name}/LICENSE'
+    run_command_exit_on_error $CMD
+    #eval $CMD || {
+    #    exit_with_error "command failed:\'$CMD\'"
+    #}
 }
 
 function rename_project {

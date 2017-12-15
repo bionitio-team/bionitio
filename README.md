@@ -1,5 +1,3 @@
-[![travis](https://travis-ci.org/bionitio-team/bionitio.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio)
-
 # Overview 
 
 This project provides a template for implementing command line bioinformatics tools in various programming languages, 

@@ -9,7 +9,7 @@ demonstrating best practice using a toy example called `bionitio`.
 
 | Language | Travis Testing Status |
 |----------|-----------------------|
-| C        | [![travis](https://travis-ci.org/bionitio-team/bionitio-c.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-c) | 
+| [C](https://github.com/bionitio-team/bionitio-c) | [![travis](https://travis-ci.org/bionitio-team/bionitio-c.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-c) | 
 | C++      | [![travis](https://travis-ci.org/bionitio-team/bionitio-cpp.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-cpp) | 
 | C#       | [![travis](https://travis-ci.org/bionitio-team/bionitio-csharp.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-csharp) | 
 | Clojure  | [![travis](https://travis-ci.org/bionitio-team/bionitio-clojure.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-clojure) | 

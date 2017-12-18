@@ -74,14 +74,14 @@ function run_command_exit_on_error {
 function clone_repositories {
     languages='c clojure cpp csharp haskell java js perl5 python r ruby rust'
     for this_language in $languages; do
-        verbose_message "cloning $this_language"
-        clone_one_repository $this_language
+        repo="bionitio-${this_language}"
+        verbose_message "cloning ${repo}"
+        clone_one_repository $repo
     done
 }
 
 function clone_one_repository {
-    CMD="git clone --recursive https://github.com/bionitio-team/bionitio-${1} > /dev/null 2>&1"
-    echo $CMD
+    CMD="git clone --recursive https://github.com/bionitio-team/${1} > /dev/null 2>&1"
     run_command_exit_on_error $CMD
 }
 

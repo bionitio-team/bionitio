@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
 
+# Initialise a new bioinformatics project, starting from bionitio.
+
 # 1. Parse command line arguments.
 # 2. Check dependencies.
 # 3. Check if the new directory already exists, and exit if it does. 
 # 4. Clone language specific bionitio git repository into a new directory.
 # 5. Set the license for the project.
 # 6. Rename bionitio to the new project name.
-# 7. Create repository for new project.
+# 7. Remove old git repository.
+# 8. Create new git repository for new project.
 
 #set -x
 
@@ -20,8 +23,6 @@ license="MIT"
 new_project_name=""
 # Verbose output
 verbose=""
-# Name of temporary sub-directory to store bionitio git repository
-git_tmp_dir="bionitio-boot-git-tmp"
 
 # Help message for using the program.
 function show_help {
@@ -73,6 +74,7 @@ function exit_with_error {
     exit $2
 }
 
+
 # Parse the command line arguments and set the global variables language and new_project_name
 function parse_args {
     local OPTIND opt
@@ -123,6 +125,7 @@ function parse_args {
     fi
 }
 
+
 function check_dependencies {
     # Check for git
     git --version > /dev/null || {
@@ -134,6 +137,7 @@ function check_dependencies {
     }
 }
 
+
 # Execute a string as a shell command and exit with an error if the command fails
 function run_command_exit_on_error {
     eval "$@" || {
@@ -141,29 +145,33 @@ function run_command_exit_on_error {
     }
 }
 
+
 function check_if_directory_exists {
     if [[ -d ${new_project_name} ]]; then
         exit_with_error "directory ${new_project_name} already exists, try another name or location, or rename the existing directory" 1
     fi
 }
 
+
 function clone_bionitio_repository {
-    CMD='git clone --recursive https://github.com/bionitio-team/bionitio-${language} ${new_project_name} > /dev/null 2>&1' 
+    CMD="git clone --recursive https://github.com/bionitio-team/bionitio-${language} ${new_project_name} > /dev/null 2>&1"
     run_command_exit_on_error $CMD
-    #eval $CMD || {
-    #    exit_with_error "command failed: \'$CMD\'" 1
-    #}
-    # Remove the .git sub-directory, because we are starting a new repository
-    /bin/rm -fr ${new_project_name}/.git/
 }
 
-function set_license {
-    CMD='curl -s https://raw.githubusercontent.com/bionitio-team/bionitio/master/license_options/${license} > ${new_project_name}/LICENSE'
-    run_command_exit_on_error $CMD
-    #eval $CMD || {
-    #    exit_with_error "command failed:\'$CMD\'"
-    #}
+
+function remove_old_git_repository {
+    # Remove the old git sub-directories
+    /bin/rm -fr ${new_project_name}/.git
+    /bin/rm -f ${new_project_name}/.gitmodules
+    /bin/rm -fr ${new_project_name}/functional_tests/.git
 }
+
+
+function set_license {
+    CMD="curl -s https://raw.githubusercontent.com/bionitio-team/bionitio/master/license_options/${license} > ${new_project_name}/LICENSE"
+    run_command_exit_on_error $CMD
+}
+
 
 function rename_project {
     # Annoyingly BSD sed and GNU sed differ in handling the -i option (update in place).
@@ -239,6 +247,7 @@ function verbose_message {
     fi
 }
 
+
 # 1. Parse command line arguments.
 parse_args $@
 # 2. Check that dependencies are met
@@ -256,7 +265,10 @@ set_license
 # 6. Rename bionitio to the new project name.
 verbose_message "renaming references to bionitio to new project name ${new_project_name}" 
 rename_project
-# 7. Create repository for new project.
+# 7. Remove old git repository
+verbose_message "removing old git repository"
+remove_old_git_repository
+# 8. Create new repository for new project.
 verbose_message "initialising new git repository for ${new_project_name}"
 create_project_repository
 verbose_message "done"

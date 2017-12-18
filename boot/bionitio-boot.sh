@@ -7,8 +7,8 @@
 # 3. Check if the new directory already exists, and exit if it does. 
 # 4. Clone language specific bionitio git repository into a new directory.
 # 5. Set the license for the project.
-# 6. Rename bionitio to the new project name.
-# 7. Remove old git repository.
+# 6. Remove old git repository.
+# 7. Rename bionitio to the new project name.
 # 8. Create new git repository for new project.
 
 #set -x
@@ -262,12 +262,12 @@ clone_bionitio_repository
 # 5. Set the license for the project
 verbose_message "setting the license to ${license}"
 set_license
-# 6. Rename bionitio to the new project name.
-verbose_message "renaming references to bionitio to new project name ${new_project_name}" 
-rename_project
-# 7. Remove old git repository
+# 6. Remove old git repository
 verbose_message "removing old git repository"
 remove_old_git_repository
+# 7. Rename bionitio to the new project name.
+verbose_message "renaming references to bionitio to new project name ${new_project_name}" 
+rename_project
 # 8. Create new repository for new project.
 verbose_message "initialising new git repository for ${new_project_name}"
 create_project_repository

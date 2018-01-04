@@ -1,6 +1,6 @@
 # Overview 
 
-Bionitio provides a template for implementing command line bioinformatics tools in various programming languages.
+Bionitio provides a template for command line bioinformatics tools in various programming languages.
 
 In each language we implement a simple tool that carries out a basic bioinformatics task.
 The program reads one or more input FASTA files, computes a variety of simple statistics on each file, and prints a tabulated output.
@@ -30,7 +30,7 @@ An additional advantage of bionitio is that it allows us to compare programming 
 
 Bionitio is intended to be a simple prototypical bioinformatics tool that is easy to understand and modify. Therefore it has only minimal functionality; just enough to demonstrate all the key features of a real bioinformatics command line program without becoming distracted by unnecessary complexity.
 
-If you use bionitio as the starting point for a new project we expect that you will rewrite it to implement your own desired functionality. However, much of the boilerplate is already provided for you, such that modifying the program should be significantly easier than starting from scratch.
+If you use bionitio as the starting point for a new project we expect that you will rewrite it to implement your own desired functionality. However, much of the boilerplate is already provided for you; modifying the program should be significantly easier than starting from scratch.
 
 All implementations of bionitio implement the same functionality and provide the same command line interface.
 Specific details of bionitio's behaviour, usage, and installation, can be found in the README for each implementation.
@@ -86,7 +86,7 @@ curl -sSf https://raw.githubusercontent.com/bionitio-team/bionitio/master/boot/b
  | bash -s -- -l rust -n skynet -c BSD-3-Clause
 ```
 
-If you prefer not to run a shell script from the web, then you can either clone the whole bionitio repository, or just make a local copy of the `bionitio-boot.sh` script, and run it locally, as shown below:
+If you prefer not to run a shell script from the web, then you can make a local copy of the `bionitio-boot.sh` script, and run it locally, as shown below:
 
 ```
 # Copy the script to your local computer

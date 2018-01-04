@@ -64,7 +64,9 @@ One of the main goals of bionitio is to provide a good place to start writing bi
 boot/bionitio-boot.sh -l rust -n skynet -c BSD-3-Clause
 ```
 
-The example above starts a fresh project called `skynet` using Rust as the implementation language. A new git repository will be created in a sub-directory called `skynet`, and the project using the BSD 3 Clause license.
+The example above starts a fresh project called `skynet` under the BSD-3-Clause license, using Rust as the implementation language. A new git repository will be created in a sub-directory called `skynet` which will be initialised with a copy of bionitio and a blank revision history. All references to `bionitio` in the source code are replaced with `skynet`.
+
+After you have started a new project from bionitio you are free to modify it as you see fit, modifying its functionality to suit your own requirements.
 
 When setting up a new project using `bionitio-boot.sh` You must specify the following things: 
 
@@ -92,10 +94,6 @@ curl https://raw.githubusercontent.com/bionitio-team/bionitio/master/boot/bionit
 # Run the script on your local computer
 bash bionitio-boot.sh -l rust -n skynet -c BSD-3-Clause
 ```
-
-# Installation and usage 
-
-Installation and usage instructions are provided separately for each of the implementations of bionitio. Please see the README.md files in the corresponding sub-folders for each implementation.
 
 # Authors
 

@@ -2,11 +2,12 @@
 
 Bionitio provides a template for implementing command line bioinformatics tools in various programming languages.
 
-In each language we implement a simple tool that carries out a basic bioinformatics task, described below.
+In each language we implement a simple tool that carries out a basic bioinformatics task.
+The program reads one or more input FASTA files, computes a variety of simple statistics on each file, and prints a tabulated output.
 
-The purpose of the tool is to provide a easy-to-understand working example that is built on best-practice software engineering principles. It can be used as a basis for learning and as a solid foundation for starting new projects. We provide a script for starting new projects based on bionitio, which saves time and ensures good programming practices are adopted from the beginning. 
+The purpose of the tool is to provide an easy-to-understand working example that is built on best-practice software engineering principles. It can be used as a basis for learning and as a solid foundation for starting new projects. We provide a script for starting new projects from bionitio, which saves time and ensures good programming practices are adopted from the beginning. 
 
-An additional advantage of bionitio is that it allows us to compare programming styles in different languages.
+An additional advantage of bionitio is that it allows us to compare programming styles in different languages and programming paradigms.
 
 ## Languages
 
@@ -29,27 +30,26 @@ An additional advantage of bionitio is that it allows us to compare programming 
 
 Bionitio is intended to be a simple prototypical bioinformatics tool that is easy to understand and modify. Therefore it has only minimal functionality; just enough to demonstrate all the key features of a real bioinformatics command line program without becoming distracted by unnecessary complexity.
 
-If you use bionitio as the starting point for a new project we expect that you will rewrite it to implement your own desired functionality. However, much of the boilerplate will already be provided for you, such that modifying the program should be significantly easier than starting from scratch.
+If you use bionitio as the starting point for a new project we expect that you will rewrite it to implement your own desired functionality. However, much of the boilerplate is already provided for you, such that modifying the program should be significantly easier than starting from scratch.
 
-The program reads one or more input FASTA files. For each file it computes a variety of simple statistics, and then prints a summary output.
+All implementations of bionitio implement the same functionality and provide the same command line interface.
+Specific details of bionitio's behaviour, usage, and installation, can be found in the README for each implementation.
 
-Specific details of bionitio's behaviour can be found in the README files for each of the implementations.
+Key features of the tool include:
 
-Basic features of the tool include:
-
-* Command line argument parsing.
-* Reading input from files or optionally from standard input.
+* Command line argument parsing and usage information.
+* Reading input from multiple files or optionally from standard input.
 * The use of library code for parsing a common bioinformatics file format (FASTA).
-* Optional logging.
+* Progress and error logging.
 * Defined exit status values.
-* A test suite (unit tests and integration testing). 
+* A test suite (unit testing and integration testing). 
 * A version number.
 * Standardised software building and packaging using programming language specific mechanisms.
 * A standard open-source software license. 
 * User documentation.
 * Code documentation.
 
-Where possible we have tried to follow the recommended conventions for programming style for each implementation language.
+Where possible we follow the recommended conventions for programming style for each implementation language.
 
 # License
 

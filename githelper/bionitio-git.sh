@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-# Convenience tool for cloning or bringing all bionitio  
-# repositories up-to-date. 
+# Convenience tool for running simple git commands on all bionitio 
+# repositories.
 
 # 1. Parse command line arguments.
 # 2. Check dependencies.
-# 3. Try to clone each of the language specific bionitio repositories
+# 3. Try to run the appropriate git command in each of the language specific bionitio repositories
 
 program_name="bionitio-clone.sh"
 
@@ -13,7 +13,7 @@ program_name="bionitio-clone.sh"
 function show_help {
 cat << UsageMessage
 
-${program_name}: clone all the bionitio language-specific repositories 
+${program_name}: run simple git commands on all the bionitio language-specific repositories 
 
 Usage:
     ${program_name} [-h] [-v] -c COMMAND
@@ -22,7 +22,7 @@ Usage:
 
 -v verbose output
 
--c COMMAND, where COMMAND is one of clone, pull
+-c COMMAND, where COMMAND is one of: clone, pull
 
 Dependencies:
 
@@ -133,5 +133,7 @@ parse_args $@
 # 2. Check that dependencies are met
 verbose_message "checking for dependencies"
 check_dependencies
+# 3. Try to run the appropriate git command in each of the language specific bionitio repositories
+verbose_message "performing command $command"
 perform_command
 verbose_message "done"

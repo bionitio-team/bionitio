@@ -15,13 +15,14 @@ bionitio-readme.sh -t TEMPLATE.md -l python -i $HOME/bionitio-python/readme_incl
 
 1. Clone all the repositories using the helpful git wrapper:
 ```
+bs=$BIONITIO_SRC
+mkdir $SCRATCH_DIR
 cd $SCRATCH_DIR
-$BIONITIO_SRC/githelper/bionitio-git.sh -c clone
+${bs}/githelper/bionitio-git.sh -c clone
 ```
 2. Run the README template program for each language:
 ```
-cd $BIONITIO_SRC/readme_template/
-for lang in 'c clojure cpp csharp haskell java js perl5 python r ruby rust'; do \
-    bionitio-readme.sh -t TEMPLATE.md -l $lang -i "$SCRATCH_DIR/bionitio-${lang}/readme_includes" > "$SCRATCH_DIR/bionitio-${lang}/README.md" \
+for lang in c clojure cpp csharp haskell java js perl5 python r ruby rust; do \
+    ${bs}/readme-template/bionitio-readme.sh -t ${bs}/readme-template/TEMPLATE.md -l "$lang" -i "bionitio-${lang}/readme_includes" > "bionitio-${lang}/README.md"; \
 done
 ```

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-# Clone all the language-specific bionitio repositories from github
+# Convenience tool for cloning or bringing all bionitio  
+# repositories up-to-date. 
 
 # 1. Parse command line arguments.
 # 2. Check dependencies.
@@ -15,11 +16,13 @@ cat << UsageMessage
 ${program_name}: clone all the bionitio language-specific repositories 
 
 Usage:
-    ${program_name} [-h] [-v]
+    ${program_name} [-h] [-v] -c COMMAND
 
 -h shows this help message
 
 -v verbose output
+
+-c COMMAND, where COMMAND is one of clone, pull
 
 Dependencies:
 
@@ -37,11 +40,15 @@ function exit_with_error {
     exit $2
 }
 
+command=""
+# The list of valid languages
+languages='c clojure cpp csharp haskell java js perl5 python r ruby rust'
+
 # Parse the command line arguments 
 function parse_args {
     local OPTIND opt
 
-    while getopts "hv" opt; do
+    while getopts "hvc:" opt; do
         case "${opt}" in
             h)
                 show_help
@@ -49,12 +56,18 @@ function parse_args {
                 ;;
 	    v)  verbose=true
 		;;
+	    c)  command="${OPTARG}"
+		;;
         esac
     done
 
     shift $((OPTIND-1))
 
     [ "$1" = "--" ] && shift
+
+    if [[ -z ${command} ]]; then
+                exit_with_error "missing command line argument: -c COMMAND, use -h for help" 2
+    fi
 }
 
 function check_dependencies {
@@ -71,8 +84,24 @@ function run_command_exit_on_error {
     }
 }
 
+function pull_repositories {
+    for this_language in $languages; do
+        repo="bionitio-${this_language}"
+        verbose_message "pulling ${repo}"
+        pull_one_repository $repo
+    done
+}
+
+function pull_one_repository {
+    if [ -d $1 ]; then
+        CMD="git -C $1 pull > /dev/null 2>&1"
+        run_command_exit_on_error $CMD
+    else
+        exit_with_error "directory $1 does not exist" 1
+    fi
+}
+
 function clone_repositories {
-    languages='c clojure cpp csharp haskell java js perl5 python r ruby rust'
     for this_language in $languages; do
         repo="bionitio-${this_language}"
         verbose_message "cloning ${repo}"
@@ -91,11 +120,18 @@ function verbose_message {
     fi
 }
 
+function perform_command {
+    if [ "$command" == "clone" ]; then
+        clone_repositories
+    elif [ "$command" == "pull" ]; then
+        pull_repositories
+    fi
+}
+
 # 1. Parse command line arguments.
 parse_args $@
 # 2. Check that dependencies are met
 verbose_message "checking for dependencies"
 check_dependencies
-# 3. Try to clone each of the language specific bionitio repositories
-clone_repositories
+perform_command
 verbose_message "done"

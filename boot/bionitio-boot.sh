@@ -7,7 +7,7 @@
 # 3. Check if the new directory already exists, and exit if it does. 
 # 4. Clone language specific bionitio git repository into a new directory.
 # 5. Set the license for the project.
-# 6. Remove old git repository.
+# 6. Remove unneeded contents such as .git and readme_includes directories/files. 
 # 7. Rename bionitio to the new project name.
 # 8. Create new git repository for new project.
 
@@ -159,11 +159,12 @@ function clone_bionitio_repository {
 }
 
 
-function remove_old_git_repository {
+function remove_unneeded_contents {
     # Remove the old git sub-directories
     /bin/rm -fr ${new_project_name}/.git
     /bin/rm -f ${new_project_name}/.gitmodules
     /bin/rm -fr ${new_project_name}/functional_tests/.git
+    /bin/rm -fr ${new_project_name}/readme_includes/
 }
 
 
@@ -262,9 +263,9 @@ clone_bionitio_repository
 # 5. Set the license for the project
 verbose_message "setting the license to ${license}"
 set_license
-# 6. Remove old git repository
-verbose_message "removing old git repository"
-remove_old_git_repository
+# 6. Remove unneeded contents 
+verbose_message "removing unneeded contents, such as git repository and readme_includes"
+remove_unneeded_contents
 # 7. Rename bionitio to the new project name.
 verbose_message "renaming references to bionitio to new project name ${new_project_name}" 
 rename_project

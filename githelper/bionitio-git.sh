@@ -16,13 +16,15 @@ cat << UsageMessage
 ${program_name}: run simple git commands on all the bionitio language-specific repositories 
 
 Usage:
-    ${program_name} [-h] [-v] -c COMMAND
+    ${program_name} [-h] [-v] -c COMMAND [-m MESSAGE]
 
 -h shows this help message
 
 -v verbose output
 
--c COMMAND, where COMMAND is one of: clone, pull
+-c COMMAND, where COMMAND is one of: clone, pull, commit, push
+
+-m MESSAGE, use MESSAGE as commit log, only used with the commit command
 
 Dependencies:
 
@@ -40,6 +42,11 @@ function exit_with_error {
     exit $2
 }
 
+# Flag to make git quiet, in verbose mode we turn this into the empty string
+quiet="--quiet"
+# Commit log message for "git commit"
+message=""
+# Git action to run, could be: clone, pull, commit, push
 command=""
 # The list of valid languages
 languages='c clojure cpp csharp haskell java js perl5 python r ruby rust'
@@ -48,15 +55,19 @@ languages='c clojure cpp csharp haskell java js perl5 python r ruby rust'
 function parse_args {
     local OPTIND opt
 
-    while getopts "hvc:" opt; do
-        case "${opt}" in
+    while getopts "hvc:m:" opt; do
+        case "$opt" in
             h)
                 show_help
                 exit 0
                 ;;
 	    v)  verbose=true
+                # Make git not quiet
+                quiet=""
 		;;
 	    c)  command="${OPTARG}"
+		;;
+	    m)  message="${OPTARG}"
 		;;
         esac
     done
@@ -66,7 +77,13 @@ function parse_args {
     [ "$1" = "--" ] && shift
 
     if [[ -z ${command} ]]; then
-                exit_with_error "missing command line argument: -c COMMAND, use -h for help" 2
+        exit_with_error "missing command line argument: -c COMMAND, use -h for help" 2
+    fi
+
+    if [[ ${command} == commit ]]; then
+        if [[ -z ${message} ]]; then
+            exit_with_error "message is required when using the commit command, you must also supply -m MESSAGE, use -h for help" 2
+        fi
     fi
 }
 
@@ -79,9 +96,52 @@ function check_dependencies {
 
 # Execute a string as a shell command and exit with an error if the command fails
 function run_command_exit_on_error {
-    eval "$@" || {
-        exit_with_error "command failed: \'$@\'" 1
-    }
+    cmd="$@"
+    verbose_message "Running command: $cmd"
+    eval "$cmd"
+    exit_status=$?
+    if [ $exit_status -ne 0 ]; then
+        exit_with_error "command failed: $cmd" 1
+    fi
+}
+
+function commit_repositories {
+    for this_language in $languages; do
+        repo="bionitio-${this_language}"
+        verbose_message "commiting ${repo}"
+        commit_one_repository $repo
+    done
+}
+
+function commit_one_repository {
+    if [ -d $1 ]; then
+        # check if there is something to commit
+        if ! git -C $1 status | grep -q "nothing to commit"; then
+            CMD="git -C $1 commit $quiet -am \"$message\""
+            run_command_exit_on_error "$CMD"
+        else
+            verbose_message "Nothing to commit"
+        fi
+    else
+        exit_with_error "directory $1 does not exist" 1
+    fi
+}
+
+function push_repositories {
+    for this_language in $languages; do
+        repo="bionitio-${this_language}"
+        verbose_message "pushing ${repo}"
+        push_one_repository $repo
+    done
+}
+
+function push_one_repository {
+    if [ -d $1 ]; then
+        CMD="git -C $1 push $quiet origin master"
+        run_command_exit_on_error $CMD
+    else
+        exit_with_error "directory $1 does not exist" 1
+    fi
 }
 
 function pull_repositories {
@@ -94,7 +154,7 @@ function pull_repositories {
 
 function pull_one_repository {
     if [ -d $1 ]; then
-        CMD="git -C $1 pull > /dev/null 2>&1"
+        CMD="git -C $1 pull $quiet"
         run_command_exit_on_error $CMD
     else
         exit_with_error "directory $1 does not exist" 1
@@ -110,7 +170,7 @@ function clone_repositories {
 }
 
 function clone_one_repository {
-    CMD="git clone --recursive https://github.com/bionitio-team/${1} > /dev/null 2>&1"
+    CMD="git clone $quiet --recursive https://github.com/bionitio-team/${1}"
     run_command_exit_on_error $CMD
 }
 
@@ -125,11 +185,15 @@ function perform_command {
         clone_repositories
     elif [ "$command" == "pull" ]; then
         pull_repositories
+    elif [ "$command" == "commit" ]; then
+        commit_repositories
+    elif [ "$command" == "push" ]; then
+        push_repositories
     fi
 }
 
 # 1. Parse command line arguments.
-parse_args $@
+parse_args "$@"
 # 2. Check that dependencies are met
 verbose_message "checking for dependencies"
 check_dependencies

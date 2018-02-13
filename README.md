@@ -5,7 +5,7 @@ Bionitio provides a template for command line bioinformatics tools in various pr
 In each language we implement a simple tool that carries out a basic bioinformatics task.
 The program reads one or more input FASTA files, computes a variety of simple statistics on each file, and prints a tabulated output.
 
-The purpose of the tool is to provide an easy-to-understand working example that is built on best-practice software engineering principles. It can be used as a basis for learning and as a solid foundation for starting new projects. We provide a script for starting new projects from bionitio, which saves time and ensures good programming practices are adopted from the beginning. 
+The purpose of the tool is to provide an easy-to-understand working example that is built on best-practice software engineering principles. It can be used as a basis for learning and as a solid foundation for starting new projects. We provide a script called `bionitio-boot.sh` for starting new projects from bionitio, which saves time and ensures good programming practices are adopted from the beginning (see below for details).
 
 An additional advantage of bionitio is that it allows us to compare programming styles in different languages and programming paradigms.
 

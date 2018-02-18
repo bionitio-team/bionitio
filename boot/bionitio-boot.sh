@@ -10,6 +10,7 @@
 # 6. Remove unneeded contents such as .git and readme_includes directories/files. 
 # 7. Rename bionitio to the new project name.
 # 8. Create new git repository for new project.
+# 9. Optionally create new github remote and push to it
 
 #set -x
 
@@ -23,6 +24,10 @@ license="MIT"
 new_project_name=""
 # Verbose output
 verbose=""
+# Optional github username
+github_username=""
+# Set this to empty string to make git verbose in output
+git_quiet="--quiet"
 
 # Help message for using the program.
 function show_help {
@@ -31,7 +36,7 @@ cat << UsageMessage
 ${program_name}: initialise a new bioinformatics project, starting from bionitio
 
 Usage:
-    ${program_name} [-h] [-v] [-c license] -l language -n new_project_name
+    ${program_name} [-h] [-v] [-c license] [-g github-username] -l language -n new_project_name
 
 Example:
     ${program_name} -c BSD-3-Clause -l python -n skynet
@@ -57,6 +62,11 @@ choose another, if you so desire.
 
 -v verbose output
 
+-g if you specify a valid github username, a new remote repository will
+   be created on github with new_project_name as the name. This assumes
+   that you do not already have a repository with this name on github
+   under the specified username. 
+
 Dependencies:
 
    The following tools must be installed on your computer to use this script,
@@ -79,7 +89,7 @@ function exit_with_error {
 function parse_args {
     local OPTIND opt
 
-    while getopts "hc:l:n:v" opt; do
+    while getopts "hc:l:n:g:v" opt; do
         case "${opt}" in
             h)
                 show_help
@@ -91,7 +101,10 @@ function parse_args {
                 ;;
             n)  new_project_name="${OPTARG}"
                 ;;
+            g)  github_username="${OPTARG}"
+                ;;
 	    v)  verbose=true
+		git_quiet=""
 		;;
         esac
     done
@@ -154,7 +167,7 @@ function check_if_directory_exists {
 
 
 function clone_bionitio_repository {
-    CMD="git clone --recursive https://github.com/bionitio-team/bionitio-${language} ${new_project_name} > /dev/null 2>&1"
+    CMD="git clone $git_quiet --recursive https://github.com/bionitio-team/bionitio-${language} ${new_project_name}"
     run_command_exit_on_error $CMD
 }
 
@@ -233,14 +246,39 @@ function rename_project {
 
 
 function create_project_repository {
-    (
-        cd ${new_project_name}
-        git init
-        git add .
-        git commit -m "Initial commit of ${new_project_name}; starting from bionitio (${language})"
-    ) > /dev/null 2>&1
+    INIT_CMD="git -C ${new_project_name} init $git_quiet"
+    run_command_exit_on_error "$INIT_CMD"
+    ADD_CMD="git -C ${new_project_name} add ."
+    run_command_exit_on_error "$ADD_CMD"
+    COMMIT_CMD="git -C ${new_project_name} commit $git_quiet -m \"Initial commit of ${new_project_name}; starting from bionitio (${language})\""
+    run_command_exit_on_error "$COMMIT_CMD"
 }
 
+# If $github_username is defined (command line argument -g)
+# we attempt to make a new remote repository on github
+# with the $github_username and $new_project_name
+function optional_github_remote {
+    if [[ -z ${github_username} ]]; then
+        verbose_message "Skipping github remote creation, no github username specified, see -g command line option"
+    else
+        verbose_message "Creating github remote for user $github_username with repository name: $new_project_name"
+        GITHUB_JSON="'{\"name\": \"$new_project_name\"}'"
+	echo "If requested, enter your github password for username $github_username"
+        CREATE_REPO_CMD="curl -sS -u $github_username https://api.github.com/user/repos -d $GITHUB_JSON > /dev/null"
+        run_command_exit_on_error "$CREATE_REPO_CMD"
+	# Unfortunately "git remote add" and "git push" does not 
+	# support the --quiet command line flag or are not totally quiet when it is given
+	if [[ -z ${git_quiet} ]]; then
+            REMOTE_ADD_CMD="git -C ${new_project_name} remote add origin https://github.com/${github_username}/${new_project_name}.git"
+            PUSH_CMD="git -C ${new_project_name} push -u origin master"
+	else
+            REMOTE_ADD_CMD="git -C ${new_project_name} remote add origin https://github.com/${github_username}/${new_project_name}.git > /dev/null 2>&1"
+            PUSH_CMD="git -C ${new_project_name} push -u origin master > /dev/null 2>&1"
+	fi
+        run_command_exit_on_error "$REMOTE_ADD_CMD"
+        run_command_exit_on_error "$PUSH_CMD"
+    fi
+}
 
 function verbose_message {
     if [ "${verbose}" = true ]; then
@@ -272,4 +310,6 @@ rename_project
 # 8. Create new repository for new project.
 verbose_message "initialising new git repository for ${new_project_name}"
 create_project_repository
+# 9. Optionally create and push to remote repostory on github
+optional_github_remote
 verbose_message "done"

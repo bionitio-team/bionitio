@@ -64,7 +64,7 @@ One of the main goals of bionitio is to provide a good place to start writing bi
 boot/bionitio-boot.sh -l rust -n skynet -c BSD-3-Clause -g cyberdyne 
 ```
 
-The example above starts a fresh project called `skynet` under the BSD-3-Clause license, using Rust as the implementation language. A new git repository will be created in a sub-directory called `skynet` which will be initialised with a copy of bionitio and a blank revision history. All references to `bionitio` in the source code are replaced with `skynet`. Finally, the code is pushed to a new repository on [github](https://www.github.com) for the username `cyberdyne`.
+The example above starts a fresh project called `skynet` under the BSD-3-Clause license, using Rust as the implementation language. A new git repository will be created in a sub-directory called `skynet` which will be initialised with a copy of bionitio and a blank revision history. All references to `bionitio` in the source code are replaced with `skynet`. Finally, the code is pushed to a new repository on [www.github.com](https://www.github.com) for the username `cyberdyne`.
 
 You should replace `skynet` with a project name of your choice, and `cyberdyne` with your github username, if you have a github account. You may be asked to enter your github username. If you don't have a github account, do not use the `-g` option. 
 

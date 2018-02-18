@@ -277,6 +277,7 @@ function optional_github_remote {
 	fi
         run_command_exit_on_error "$REMOTE_ADD_CMD"
         run_command_exit_on_error "$PUSH_CMD"
+	echo "Your new github repository is: https://github.com/${github_username}/${new_project_name}"
     fi
 }
 

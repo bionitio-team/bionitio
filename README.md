@@ -61,10 +61,12 @@ However, we grant permission to users who derive their own projects from bioniti
 One of the main goals of bionitio is to provide a good place to start writing bioinformatics command line tools. To make that easy we've provided a shell script called `bionitio-boot.sh` to help you start a new project, which is run like so:
 
 ```
-boot/bionitio-boot.sh -l rust -n skynet -c BSD-3-Clause
+boot/bionitio-boot.sh -l rust -n skynet -c BSD-3-Clause -g cyberdyne 
 ```
 
-The example above starts a fresh project called `skynet` under the BSD-3-Clause license, using Rust as the implementation language. A new git repository will be created in a sub-directory called `skynet` which will be initialised with a copy of bionitio and a blank revision history. All references to `bionitio` in the source code are replaced with `skynet`.
+The example above starts a fresh project called `skynet` under the BSD-3-Clause license, using Rust as the implementation language. A new git repository will be created in a sub-directory called `skynet` which will be initialised with a copy of bionitio and a blank revision history. All references to `bionitio` in the source code are replaced with `skynet`. Finally, the code is pushed to a new repository on [github](https://www.github.com) for the username `cyberdyne`.
+
+You should replace `skynet` with a project name of your choice, and `cyberdyne` with your github username, if you have a github account. You may be asked to enter your github username. If you don't have a github account, do not use the `-g` option. 
 
 After you have started a new project from bionitio you are free to modify it as you see fit, modifying its functionality to suit your own requirements.
 
@@ -78,12 +80,14 @@ Required:
 Optional:
 
 * -c LICENSE: the license that you want to assign to your new project (one of: Apache-2.0, BSD-2-Clause, BSD-3-Clause, GPL-2.0, GPL-3.0, MIT). If you do not specify a license then it defaults to the MIT license.
+* -g GITHUB-USERNAME: create a new remote repository in github and push new project to that repository. Replace `GITHUB-USERNAME` with your actual github user name. You may be prompted for your github password.
+* -v: enable verbose mode; the script will print a lot more information about what it is doing. This is mostly useful for debugging if it does not work as expected. 
 
 If you don't have a local copy of the script, you can run it from the web like so, using curl:
 
 ```
 curl -sSf https://raw.githubusercontent.com/bionitio-team/bionitio/master/boot/bionitio-boot.sh \
- | bash -s -- -l rust -n skynet -c BSD-3-Clause
+ | bash -s -- -l rust -n skynet -c BSD-3-Clause -g cyberdyne
 ```
 
 If you prefer not to run a shell script from the web, then you can make a local copy of the `bionitio-boot.sh` script, and run it locally, as shown below:
@@ -91,8 +95,11 @@ If you prefer not to run a shell script from the web, then you can make a local 
 ```
 # Copy the script to your local computer
 curl https://raw.githubusercontent.com/bionitio-team/bionitio/master/boot/bionitio-boot.sh > bionitio-boot.sh
+
+# Inspect the script to ensure you are happy with the commands it will execute on your system.
+
 # Run the script on your local computer
-bash bionitio-boot.sh -l rust -n skynet -c BSD-3-Clause
+bash bionitio-boot.sh -l rust -n skynet -c BSD-3-Clause -g cyberdyne
 ```
 
 # Authors

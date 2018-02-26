@@ -11,6 +11,7 @@
 # 7. Rename bionitio to the new project name.
 # 8. Create new git repository for new project.
 # 9. Optionally create new github remote and push to it
+# 10. Patch the README.md file to contain correct URLs and license information.
 
 #set -x
 
@@ -281,6 +282,16 @@ function optional_github_remote {
     fi
 }
 
+function patch_readme {
+    username="USERNAME"
+    if [ -n "$github_username" ]; then
+        username="$github_username"
+    fi
+    original_file="${new_project_name}/README.md"
+    new_file="${new_project_name}/README.md.bak"
+    sed -e "s/${new_project_name}-team/${username}/g" ${original_file} > ${new_file} && mv ${new_file} ${original_file}
+}
+
 function verbose_message {
     if [ "${verbose}" = true ]; then
         echo "${program_name} $1"
@@ -313,4 +324,7 @@ verbose_message "initialising new git repository for ${new_project_name}"
 create_project_repository
 # 9. Optionally create and push to remote repostory on github
 optional_github_remote
+# 10. Patch the README.md file to contain correct URLs and license information.
+verbose_message "patching the README.md file"
+patch_readme
 verbose_message "done"

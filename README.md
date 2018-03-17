@@ -58,7 +58,7 @@ However, we grant permission to users who derive their own projects from bioniti
 
 # Starting a new project from bionitio
 
-[How to set up a new bionitio project](https://github.com/bionitio-team/bionitio/wiki/How-to-set-up-a-new-bionitio-project).
+[How to set up a new bionitio project, step-by-step](https://github.com/bionitio-team/bionitio/wiki/How-to-set-up-a-new-bionitio-project).
 
 One of the main goals of bionitio is to provide a good place to start writing bioinformatics command line tools. To make that easy we've provided a shell script called `bionitio-boot.sh` to help you start a new project, which is run like so:
 

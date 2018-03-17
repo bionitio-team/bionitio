@@ -58,6 +58,7 @@ However, we grant permission to users who derive their own projects from bioniti
 
 # Starting a new project from bionitio
 
+
 One of the main goals of bionitio is to provide a good place to start writing bioinformatics command line tools. To make that easy we've provided a shell script called `bionitio-boot.sh` to help you start a new project, which is run like so:
 
 ```
@@ -69,6 +70,8 @@ The example above starts a fresh project called `skynet` under the BSD-3-Clause 
 You should replace `skynet` with a project name of your choice, and `cyberdyne` with your github username, if you have a github account. You may be asked to enter your github username. This assumes you do not already have a github project of the given name. If you don't have a github account, do not use the `-g` option. 
 
 After you have started a new project from bionitio you are free to modify it as you see fit, modifying its functionality to suit your own requirements.
+
+For a step-by-step guide to setting up a new project using bionitio, see our wiki page [How to set up a new bionitio project](https://github.com/bionitio-team/bionitio/wiki/How-to-set-up-a-new-bionitio-project).
 
 When setting up a new project using `bionitio-boot.sh` You must specify the following things: 
 

@@ -2,15 +2,11 @@
 
 # Overview 
 
-This is a LANGUAGE implementation of [bionitio](https://github.com/bionitio-team/bionitio).
-
-The program reads one or more input FASTA files. For each file it computes a variety of statistics, and then prints a summary of the statistics as output.
-
-The goal is to provide a solid foundation for new bioinformatics command line tools, and is an ideal starting place for new projects.
+This program reads one or more input FASTA files. For each file it computes a variety of statistics, and then prints a summary of the statistics as output.
 
 # Licence
 
-This program is released as open source software under the terms of [MIT License](https://raw.githubusercontent.com/bionitio-team/bionitio/master/LICENSE)
+This program is released as open source software under the terms of [MIT License](https://raw.githubusercontent.com/bionitio-team/bionitio/master/LICENSE).
 
 # Installing
 
@@ -150,8 +146,8 @@ FILENAME        TOTAL   NUMSEQ  MIN     AVG     MAX
 two_sequence.fasta      2       357     120     178     237
 ```
 
-# Bugs
+# Bug reporting and feature requests
 
-[General bionitio issues](https://github.com/bionitio-team/bionitio/issues)
+Please submit bug reports and feature requests to the issue tracker on GitHub:
 
-[bionitio-LANGUAGE specific issues](https://github.com/bionitio-team/bionitio-LANGUAGE/issues) 
+[bionitio issue tracker](https://github.com/bionitio-team/bionitio/issues)

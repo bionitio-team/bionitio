@@ -28,7 +28,7 @@ ${bs}/githelper/bionitio-git.sh -c pull
 3. Run the README template program for each language:
 ```
 for lang in c clojure cpp csharp haskell java js perl5 python r ruby rust; do \
-    ${bs}/readme-template/bionitio-readme.sh -t ${bs}/readme-template/TEMPLATE.md -l "$lang" -i "bionitio-${lang}/readme_includes" > "bionitio-${lang}/README.md"; \
+    ${bs}/readme_template/bionitio-readme.sh -t ${bs}/readme_template/TEMPLATE.md -l "$lang" -i "bionitio-${lang}/readme_includes" > "bionitio-${lang}/README.md"; \
 done
 ```
 4. Commit the changes with a message:

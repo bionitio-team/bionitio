@@ -117,3 +117,4 @@ Alphabetically:
 * Bernie Pope
 * David R Powell
 * Torsten Seemann
+* Anna Syme

@@ -10,8 +10,8 @@
 # 6. Remove unneeded contents such as .git and readme_includes directories/files. 
 # 7. Rename bionitio to the new project name.
 # 8. Create new git repository for new project.
-# 9. Optionally create new github remote and push to it
-# 10. Patch the README.md file to contain correct URLs and license information.
+# 9. Patch the README.md file to contain correct URLs and license information.
+# 10. Optionally create new github remote and push to it
 
 #set -x
 
@@ -282,6 +282,8 @@ function optional_github_remote {
     fi
 }
 
+# Replace incorrect references in the README.md file to the appropriate
+# username, project name and license name
 function patch_readme {
     username="USERNAME"
     if [ -n "$github_username" ]; then
@@ -289,7 +291,11 @@ function patch_readme {
     fi
     original_file="${new_project_name}/README.md"
     new_file="${new_project_name}/README.md.bak"
-    sed -e "s/${new_project_name}-team/${username}/g" ${original_file} > ${new_file} && mv ${new_file} ${original_file}
+    sed -e "s/${new_project_name}-team/${username}/g" \
+	-e "s/${new_project_name}-${language}/${new_project_name}/g" \
+	-e "s/\[.* License\]/\[${license} License\]/g" \
+         ${original_file} > ${new_file} \
+         && mv ${new_file} ${original_file}
 }
 
 function verbose_message {
@@ -319,12 +325,12 @@ remove_unneeded_contents
 # 7. Rename bionitio to the new project name.
 verbose_message "renaming references to bionitio to new project name ${new_project_name}" 
 rename_project
-# 8. Create new repository for new project.
-verbose_message "initialising new git repository for ${new_project_name}"
-create_project_repository
-# 9. Optionally create and push to remote repostory on github
-optional_github_remote
-# 10. Patch the README.md file to contain correct URLs and license information.
+# 8. Patch the README.md file to contain correct URLs and license information.
 verbose_message "patching the README.md file"
 patch_readme
+# 9. Create new repository for new project.
+verbose_message "initialising new git repository for ${new_project_name}"
+create_project_repository
+# 10. Optionally create and push to remote repostory on github
+optional_github_remote
 verbose_message "done"

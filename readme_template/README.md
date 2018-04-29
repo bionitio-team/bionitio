@@ -24,22 +24,22 @@ Or, if you already have cloned the repositories, then you can pull their updates
 ```
 ${bs}/githelper/bionitio-git.sh -c pull 
 ```
-2. Make your changes to the template `TEMPLATE.md`, or to the implementation-specific files in the `readme_includes` directory in each implementation of bionitio.
+2. Make your changes to the template `TEMPLATE.md`, or to the implementation-specific files in the `readme_includes` directory in each implementation of bionitio. Remember to git commit and push your changes if you update the template or other files: you need to do this manually.
 3. Make sure you are in the $SCRATCH_DIR for the remaining commands:
 ```
 cd $SCRATCH_DIR
 ```
-3. Run the README template program for each language:
+4. Run the README template program for each language:
 ```
 for lang in c clojure cpp csharp haskell java js perl5 python r ruby rust; do \
     ${bs}/readme_template/bionitio-readme.sh -t ${bs}/readme_template/TEMPLATE.md -l "$lang" -i "bionitio-${lang}/readme_includes" > "bionitio-${lang}/README.md"; \
 done
 ```
-4. Commit the changes with a message:
+5. Commit the changes with a message:
 ```
 ${bs}/githelper/bionitio-git.sh -c commit -m "Put your commit message here"
 ```
-5. Push your changes back to git:
+6. Push your changes back to git:
 ```
 ${bs}/githelper/bionitio-git.sh -c push
 ```

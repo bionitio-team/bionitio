@@ -14,12 +14,12 @@ This program is released as open source software under the terms of [MIT License
 
 Clone this repository: 
 ```
-git clone https://github.com/bionitio-team/bionitio-LANGUAGE
+$ git clone https://github.com/bionitio-team/bionitio-LANGUAGE
 ```
 
 Move into the repository directory:
 ```
-cd bionitio-LANGUAGE
+$ cd bionitio-LANGUAGE
 ```
 
 #include "install.md"

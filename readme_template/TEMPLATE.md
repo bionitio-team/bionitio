@@ -10,6 +10,16 @@ This program is released as open source software under the terms of [MIT License
 
 # Installing
 
+Clone this repository: 
+```
+git clone https://github.com/bionitio-team/bionitio-LANGUAGE
+```
+
+Move into the repository directory:
+```
+cd bionitio-LANGUAGE
+```
+
 #include "install.md"
 
 # General behaviour
@@ -125,11 +135,7 @@ Bionitio returns the following exit status values:
 
 # Error handling
 
-## Invalid input FASTA files
-
-## Incorrect command line arguments
-
-## Memory limits and other resource restrictions
+#include "errors.md"
 
 # Testing
 

@@ -24,7 +24,7 @@ Or, if you already have cloned the repositories, then you can pull their updates
 ```
 ${bs}/githelper/bionitio-git.sh -c pull 
 ```
-2. Make your changes to the template `TEMPLATE.md`, or to the implementation-specific files in the `readme_includes` directory in each implementation of bionitio.
+2. Make your changes to the template `TEMPLATE.md`, or to the implementation-specific files in the `readme_includes` directory in each implementation of bionitio. Remember to git commit and push your changes if you update the template or other files: you need to do this manually.
 3. Make sure you are in the $SCRATCH_DIR for the remaining commands:
 ```
 cd $SCRATCH_DIR

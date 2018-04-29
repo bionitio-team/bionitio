@@ -195,54 +195,46 @@ function rename_project {
     # See: http://stackoverflow.com/questions/5694228/sed-in-place-flag-that-works-both-on-mac-bsd-and-linux
     # BSD sed does not support case insensitive matching, so we have to repeat for each
     # style of capitalisation.
-    
+
     # project name with first character upper case
     first_upper_project_name="$(tr '[:lower:]' '[:upper:]' <<< ${new_project_name:0:1})${new_project_name:1}"
-    
+
     # project name with all characters upper case
     all_upper_project_name="$(tr '[:lower:]' '[:upper:]' <<< ${new_project_name})"
-    
+
     # substitute all occurrences of bionitio in content
     find ${new_project_name} -type f -print0 | xargs -0 sed -i.temporary  "s/bionitio/${new_project_name}/g"
     find ${new_project_name} -name "*.temporary" -type f -delete
-    
+
     find ${new_project_name} -type f -print0 | xargs -0 sed -i.temporary  "s/Bionitio/${first_upper_project_name}/g"
     find ${new_project_name} -name "*.temporary" -type f -delete
-    
+
     find ${new_project_name} -type f -print0 | xargs -0 sed -i.temporary  "s/BIONITIO/${all_upper_project_name}/g"
     find ${new_project_name} -name "*.temporary" -type f -delete
 
     # rename directories and files
-    verbose_message "renaming directories..."
-    (shopt -s nullglob && recursive_rename() {
-        for old in "$1"*/; do
-            new1="${old//bionitio/${new_project_name}}"
-            new2="${new1//Bionitio/${first_upper_project_name}}"
-            new="${new2//BIONITIO/${all_upper_project_name}}"
-            if [ "$old" != "$new" ]; then
-                verbose_message "$old -> $new"
-                if [ -e "$new" ]; then
-                    exit_with_error "cannot rename directory \"$old\" to \"$new\": \"$new\" exists. Choose a different project name." 1
-                fi
-                mv -- "$old" "$new"
-            fi
-            recursive_rename "$new" || exit 1
-        done
-    } && recursive_rename "${new_project_name}/") || exit 1
-
-    verbose_message "renaming files..."
-    for old in $(find ${new_project_name} -type f); do
-        new1="${old//bionitio/${new_project_name}}"
-        new2="${new1//Bionitio/${first_upper_project_name}}"
-        new="${new2//BIONITIO/${all_upper_project_name}}"
-        if [ "$old" != "$new" ]; then
-            verbose_message "$old -> $new"
-            if [ -e "$new" ]; then
-                exit_with_error "cannot rename file \"$old\" to \"$new\": \"$new\" exists. Choose a different project name." 1
-            fi
-            mv -- "$old" "$new"
+    # sort in reverse order so that we always move a directory's contents before
+    # moving that directory
+    # Move into the project directory (new_project_name) and use `find .` so
+    # that we don't substitute the word bionitio if it happens to occur in new_project_name
+    verbose_message "renaming files and directories..."
+    cd ${new_project_name}
+    for old in $(find . -iname "*bionitio*" | sort -r); do
+      basename="$(basename ${old})"
+      dirname="$(dirname ${old})"
+      new1="${basename//bionitio/${new_project_name}}"
+      new2="${new1//Bionitio/${first_upper_project_name}}"
+      newbase="${new2//BIONITIO/${all_upper_project_name}}"
+      new="${dirname}/${newbase}"
+      if [ "$old" != "$new" ]; then
+        verbose_message "$old -> $new"
+        if [ -e "$new" ]; then
+          exit_with_error "cannot rename directory \"$old\" to \"$new\": \"$new\" exists. Choose a different project name." 1
+        fi
+          mv -- "$old" "$new"
         fi
     done
+    cd ..
 }
 
 

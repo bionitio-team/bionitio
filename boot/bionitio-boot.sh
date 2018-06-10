@@ -8,10 +8,11 @@
 # 4. Clone language specific bionitio git repository into a new directory.
 # 5. Set the license for the project.
 # 6. Remove unneeded contents such as .git and readme_includes directories/files. 
-# 7. Rename bionitio to the new project name.
-# 8. Create new git repository for new project.
-# 9. Patch the README.md file to contain correct URLs and license information.
-# 10. Optionally create new github remote and push to it
+# 7. Substitute placeholder variables in all files. 
+# 8. Rename bionitio to the new project name.
+# 9. Create new git repository for new project.
+# 10. Patch the README.md file to contain correct URLs and license information.
+# 11. Optionally create new github remote and push to it
 
 #set -x
 
@@ -27,6 +28,10 @@ new_project_name=""
 verbose=""
 # Optional github username
 github_username=""
+# Optional author name
+author_name="BIONITIO_AUTHOR"
+# Optional author email 
+author_email="BIONITIO_EMAIL"
 # Set this to empty string to make git verbose in output
 git_quiet="--quiet"
 
@@ -37,7 +42,7 @@ cat << UsageMessage
 ${program_name}: initialise a new bioinformatics project, starting from bionitio
 
 Usage:
-    ${program_name} [-h] [-v] [-c license] [-g github-username] -l language -n new_project_name
+    ${program_name} [-h] [-v] [-c license] [-g github-username] [-a author-name] [-e author_email] -l language -n new_project_name
 
 Example:
     ${program_name} -c BSD-3-Clause -l python -n skynet
@@ -68,6 +73,12 @@ choose another, if you so desire.
    that you do not already have a repository with this name on github
    under the specified username. 
 
+-a if you specify an author name, we will replace all occurrences of
+   BIONITIO_AUTHOR with this name in all files in the new project.
+
+-e if you specify an author email, we will replace all occurrences of
+   BIONITIO_EMAIL with this email address in all files in the new project.
+
 Dependencies:
 
    The following tools must be installed on your computer to use this script,
@@ -90,7 +101,7 @@ function exit_with_error {
 function parse_args {
     local OPTIND opt
 
-    while getopts "hc:l:n:g:v" opt; do
+    while getopts "hc:l:n:g:a:e:v" opt; do
         case "${opt}" in
             h)
                 show_help
@@ -103,6 +114,10 @@ function parse_args {
             n)  new_project_name="${OPTARG}"
                 ;;
             g)  github_username="${OPTARG}"
+                ;;
+            a)  author_name="${OPTARG}"
+                ;;
+            e)  author_email="${OPTARG}"
                 ;;
 	    v)  verbose=true
 		git_quiet=""
@@ -187,6 +202,15 @@ function set_license {
     run_command_exit_on_error $CMD
 }
 
+
+function substitute_placeholders {
+    date_string=$(date "+%d %b %Y")
+    find ${new_project_name} -type f -print0 | xargs -0 sed -i.temporary \
+        -e "s/BIONITIO_AUTHOR/${author_name}/g" \
+        -e "s/BIONITIO_DATE/${date_string}/g" \
+        -e "s/BIONITIO_EMAIL/${author_email}/g"
+    find ${new_project_name} -name "*.temporary" -type f -delete
+}
 
 function rename_project {
     # Annoyingly BSD sed and GNU sed differ in handling the -i option (update in place).
@@ -298,7 +322,7 @@ function verbose_message {
 
 
 # 1. Parse command line arguments.
-parse_args $@
+parse_args "$@"
 # 2. Check that dependencies are met
 verbose_message "checking for dependencies"
 check_dependencies
@@ -314,15 +338,18 @@ set_license
 # 6. Remove unneeded contents 
 verbose_message "removing unneeded contents, such as git repository and readme_includes"
 remove_unneeded_contents
-# 7. Rename bionitio to the new project name.
+# 7. Substitute placeholder variables in all files 
+verbose_message "Substituting placeholder variables in all files"
+substitute_placeholders
+# 8. Rename bionitio to the new project name.
 verbose_message "renaming references to bionitio to new project name ${new_project_name}" 
 rename_project
-# 8. Patch the README.md file to contain correct URLs and license information.
+# 9. Patch the README.md file to contain correct URLs and license information.
 verbose_message "patching the README.md file"
 patch_readme
-# 9. Create new repository for new project.
+# 10. Create new repository for new project.
 verbose_message "initialising new git repository for ${new_project_name}"
 create_project_repository
-# 10. Optionally create and push to remote repostory on github
+# 11. Optionally create and push to remote repostory on github
 optional_github_remote
 verbose_message "done"

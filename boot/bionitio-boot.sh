@@ -208,7 +208,8 @@ function substitute_placeholders {
     find ${new_project_name} -type f -print0 | xargs -0 sed -i.temporary \
         -e "s/BIONITIO_AUTHOR/${author_name}/g" \
         -e "s/BIONITIO_DATE/${date_string}/g" \
-        -e "s/BIONITIO_EMAIL/${author_email}/g"
+        -e "s/BIONITIO_EMAIL/${author_email}/g" \
+        -e "s/BIONITIO_LICENSE/${license}/g"
     find ${new_project_name} -name "*.temporary" -type f -delete
 }
 

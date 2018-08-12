@@ -169,9 +169,11 @@ function check_dependencies {
 
 # Execute a string as a shell command and exit with an error if the command fails
 function run_command_exit_on_error {
-    eval "$@" || {
-        exit_with_error "command failed: \'$@\'" 1
-    }
+    eval "$@"
+    eval_exit_status=$?
+    if [ $eval_exit_status != 0 ]; then
+        exit_with_error "command failed: \'$@\' with exit code $eval_exit_status" 1
+    fi 
 }
 
 

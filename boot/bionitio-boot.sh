@@ -12,7 +12,7 @@
 # 8. Rename bionitio to the new project name.
 # 9. Create new git repository for new project.
 # 10. Patch the README.md file to contain correct URLs and license information.
-# 11. Optionally create new github remote and push to it
+# 11. Optionally create new github remote and push to it.
 
 #set -x
 
@@ -32,8 +32,8 @@ github_username=""
 author_name="BIONITIO_AUTHOR"
 # Optional author email 
 author_email="BIONITIO_EMAIL"
-# Set this to empty string to make git verbose in output
-git_quiet="--quiet"
+# name of log file 
+logfile="/dev/null"
 
 # Help message for using the program.
 function show_help {
@@ -42,31 +42,30 @@ cat << UsageMessage
 ${program_name}: initialise a new bioinformatics project, starting from bionitio
 
 Usage:
-    ${program_name} [-h] [-v] [-c license] [-g github-username] [-a author-name] [-e author_email] -l language -n new_project_name
+    ${program_name} [-h] [-v] [-c license] [-g github-username] [-a author-name] [-e author_email] [-l logfile] -i language -n new_project_name
 
 Example:
-    ${program_name} -c BSD-3-Clause -l python -n skynet
+    ${program_name} -c BSD-3-Clause -i python -n skynet
 
 The above example will try to initialise a new project in directory 'skynet'
 based on the 'python' bionitio implementation, using the BSD-3-Clause license.
 
-If a directory already exists in the current working directory with the same
-name as the new_project_name then this installer will not continue.
+-n choose a name for your new project
+   If a directory already exists in the current working directory with the same
+   name as the new_project_name then this installer will not continue.
 
-If no license is supplied, it will default to using the MIT license.
+-i choose a language implementation for your new project
+   Valid languages are:
+   c, clojure, cpp, csharp, haskell, java, js, perl5, python, r, ruby, rust
 
-Valid languages are:
-c, clojure, cpp, csharp, haskell, java, js, perl5, python, r, ruby, rust
-
-Valid licenses are:
-Apache-2.0, BSD-2-Clause, BSD-3-Clause, GPL-2.0, GPL-3.0, MIT
-
-These are just a selection of commonly used licenses, but you are free to
-choose another, if you so desire.
+-c choose a license for your new project
+   Valid licenses are:
+   Apache-2.0, BSD-2-Clause, BSD-3-Clause, GPL-2.0, GPL-3.0, MIT
+   If no license is supplied, it will default to using the MIT license.
 
 -h shows this help message
 
--v verbose output
+-v verbose output, show more information about what this script is doing
 
 -g if you specify a valid github username, a new remote repository will
    be created on github with new_project_name as the name. This assumes
@@ -79,10 +78,15 @@ choose another, if you so desire.
 -e if you specify an author email, we will replace all occurrences of
    BIONITIO_EMAIL with this email address in all files in the new project.
 
+-l write log messages to the specified filename. This can be useful for
+   debugging or monitoring the behaviour of this script. If this option
+   is not specified, log messages will be discarded.
+
 Dependencies:
 
    The following tools must be installed on your computer to use this script,
    and be accessible via the PATH environment variable:
+   - bash
    - git 
    - curl 
 
@@ -92,8 +96,10 @@ UsageMessage
 
 # echo an error message $1 and exit with status $2
 function exit_with_error {
-    printf "${program_name}: ERROR: $1\n"
-    exit $2
+    error_message=$1
+    exit_status_value=$2
+    printf "${program_name}: ERROR: ${error_message}\n"
+    exit ${exit_status_value}
 }
 
 
@@ -101,13 +107,15 @@ function exit_with_error {
 function parse_args {
     local OPTIND opt
 
-    while getopts "hc:l:n:g:a:e:v" opt; do
+    while getopts "hc:i:l:n:g:a:e:v" opt; do
         case "${opt}" in
             h)
                 show_help
                 exit 0
                 ;;
-            l)  language="${OPTARG}"
+            i)  language="${OPTARG}"
+                ;;
+            l)  logfile="${OPTARG}"
                 ;;
             c)  license="${OPTARG}"
                 ;;
@@ -120,7 +128,6 @@ function parse_args {
             e)  author_email="${OPTARG}"
                 ;;
 	    v)  verbose=true
-		git_quiet=""
 		;;
         esac
     done
@@ -130,7 +137,7 @@ function parse_args {
     [ "$1" = "--" ] && shift
 
     if [[ -z ${language} ]]; then
-		exit_with_error "missing command line argument: -l language, use -h for help" 2
+		exit_with_error "missing command line argument: -i language, use -h for help" 2
     fi
 
     case ${language} in
@@ -152,6 +159,9 @@ function parse_args {
     if [[ -z ${new_project_name} ]]; then
         exit_with_error "missing command line argument: -n new_project_name, use -h for help" 2
     fi
+
+    # Connect file descriptor 3 to the logfile
+    exec 3<>${logfile}
 }
 
 
@@ -167,54 +177,114 @@ function check_dependencies {
 }
 
 
-# Execute a string as a shell command and exit with an error if the command fails
-function run_command_exit_on_error {
-    eval "$@"
-    eval_exit_status=$?
-    if [ $eval_exit_status != 0 ]; then
-        exit_with_error "command failed: \'$@\' with exit code $eval_exit_status" 1
-    fi 
+INTERACTIVE_SLEEP_RETRY_SECS=10
+INTERACTIVE_NUM_RETRIES=3
+# Execute a shell command 
+# Arguments:
+#   1) The command to run as a string 
+#   2) A unique name identifying the command 
+#   3) A string description of what it is doing, for verbose output
+#   4) An optional directory to run the command in 
+function run_command_interactive {
+    command_to_run=$1
+    command_description=$2
+    verbose_message "$command_description"
+    # execute the command and get its exit status
+    verbose_message "executing command: ${command_to_run}"
+    eval_exit_status=1
+    num_tries_remaining=3
+    while (( eval_exit_status != 0 && num_tries_remaining > 0 )); do
+        eval "$command_to_run" >&3
+        eval_exit_status=$?
+	num_tries_remaining=$((num_tries_remaining - 1))
+	if (( eval_exit_status != 0 && num_tries_remaining > 0 )); then
+            echo "$command_description failed, trying again in $INTERACTIVE_SLEEP_RETRY_SECS seconds, $num_tries_remaining tries remaining"
+            sleep $INTERACTIVE_SLEEP_RETRY_SECS
+        fi	
+    done
+
+    if (( eval_exit_status != 0 && num_retries_remaining == 0 )); then
+        echo "$command_description failed the maximum number of retries allowed ($INTERACTIVE_NUM_RETRIES)" 
+        exit_with_error "${command_to_run}, failed with exit status ${eval_exit_status}" 1 
+    fi
+
+    #while [ ${eval_exit_status} -ne 0 ]; do
+    #    eval "$command_to_run" >&3
+    #    eval_exit_status=$?
+    #done
+    #if [ ${eval_exit_status} -ne 0 ]; then
+    #    exit_with_error "${command_to_run}, failed with exit status ${eval_exit_status}" 1
+    #fi
 }
 
 
-function check_if_directory_exists {
-    if [[ -d ${new_project_name} ]]; then
-        exit_with_error "directory ${new_project_name} already exists, try another name or location, or rename the existing directory" 1
+# Execute a shell command 
+# Arguments:
+#   1) The command to run as a string 
+#   2) A unique name identifying the command 
+#   3) A string description of what it is doing, for verbose output
+#   4) An optional directory to run the command in 
+function run_command {
+    command_to_run=$1
+    command_description=$2
+    verbose_message "$command_description"
+    # execute the command and get its exit status
+    verbose_message "executing command: ${command_to_run}"
+    eval "$command_to_run" 2>&3 >&3
+    eval_exit_status=$?
+    if [ ${eval_exit_status} -ne 0 ]; then
+        exit_with_error "${command_to_run}, failed with exit status ${eval_exit_status}" 1
     fi
 }
 
 
-function clone_bionitio_repository {
-    CMD="git clone $git_quiet --recursive https://github.com/bionitio-team/bionitio-${language} ${new_project_name}"
-    run_command_exit_on_error $CMD
+# Check if the directory for the new project already exists.
+function check_if_directory_exists {
+    if [[ -d ${new_project_name} ]]; then
+        exit_with_error "directory ${new_project_name} already exists.\nTry another name or location, or rename/remove the existing directory." 1
+    fi
 }
 
 
+function clone_repository {
+    CMD="git clone --recursive https://github.com/bionitio-team/bionitio-${language} ${new_project_name}"
+    run_command "$CMD" "clone bionitio repository"
+}
+
+
+# Remove the old git sub-directories
 function remove_unneeded_contents {
-    # Remove the old git sub-directories
-    /bin/rm -fr ${new_project_name}/.git
-    /bin/rm -f ${new_project_name}/.gitmodules
-    /bin/rm -fr ${new_project_name}/functional_tests/.git
-    /bin/rm -fr ${new_project_name}/readme_includes/
+    RM_COMMAND="/bin/rm -fr ${new_project_name}/.git ${new_project_name}/.gitmodules ${new_project_name}/functional_tests/.git ${new_project_name}/readme_includes/"
+    run_command "$RM_COMMAND" "Removing unnecssary files from new repository" 
 }
 
 
+# Copy the user-specified (or default) license file from github into the repository
 function set_license {
-    CMD="curl -s https://raw.githubusercontent.com/bionitio-team/bionitio/master/license_options/${license} > ${new_project_name}/LICENSE"
-    run_command_exit_on_error $CMD
+    CMD="curl --fail -s https://raw.githubusercontent.com/bionitio-team/bionitio/master/license_options/${license} > ${new_project_name}/LICENSE"
+    run_command "$CMD" "Copy license file into repository"
 }
 
 
+# Replace special placeholder variables in files.
+# These allow us to substitute special values, such as the name of the author
+# into files in the new repository.
+# Variables replaced:
+#    BIONITIO_AUTHOR
+#    BIONITIO_DATE
+#    BIONITIO_EMAIL
+#    BIONITIO_LICENSE
+# The command to perform the substitution makes temporary files, which must be deleted once complete
 function substitute_placeholders {
     date_string=$(date "+%d %b %Y")
-    find ${new_project_name} -type f -print0 | xargs -0 sed -i.temporary \
-        -e "s/BIONITIO_AUTHOR/${author_name}/g" \
-        -e "s/BIONITIO_DATE/${date_string}/g" \
-        -e "s/BIONITIO_EMAIL/${author_email}/g" \
-        -e "s/BIONITIO_LICENSE/${license}/g"
-    find ${new_project_name} -name "*.temporary" -type f -delete
+    FIND_REPLACE_CMD="find ${new_project_name} -type f -print0 | xargs -0 sed -i.temporary -e \"s/BIONITIO_AUTHOR/${author_name}/g\" -e \"s/BIONITIO_DATE/${date_string}/g\" -e \"s/BIONITIO_EMAIL/${author_email}/g\" -e \"s/BIONITIO_LICENSE/${license}/g\""
+    FIND_DELETE_TEMPORARY_FILES_CMD="find ${new_project_name} -name \"*.temporary\" -type f -delete"
+    run_command "${FIND_REPLACE_CMD} && ${FIND_DELETE_TEMPORARY_FILES_CMD}" "Substituting placeholder variables in files"
 }
 
+
+# Replace "bionitio" and various capitalisations with the name of the new project
+# within all file contents and also in file and directory names.
 function rename_project {
     # Annoyingly BSD sed and GNU sed differ in handling the -i option (update in place).
     # So we opt for a portable approach which creates backups of the original ending in .temporary,
@@ -230,20 +300,17 @@ function rename_project {
     all_upper_project_name="$(tr '[:lower:]' '[:upper:]' <<< ${new_project_name})"
 
     # substitute all occurrences of bionitio in content
-    find ${new_project_name} -type f -print0 | xargs -0 sed -i.temporary  "s/bionitio/${new_project_name}/g"
-    find ${new_project_name} -name "*.temporary" -type f -delete
-
-    find ${new_project_name} -type f -print0 | xargs -0 sed -i.temporary  "s/Bionitio/${first_upper_project_name}/g"
-    find ${new_project_name} -name "*.temporary" -type f -delete
-
-    find ${new_project_name} -type f -print0 | xargs -0 sed -i.temporary  "s/BIONITIO/${all_upper_project_name}/g"
-    find ${new_project_name} -name "*.temporary" -type f -delete
+    REPLACE_IN_FILES_CMD="find ${new_project_name} -type f -print0 | xargs -0 sed -i.temporary -e \"s/bionitio/${new_project_name}/g\" -e \"s/Bionitio/${first_upper_project_name}/g\" -e \"s/BIONITIO/${all_upper_project_name}/g\""
+    REMOVE_RENAME_TEMPORARY_FILES_CMD="find ${new_project_name} -name \"*.temporary\" -type f -delete"
+    REPLACE_IN_FILES_REMOVE_TEMP_FILES_CMD="${REPLACE_IN_FILES_CMD} && ${REMOVE_RENAME_TEMPORARY_FILES_CMD}"
+    run_command "${REPLACE_IN_FILES_REMOVE_TEMP_FILES_CMD}" "Replace bionitio with ${new_project_name} in all file contents"
 
     # rename directories and files
     # sort in reverse order so that we always move a directory's contents before
     # moving that directory
     # Move into the project directory (new_project_name) and use `find .` so
     # that we don't substitute the word bionitio if it happens to occur in new_project_name
+    verbose_message "replace bionitio with ${new_project_name} in all directory and file names"
     verbose_message "renaming files and directories..."
     cd ${new_project_name}
     for old in $(find . -iname "*bionitio*" | sort -r); do
@@ -266,39 +333,46 @@ function rename_project {
 
 
 function create_project_repository {
-    INIT_CMD="git -C ${new_project_name} init $git_quiet"
-    run_command_exit_on_error "$INIT_CMD"
-    ADD_CMD="git -C ${new_project_name} add ."
-    run_command_exit_on_error "$ADD_CMD"
-    COMMIT_CMD="git -C ${new_project_name} commit $git_quiet -m \"Initial commit of ${new_project_name}; starting from bionitio (${language})\""
-    run_command_exit_on_error "$COMMIT_CMD"
+   ( cd ${new_project_name}
+      INIT_CMD="git init"
+      run_command "$INIT_CMD" "Initialise new git repository"
+      ADD_CMD="git add ."
+      run_command "$ADD_CMD" "Add code to new git repository"
+      COMMIT_CMD="git commit -m \"Initial commit of ${new_project_name}; starting from bionitio (${language})\""
+      run_command "$COMMIT_CMD" "Commit files to new git repository"
+    )
 }
 
 # If $github_username is defined (command line argument -g)
 # we attempt to make a new remote repository on github
 # with the $github_username and $new_project_name
-function optional_github_remote {
-    if [[ -z ${github_username} ]]; then
-        verbose_message "Skipping github remote creation, no github username specified, see -g command line option"
-    else
-        verbose_message "Creating github remote for user $github_username with repository name: $new_project_name"
-        GITHUB_JSON="'{\"name\": \"$new_project_name\"}'"
-	echo "If requested, enter your github password for username $github_username"
-        CREATE_REPO_CMD="curl -sS -u $github_username https://api.github.com/user/repos -d $GITHUB_JSON > /dev/null"
-        run_command_exit_on_error "$CREATE_REPO_CMD"
-	# Unfortunately "git remote add" and "git push" does not 
-	# support the --quiet command line flag or are not totally quiet when it is given
-	if [[ -z ${git_quiet} ]]; then
-            REMOTE_ADD_CMD="git -C ${new_project_name} remote add origin https://github.com/${github_username}/${new_project_name}.git"
-            PUSH_CMD="git -C ${new_project_name} push -u origin master"
-	else
-            REMOTE_ADD_CMD="git -C ${new_project_name} remote add origin https://github.com/${github_username}/${new_project_name}.git > /dev/null 2>&1"
-            PUSH_CMD="git -C ${new_project_name} push -u origin master > /dev/null 2>&1"
-	fi
-        run_command_exit_on_error "$REMOTE_ADD_CMD"
-        run_command_exit_on_error "$PUSH_CMD"
-	echo "Your new github repository is: https://github.com/${github_username}/${new_project_name}"
-    fi
+function github_remote {
+      create_github_repo 
+    ( cd ${new_project_name}
+      git_remote_add_origin 
+      git_push_origin_master 
+      echo "Your new GitHub repository is: https://github.com/${github_username}/${new_project_name}"
+    )
+}
+
+function git_push_origin_master {
+    echo "If requested for a username and password, enter your GitHub username and password"
+    PUSH_CMD="git push -u origin master"
+    #run_command "$PUSH_CMD" "Push new repository to GitHub remote"
+    run_command_interactive "$PUSH_CMD" "Push new repository to GitHub remote"
+}
+
+function git_remote_add_origin {
+    REMOTE_ADD_CMD="git remote add origin https://github.com/${github_username}/${new_project_name}.git"
+    run_command "$REMOTE_ADD_CMD" "Add GitHub remote to new git repository"
+}
+
+function create_github_repo {
+    verbose_message "Creating GitHub remote for user $github_username with repository name: $new_project_name"
+    GITHUB_JSON="'{\"name\": \"$new_project_name\"}'"
+    echo "If requested for a password, enter your GitHub password for username $github_username"
+    CREATE_REPO_CMD="curl --fail -sS -u $github_username https://api.github.com/user/repos -d $GITHUB_JSON"
+    run_command_interactive "$CREATE_REPO_CMD" "Create remote repository on GitHub"
 }
 
 # Replace incorrect references in the README.md file to the appropriate
@@ -310,49 +384,56 @@ function patch_readme {
     fi
     original_file="${new_project_name}/README.md"
     new_file="${new_project_name}/README.md.bak"
-    sed -e "s/${new_project_name}-team/${username}/g" \
-	-e "s/${new_project_name}-${language}/${new_project_name}/g" \
-	-e "s/\[.* License\]/\[${license} License\]/g" \
+    SED_CMD="sed -e \"s/${new_project_name}-team/${username}/g\" \
+	-e \"s/${new_project_name}-${language}/${new_project_name}/g\" \
+	-e \"s/\[.* License\]/\[${license} License\]/g\" \
          ${original_file} > ${new_file} \
-         && mv ${new_file} ${original_file}
+         && mv ${new_file} ${original_file}"
+    run_command "$SED_CMD" "Replace placeholders in README.md"
 }
 
+# If user specifies -v on the command line we print out extra information to stdout.
+# We also write these messages to the log file
 function verbose_message {
+    message="$1"
+    echo "${program_name}: ${message}" >&3 
     if [ "${verbose}" = true ]; then
-        echo "${program_name} $1"
+        echo "${program_name}: $1"
     fi
 }
 
+function optionally_push_github {
+    if [[ -z ${github_username} ]]; then
+        verbose_message "Skipping GitHub remote creation, no GitHub username specified, see -g command line option"
+    else
+        github_remote
+    fi
+}
 
 # 1. Parse command line arguments.
 parse_args "$@"
+verbose_message "command line: ${program_name} $*"
 # 2. Check that dependencies are met
-verbose_message "checking for dependencies"
-check_dependencies
+verbose_message "checking dependencies" 
+check_dependencies 
 # 3. Try to create new directory for the project.
-verbose_message "Checking if ${new_project_name} already exists"
+verbose_message "checking if ${new_project_name} already exists"
 check_if_directory_exists
 # 4. Clone bionitio git repository into the newly created directory.
-verbose_message "cloning bionitio repository into ${new_project_name}"
-clone_bionitio_repository
+clone_repository 
 # 5. Set the license for the project
-verbose_message "setting the license to ${license}"
-set_license
+set_license 
 # 6. Remove unneeded contents 
-verbose_message "removing unneeded contents, such as git repository and readme_includes"
 remove_unneeded_contents
 # 7. Substitute placeholder variables in all files 
-verbose_message "Substituting placeholder variables in all files"
-substitute_placeholders
+substitute_placeholders 
 # 8. Rename bionitio to the new project name.
-verbose_message "renaming references to bionitio to new project name ${new_project_name}" 
 rename_project
 # 9. Patch the README.md file to contain correct URLs and license information.
-verbose_message "patching the README.md file"
-patch_readme
+patch_readme 
 # 10. Create new repository for new project.
-verbose_message "initialising new git repository for ${new_project_name}"
 create_project_repository
 # 11. Optionally create and push to remote repostory on github
-optional_github_remote
-verbose_message "done"
+optionally_push_github
+
+verbose_message "successfully completed"

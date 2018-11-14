@@ -65,7 +65,7 @@ In the examples below `$` indicates the Unix prompt.
 One of the main goals of bionitio is to provide a good place to start writing bioinformatics command line tools. To make that easy we've provided a shell script called `bionitio-boot.sh` to help you start a new project, which is run like so:
 
 ```
-$ boot/bionitio-boot.sh -l python -n skynet -c BSD-3-Clause -g cyberdyne -a 'Miles Bennett Dyson' -e 'miles@cyberdyne.com' 
+$ boot/bionitio-boot.sh -i python -n skynet -c BSD-3-Clause -g cyberdyne -a 'Miles Bennett Dyson' -e 'miles@cyberdyne.com' 
 ```
 
 The example above starts a fresh project called `skynet` under the BSD-3-Clause license, using Python as the implementation language. A new git repository will be created in a sub-directory called `skynet` which will be initialised with a copy of bionitio and a blank revision history. All references to `bionitio` in the source code are replaced with `skynet`. Finally, the code is pushed to a new repository on [www.github.com](https://www.github.com) for the username `cyberdyne`.
@@ -79,7 +79,7 @@ When setting up a new project using `bionitio-boot.sh` You must specify the foll
 
 Required:
 
-* -l LANGUAGE: the programming language you want to use (one of: c, clojure, cpp, haskell, java, js, perl5, python, r, ruby, rust)
+* -i LANGUAGE: the programming language you want to use (one of: c, clojure, cpp, haskell, java, js, perl5, python, r, ruby, rust)
 * -n NAME: the name of your new project.
 
 Optional:
@@ -89,12 +89,13 @@ Optional:
 * -a AUTHOR-NAME: Use this name for the author of the code (will appear in source code headers and other places where a name is appropriate).
 * -e AUTHOR-EMAIL: Use this string for the email address of author of the code (will appear in source code headers and other places where an email address is appropriate).
 * -v: enable verbose mode; the script will print a lot more information about what it is doing. This is mostly useful for debugging if it does not work as expected. 
+* -l LOGFILE: log progress information to the file named LOGFILE. This may be useful for debugging purposes. 
 
 If you don't have a local copy of the script, you can run it from the web like so, using curl:
 
 ```
 $ curl -sSf https://raw.githubusercontent.com/bionitio-team/bionitio/master/boot/bionitio-boot.sh \
- | bash -s -- -l python -n skynet -c BSD-3-Clause -g cyberdyne -a 'Miles Bennett Dyson' -e 'miles@cyberdyne.com'
+ | bash -s -- -i python -n skynet -c BSD-3-Clause -g cyberdyne -a 'Miles Bennett Dyson' -e 'miles@cyberdyne.com'
 ```
 
 If you prefer not to run a shell script from the web, then you can make a local copy of the `bionitio-boot.sh` script, and run it locally, as shown below:
@@ -106,7 +107,7 @@ $ curl https://raw.githubusercontent.com/bionitio-team/bionitio/master/boot/bion
 # Inspect the script to ensure you are happy with the commands it will execute on your system.
 
 # Run the script on your local computer
-$ bash bionitio-boot.sh -l python -n skynet -c BSD-3-Clause -g cyberdyne -a 'Miles Bennett Dyson' -e 'miles@cyberdyne.com'
+$ bash bionitio-boot.sh -i python -n skynet -c BSD-3-Clause -g cyberdyne -a 'Miles Bennett Dyson' -e 'miles@cyberdyne.com'
 ```
 
 # Authors

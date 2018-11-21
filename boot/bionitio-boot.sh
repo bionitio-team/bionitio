@@ -207,14 +207,6 @@ function run_command_interactive {
         echo "$command_description failed the maximum number of retries allowed ($INTERACTIVE_NUM_RETRIES)" 
         exit_with_error "${command_to_run}, failed with exit status ${eval_exit_status}" 1 
     fi
-
-    #while [ ${eval_exit_status} -ne 0 ]; do
-    #    eval "$command_to_run" >&3
-    #    eval_exit_status=$?
-    #done
-    #if [ ${eval_exit_status} -ne 0 ]; then
-    #    exit_with_error "${command_to_run}, failed with exit status ${eval_exit_status}" 1
-    #fi
 }
 
 
@@ -358,7 +350,6 @@ function github_remote {
 function git_push_origin_master {
     echo "If requested for a username and password, enter your GitHub username and password"
     PUSH_CMD="git push -u origin master"
-    #run_command "$PUSH_CMD" "Push new repository to GitHub remote"
     run_command_interactive "$PUSH_CMD" "Push new repository to GitHub remote"
 }
 

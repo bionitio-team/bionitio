@@ -27,7 +27,7 @@ new_project_name=""
 # Verbose output
 verbose=""
 # Optional github username
-github_username=""
+github_username="BIONITIO_USERNAME"
 # Optional author name
 author_name="BIONITIO_AUTHOR"
 # Optional author email 
@@ -266,10 +266,11 @@ function set_license {
 #    BIONITIO_DATE
 #    BIONITIO_EMAIL
 #    BIONITIO_LICENSE
+#    BIONITIO_USERNAME
 # The command to perform the substitution makes temporary files, which must be deleted once complete
 function substitute_placeholders {
     date_string=$(date "+%d %b %Y")
-    FIND_REPLACE_CMD="find ${new_project_name} -type f -print0 | xargs -0 sed -i.temporary -e \"s/BIONITIO_AUTHOR/${author_name}/g\" -e \"s/BIONITIO_DATE/${date_string}/g\" -e \"s/BIONITIO_EMAIL/${author_email}/g\" -e \"s/BIONITIO_LICENSE/${license}/g\""
+    FIND_REPLACE_CMD="find ${new_project_name} -type f -print0 | xargs -0 sed -i.temporary -e \"s/BIONITIO_AUTHOR/${author_name}/g\" -e \"s/BIONITIO_DATE/${date_string}/g\" -e \"s/BIONITIO_EMAIL/${author_email}/g\" -e \"s/BIONITIO_LICENSE/${license}/g\" -e \"s/BIONITIO_USERNAME/${github_username}/g\""
     FIND_DELETE_TEMPORARY_FILES_CMD="find ${new_project_name} -name \"*.temporary\" -type f -delete"
     run_command "${FIND_REPLACE_CMD} && ${FIND_DELETE_TEMPORARY_FILES_CMD}" "Substituting placeholder variables in files"
 }
@@ -369,8 +370,8 @@ function create_github_repo {
 # Replace incorrect references in the README.md file to the appropriate
 # username, project name and license name
 function patch_readme {
-    username="USERNAME"
-    if [ -n "$github_username" ]; then
+    username="BIONITIO_USERNAME"
+    if [ "$github_username" != "BIONITIO_USERNAME" ]; then
         username="$github_username"
     fi
     original_file="${new_project_name}/README.md"
@@ -394,7 +395,7 @@ function verbose_message {
 }
 
 function optionally_push_github {
-    if [[ -z ${github_username} ]]; then
+    if [ "$github_username" == "BIONITIO_USERNAME" ]; then
         verbose_message "Skipping GitHub remote creation, no GitHub username specified, see -g command line option"
     else
         github_remote

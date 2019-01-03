@@ -26,8 +26,10 @@ license="MIT"
 new_project_name=""
 # Verbose output
 verbose=""
-# Optional github username
-github_username=""
+# Github username, may be overwritten command line argument if provided by the user 
+github_username="GITHUB_USERNAME"
+# If true, attempt to create github remote repository
+github_remote_required=false
 # Optional author name
 author_name="BIONITIO_AUTHOR"
 # Optional author email 
@@ -122,6 +124,7 @@ function parse_args {
             n)  new_project_name="${OPTARG}"
                 ;;
             g)  github_username="${OPTARG}"
+                github_remote_required=true
                 ;;
             a)  author_name="${OPTARG}"
                 ;;
@@ -266,10 +269,11 @@ function set_license {
 #    BIONITIO_DATE
 #    BIONITIO_EMAIL
 #    BIONITIO_LICENSE
+#    BIONITIO_GITHUB_USERNAME
 # The command to perform the substitution makes temporary files, which must be deleted once complete
 function substitute_placeholders {
     date_string=$(date "+%d %b %Y")
-    FIND_REPLACE_CMD="find ${new_project_name} -type f -print0 | xargs -0 sed -i.temporary -e \"s/BIONITIO_AUTHOR/${author_name}/g\" -e \"s/BIONITIO_DATE/${date_string}/g\" -e \"s/BIONITIO_EMAIL/${author_email}/g\" -e \"s/BIONITIO_LICENSE/${license}/g\""
+    FIND_REPLACE_CMD="find ${new_project_name} -type f -print0 | xargs -0 sed -i.temporary -e \"s/BIONITIO_AUTHOR/${author_name}/g\" -e \"s/BIONITIO_DATE/${date_string}/g\" -e \"s/BIONITIO_EMAIL/${author_email}/g\" -e \"s/BIONITIO_LICENSE/${license}/g\" -e \"s/BIONITIO_GITHUB_USERNAME/${github_username}/g\""
     FIND_DELETE_TEMPORARY_FILES_CMD="find ${new_project_name} -name \"*.temporary\" -type f -delete"
     run_command "${FIND_REPLACE_CMD} && ${FIND_DELETE_TEMPORARY_FILES_CMD}" "Substituting placeholder variables in files"
 }
@@ -335,7 +339,7 @@ function create_project_repository {
     )
 }
 
-# If $github_username is defined (command line argument -g)
+# If $github_remote_required is true (as a consequence of setting the command line argument -g)
 # we attempt to make a new remote repository on github
 # with the $github_username and $new_project_name
 function github_remote {
@@ -369,13 +373,9 @@ function create_github_repo {
 # Replace incorrect references in the README.md file to the appropriate
 # username, project name and license name
 function patch_readme {
-    username="USERNAME"
-    if [ -n "$github_username" ]; then
-        username="$github_username"
-    fi
     original_file="${new_project_name}/README.md"
     new_file="${new_project_name}/README.md.bak"
-    SED_CMD="sed -e \"s/${new_project_name}-team/${username}/g\" \
+    SED_CMD="sed -e \"s/${new_project_name}-team/${github_username}/g\" \
 	-e \"s/${new_project_name}-${language}/${new_project_name}/g\" \
 	-e \"s/\[.* License\]/\[${license} License\]/g\" \
          ${original_file} > ${new_file} \
@@ -394,10 +394,10 @@ function verbose_message {
 }
 
 function optionally_push_github {
-    if [[ -z ${github_username} ]]; then
-        verbose_message "Skipping GitHub remote creation, no GitHub username specified, see -g command line option"
-    else
+    if [[ ${github_remote_required} = true ]]; then
         github_remote
+    else
+        verbose_message "Skipping GitHub remote creation, no GitHub username specified, see -g command line option"
     fi
 }
 

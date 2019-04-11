@@ -58,7 +58,7 @@ However, we grant permission to users who derive their own projects from bioniti
 
 # Starting a new project from bionitio
 
-[How to set up a new bionitio project, step-by-step](https://github.com/bionitio-team/bionitio/wiki/How-to-set-up-a-new-bionitio-project).
+[How to set up a new bionitio project, step-by-step](https://github.com/bionitio-team/bionitio/wiki).
 
 In the examples below `$` indicates the Unix prompt.
 

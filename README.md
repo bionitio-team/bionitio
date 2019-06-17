@@ -82,6 +82,8 @@ Required:
 * -i LANGUAGE: the programming language you want to use (one of: c, clojure, cpp, haskell, java, js, perl5, python, r, ruby, rust)
 * -n NAME: the name of your new project.
 
+If you are new to programming, and do not know which programming language to use, then we recommend picking one of the high-level interpreted languages that are popular in Bioinformatics, such as Python or R. You may also need to seek advice from your peers about which language(s) are most appropriate for your purposes. We have tried to cover as many popular languages as possible, and apologise if your preference is not currently available. However, we  also welcome new implementations of Bionitio in languages not already covered.
+
 Optional:
 
 * -c LICENSE: the license that you want to assign to your new project (one of: Apache-2.0, BSD-2-Clause, BSD-3-Clause, GPL-2.0, GPL-3.0, MIT). If you do not specify a license then it defaults to the MIT license.

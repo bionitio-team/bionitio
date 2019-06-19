@@ -9,6 +9,8 @@ The purpose of the tool is to provide an easy-to-understand working example that
 
 An additional advantage of bionitio is that it allows us to compare programming styles in different languages and programming paradigms.
 
+Bionitio is intended to work on POSIX-like operating systems (such as Linux and OSX). It has not been tested extensively on variants of the Windows operating system.
+
 ## Languages
 
 | Language | Repository | Travis Testing Status |

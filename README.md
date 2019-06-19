@@ -23,7 +23,7 @@ Bionitio is intended to work on POSIX-like operating systems (such as Linux and 
 | Javascript | <https://github.com/bionitio-team/bionitio-js> | [![travis](https://travis-ci.org/bionitio-team/bionitio-js.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-js) | 
 | Haskell  | <https://github.com/bionitio-team/bionitio-haskell> | [![travis](https://travis-ci.org/bionitio-team/bionitio-haskell.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-haskell) | 
 | Perl 5   | <https://github.com/bionitio-team/bionitio-perl5> | [![travis](https://travis-ci.org/bionitio-team/bionitio-perl5.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-perl5) | 
-| Python   | <https://github.com/bionitio-team/bionitio-python> | [![travis](https://travis-ci.org/bionitio-team/bionitio-python.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-python) | 
+| Python 3 | <https://github.com/bionitio-team/bionitio-python> | [![travis](https://travis-ci.org/bionitio-team/bionitio-python.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-python) | 
 | R        | <https://github.com/bionitio-team/bionitio-r> | [![travis](https://travis-ci.org/bionitio-team/bionitio-r.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-r) | 
 | Ruby     | <https://github.com/bionitio-team/bionitio-ruby> | [![travis](https://travis-ci.org/bionitio-team/bionitio-ruby.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-ruby) | 
 | Rust     | <https://github.com/bionitio-team/bionitio-rust> | [![travis](https://travis-ci.org/bionitio-team/bionitio-rust.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-rust) | 

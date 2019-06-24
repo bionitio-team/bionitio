@@ -81,7 +81,7 @@ When setting up a new project using `bionitio-boot.sh` You must specify the foll
 
 Required:
 
-* -i LANGUAGE: the programming language you want to use (one of: c, clojure, cpp, c#, haskell, java, js, perl5, python, r, ruby, rust)
+* -i LANGUAGE: the programming language you want to use (one of: c, clojure, cpp, csharp, haskell, java, js, perl5, python, r, ruby, rust)
 * -n NAME: the name of your new project.
 
 If you are new to programming, and do not know which programming language to use, then we recommend picking one of the high-level interpreted languages that are popular in Bioinformatics, such as Python or R. You may also need to seek advice from your peers about which language(s) are most appropriate for your purposes. We have tried to cover as many popular languages as possible, and apologise if your preference is not currently available. However, we  also welcome new implementations of Bionitio in languages not already covered.

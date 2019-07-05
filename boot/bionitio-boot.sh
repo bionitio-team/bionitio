@@ -348,8 +348,9 @@ function create_project_repository {
       run_command "$INIT_CMD" "Initialise new git repository"
       ADD_CMD="git add ."
       run_command "$ADD_CMD" "Add code to new git repository"
-      COMMIT_CMD="git commit -m \"Initial commit of ${new_project_name}; starting from bionitio (${language})\""
-      run_command "$COMMIT_CMD" "Commit files to new git repository"
+      #COMMIT_CMD="git commit -m \"Initial commit of ${new_project_name}; starting from bionitio (${language})\""
+      #run_command "$COMMIT_CMD" "Commit files to new git repository"
+      git commit -m \"Initial commit of ${new_project_name}; starting from bionitio (${language})\"
     )
 }
 

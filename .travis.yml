@@ -9,5 +9,4 @@ dist: xenial
 script:
   # Get command line help
   - boot/bionitio-boot.sh -h 
-  # Create a new repository using Python
-  - boot/bionitio-boot.sh -i python -n skynet -c BSD-3-Clause -a 'Miles Bennett Dyson' -e 'miles@cyberdyne.com' -l logfile
+  - boot/bionitio-boot-test.sh

@@ -4,15 +4,16 @@
 
 # 1. Parse command line arguments.
 # 2. Check dependencies.
-# 3. Check if the new directory already exists, and exit if it does. 
-# 4. Clone language specific bionitio git repository into a new directory.
-# 5. Set the license for the project.
-# 6. Remove unneeded contents such as .git and readme_includes directories/files. 
-# 7. Substitute placeholder variables in all files. 
-# 8. Rename bionitio to the new project name.
-# 9. Create new git repository for new project.
-# 10. Patch the README.md file to contain correct URLs and license information.
-# 11. Optionally create new github remote and push to it.
+# 3. Check if the new project name is a valid name, and exit if it is invalid.
+# 4. Check if the new directory already exists, and exit if it does.
+# 5. Clone language specific bionitio git repository into a new directory.
+# 6. Set the license for the project.
+# 7. Remove unneeded contents such as .git and readme_includes directories/files.
+# 8. Substitute placeholder variables in all files.
+# 9. Rename bionitio to the new project name.
+# 10. Create new git repository for new project.
+# 11. Patch the README.md file to contain correct URLs and license information.
+# 12. Optionally create new github remote and push to it.
 
 #set -x
 
@@ -180,6 +181,19 @@ function check_dependencies {
 }
 
 
+function check_project_name {
+    case ${language} in
+    r)
+        if [[ ! ${new_project_name} =~ ^[A-Za-z]+[A-Za-z0-9.]*[A-Za-z0-9]$ ]]; then
+            exit_with_error "${new_project_name} is an invalid name for an R project. The project name must start with a letter and can only contain letters, numbers and periods." 1
+        fi
+        ;;
+    *)
+        ;;
+    esac
+}
+
+
 INTERACTIVE_SLEEP_RETRY_SECS=10
 INTERACTIVE_NUM_RETRIES=3
 # Execute a shell command 
@@ -322,7 +336,7 @@ function rename_project {
           exit_with_error "cannot rename directory \"$old\" to \"$new\": \"$new\" exists. Choose a different project name." 1
         fi
           mv -- "$old" "$new"
-        fi
+      fi
     done
     cd ..
 }
@@ -407,24 +421,26 @@ verbose_message "command line: ${program_name} $*"
 # 2. Check that dependencies are met
 verbose_message "checking dependencies" 
 check_dependencies 
-# 3. Try to create new directory for the project.
+# 3. Check project name is valid
+check_project_name
+# 4. Try to create new directory for the project.
 verbose_message "checking if ${new_project_name} already exists"
 check_if_directory_exists
-# 4. Clone bionitio git repository into the newly created directory.
+# 5. Clone bionitio git repository into the newly created directory.
 clone_repository 
-# 5. Set the license for the project
+# 6. Set the license for the project
 set_license 
-# 6. Remove unneeded contents 
+# 7. Remove unneeded contents 
 remove_unneeded_contents
-# 7. Substitute placeholder variables in all files 
+# 8. Substitute placeholder variables in all files 
 substitute_placeholders 
-# 8. Rename bionitio to the new project name.
+# 9. Rename bionitio to the new project name.
 rename_project
-# 9. Patch the README.md file to contain correct URLs and license information.
+# 10. Patch the README.md file to contain correct URLs and license information.
 patch_readme 
-# 10. Create new repository for new project.
+# 11. Create new repository for new project.
 create_project_repository
-# 11. Optionally create and push to remote repostory on github
+# 12. Optionally create and push to remote repostory on github
 optionally_push_github
 
 verbose_message "successfully completed"

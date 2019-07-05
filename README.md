@@ -11,6 +11,8 @@ The purpose of the tool is to provide an easy-to-understand working example that
 
 An additional advantage of bionitio is that it allows us to compare programming styles in different languages and programming paradigms.
 
+Bionitio is intended to work on POSIX-like operating systems (such as Linux and OSX). It has not been tested extensively on variants of the Windows operating system.
+
 ## Languages
 
 | Language | Repository | Travis Testing Status |
@@ -23,7 +25,7 @@ An additional advantage of bionitio is that it allows us to compare programming 
 | Javascript | <https://github.com/bionitio-team/bionitio-js> | [![travis](https://travis-ci.org/bionitio-team/bionitio-js.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-js) | 
 | Haskell  | <https://github.com/bionitio-team/bionitio-haskell> | [![travis](https://travis-ci.org/bionitio-team/bionitio-haskell.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-haskell) | 
 | Perl 5   | <https://github.com/bionitio-team/bionitio-perl5> | [![travis](https://travis-ci.org/bionitio-team/bionitio-perl5.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-perl5) | 
-| Python   | <https://github.com/bionitio-team/bionitio-python> | [![travis](https://travis-ci.org/bionitio-team/bionitio-python.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-python) | 
+| Python 3 | <https://github.com/bionitio-team/bionitio-python> | [![travis](https://travis-ci.org/bionitio-team/bionitio-python.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-python) | 
 | R        | <https://github.com/bionitio-team/bionitio-r> | [![travis](https://travis-ci.org/bionitio-team/bionitio-r.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-r) | 
 | Ruby     | <https://github.com/bionitio-team/bionitio-ruby> | [![travis](https://travis-ci.org/bionitio-team/bionitio-ruby.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-ruby) | 
 | Rust     | <https://github.com/bionitio-team/bionitio-rust> | [![travis](https://travis-ci.org/bionitio-team/bionitio-rust.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio-rust) | 
@@ -60,7 +62,7 @@ However, we grant permission to users who derive their own projects from bioniti
 
 # Starting a new project from bionitio
 
-[How to set up a new bionitio project, step-by-step](https://github.com/bionitio-team/bionitio/wiki/How-to-set-up-a-new-bionitio-project).
+[How to set up a new bionitio project, step-by-step](https://github.com/bionitio-team/bionitio/wiki).
 
 In the examples below `$` indicates the Unix prompt.
 
@@ -81,8 +83,10 @@ When setting up a new project using `bionitio-boot.sh` You must specify the foll
 
 Required:
 
-* -i LANGUAGE: the programming language you want to use (one of: c, clojure, cpp, haskell, java, js, perl5, python, r, ruby, rust)
+* -i LANGUAGE: the programming language you want to use (one of: c, clojure, cpp, csharp, haskell, java, js, perl5, python, r, ruby, rust)
 * -n NAME: the name of your new project.
+
+If you are new to programming, and do not know which programming language to use, then we recommend picking one of the high-level interpreted languages that are popular in Bioinformatics, such as Python or R. You may also need to seek advice from your peers about which language(s) are most appropriate for your purposes. We have tried to cover as many popular languages as possible, and apologise if your preference is not currently available. However, we  also welcome new implementations of Bionitio in languages not already covered.
 
 Optional:
 

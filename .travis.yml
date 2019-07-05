@@ -14,6 +14,6 @@ script:
   # - boot/bionitio-boot.sh -h 
   - docker run --rm bionitio-boot -h
     # - docker run -v `pwd`:/out --rm bionitio-boot -i python -n biodemo -c BSD-3-Clause -a 'Example Author Name' -e 'example@email.address.com' -l logfile -v
-  - docker run -v "$TRAVIS_BUILD_DIR:/out" --rm bionitio-boot -i python -n biodemo -c BSD-3-Clause -a 'Example Author Name' -e 'example@email.address.com' -l logfile -v
+  - docker run -it -v "$TRAVIS_BUILD_DIR:/out" --rm bionitio-boot -i python -n biodemo -c BSD-3-Clause -a 'Example Author Name' -e 'example@email.address.com' -l logfile -v
   - ls -latrh
   - boot/bionitio-boot-test.sh

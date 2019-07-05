@@ -1,3 +1,5 @@
+[![travis](https://travis-ci.org/bionitio-team/bionitio.svg?branch=master)](https://travis-ci.org/bionitio-team/bionitio)
+
 # Overview 
 
 Bionitio provides a template for command line bioinformatics tools in various programming languages.

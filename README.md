@@ -107,7 +107,7 @@ $ curl -sSf https://raw.githubusercontent.com/bionitio-team/bionitio/master/boot
 Or if you have Docker installed on your computer, you can run the Docker container like so:
 
 ```
-docker run -it -v "$(pwd):/out" --rm bionitio/bionitio-boot:latest \
+docker run -it -v "$(pwd):/out" --rm bionitio/bionitio-boot \
   -i python -n skynet -c BSD-3-Clause -g cyberdyne -a 'Miles Bennett Dyson' -e 'miles@cyberdyne.com'
 ```
 

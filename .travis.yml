@@ -1,10 +1,13 @@
 sudo: true
 dist: xenial
-#services:
-#  - docker
+services:
+  - docker
 language: python
 python:
   - "3.4"
+
+before_install:
+  - docker build -t bionitio-boot boot/
 
 script:
   # Get command line help

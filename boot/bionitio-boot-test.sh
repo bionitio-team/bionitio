@@ -6,13 +6,13 @@
 BOOTSTRAP_SCRIPT=$1
 
 # Run the script and create a new python repository
-${BOOTSTRAP_SCRIPT} -i python -n skynet -c BSD-3-Clause -a 'Miles Bennett Dyson' -e 'miles@cyberdyne.com' -l logfile
+${BOOTSTRAP_SCRIPT} -i python -n biodemo -c BSD-3-Clause -a 'Example Author Name' -e 'example@email.address.com' -l logfile
 
 # Install the new program into a virtual environment
-python3 -m venv skynet_dev
-source skynet_dev/bin/activate
-pip install -U skynet 
+python3 -m venv biodemo_dev
+source biodemo_dev/bin/activate
+pip install -U ./biodemo 
 
 # Run the test suite
 
-./skynet/functional_tests/skynet-test.sh -p skynet -d ./skynet/functional_tests/test_data -v
+./biodemo/functional_tests/biodemo-test.sh -p biodemo -d ./biodemo/functional_tests/test_data -v

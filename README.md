@@ -104,7 +104,14 @@ $ curl -sSf https://raw.githubusercontent.com/bionitio-team/bionitio/master/boot
  | bash -s -- -i python -n skynet -c BSD-3-Clause -g cyberdyne -a 'Miles Bennett Dyson' -e 'miles@cyberdyne.com'
 ```
 
-If you prefer not to run a shell script from the web, then you can make a local copy of the `bionitio-boot.sh` script, and run it locally, as shown below:
+Or if you have Docker installed on your computer, you can run the Docker container like so:
+
+```
+docker run -it -v "$(pwd):/out" --rm bionitio/bionitio-boot:latest \
+  -i python -n skynet -c BSD-3-Clause -g cyberdyne -a 'Miles Bennett Dyson' -e 'miles@cyberdyne.com'
+```
+
+Or you can make a local copy of the `bionitio-boot.sh` script, and run it locally, as shown below:
 
 ```
 # Copy the script to your local computer

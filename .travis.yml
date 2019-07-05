@@ -9,4 +9,4 @@ dist: xenial
 script:
   # Get command line help
   - boot/bionitio-boot.sh -h 
-  - boot/bionitio-boot-test.sh
+  - boot/bionitio-boot-test.sh boot/bionitio-boot.sh

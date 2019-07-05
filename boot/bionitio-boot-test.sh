@@ -15,4 +15,4 @@ pip install -U skynet
 
 # Run the test suite
 
-./skynet/functional_tests/skynet-test.sh -p bionitio -d ./skynet/functional_tests/test_data
+./skynet/functional_tests/skynet-test.sh -p skynet -d ./skynet/functional_tests/test_data

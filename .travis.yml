@@ -10,6 +10,9 @@ before_install:
   - docker build -t bionitio-boot boot/
 
 script:
+  # Test the bootstrap script -h option
   - docker run --rm bionitio-boot -h
+  # Test the boostrap script creating a new Python repository
   - docker run -it -v "$TRAVIS_BUILD_DIR:/out" --rm bionitio-boot -i python -n biodemo -c BSD-3-Clause -a 'Example Author Name' -e 'example@email.address.com' -l logfile -v
+  # Run the test suit for the newly created repository to check that the install worked
   - boot/bionitio-boot-test.sh

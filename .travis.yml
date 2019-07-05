@@ -14,3 +14,4 @@ script:
   # - boot/bionitio-boot.sh -h 
   # - boot/bionitio-boot-test.sh boot/bionitio-boot.sh
   - docker run --rm bionitio-boot -h
+  - docker run --rm bionitio-boot -i python -n biodemo -c BSD-3-Clause -a 'Example Author Name' -e 'example@email.address.com' -l logfile

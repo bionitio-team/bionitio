@@ -2,9 +2,9 @@ sudo: true
 dist: xenial
 #services:
 #  - docker
-#language: python
-#python:
-#  - "3.4"
+language: python
+python:
+  - "3.4"
 
 script:
   # Get command line help

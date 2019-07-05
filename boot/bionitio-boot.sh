@@ -348,7 +348,9 @@ function create_project_repository {
       run_command "$INIT_CMD" "Initialise new git repository"
       ADD_CMD="git add ."
       run_command "$ADD_CMD" "Add code to new git repository"
-      COMMIT_CMD="git commit -m \"Initial commit of ${new_project_name}; starting from bionitio (${language})\""
+      # git commit requires a user name and email, but in some cases this is not defined,
+      # such as inside a Docker container. So we use dummy values here
+      COMMIT_CMD="git -c \"user.name=BIONITIO\" -c \"user.email=bionitio\" commit -m \"Initial commit of ${new_project_name}; starting from bionitio (${language})\""
       run_command "$COMMIT_CMD" "Commit files to new git repository"
     )
 }

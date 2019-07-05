@@ -1,8 +1,5 @@
 FROM python:3.7.3-stretch
-WORKDIR /out
+WORKDIR /app
 COPY bionitio-boot.sh .
-
-RUN pwd
-RUN ls -latrh
-
-ENTRYPOINT ["./bionitio-boot.sh"]
+WORKDIR /out
+ENTRYPOINT ["/app/bionitio-boot.sh"]

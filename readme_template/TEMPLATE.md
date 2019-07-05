@@ -61,13 +61,13 @@ FILENAME	NUMSEQ	TOTAL	MIN	AVG	MAX
 file1.fa	5264	3801855	31	722	53540
 ```
 
-The example below illustrates bionitio applied to three named FASTA files called `file1.fa`, `file2.fa` and `file3.fa`:
+The example below illustrates bionitio applied to three FASTA files called `file1.fa`, `file2.fa` and `file3.fa`:
 ```
 $ bionitio file1.fa file2.fa file3.fa
 FILENAME	NUMSEQ	TOTAL	MIN	AVG	MAX
 file1.fa	5264	3801855	31	722	53540
-file2.fa	5264	3801855	31	722	53540
-file3.fa	5264	3801855	31	722	53540
+file2.fa	1245	982374	8	393	928402
+file3.fa	64	8376	102	123	212	
 ```
 
 ## Reading a single FASTA file from standard input 
@@ -92,7 +92,7 @@ stdin	5264	3801855	31	722	53540
 
 Bionitio provides an optional command line argument `--minlen` which causes it to ignore (not count) any sequences in the input FASTA files with length strictly less than the supplied value. 
 
-The example below illustrates bionitio applied to a single FASTA file called `file`.fa` with a `--minlen` filter of `1000`.
+The example below illustrates bionitio applied to a single FASTA file called `file`.fa` with a `--minlen` filter of 1000.
 ```
 $ bionitio --minlen 1000 file.fa
 FILENAME	NUMSEQ	TOTAL	MIN	AVG	MAX
@@ -105,8 +105,6 @@ If the ``--log FILE`` command line argument is specified, bionitio will output a
 
 ```
 $ bionitio --log bt.log file1.fasta file2.fasta 
-# normal bionitio output appears here
-# contents of log file displayed below
 ```
 #include "log.md"
 
@@ -128,7 +126,6 @@ Bionitio returns the following exit status values:
 * 0: The program completed successfully.
 * 1: File I/O error. This can occur if at least one of the input FASTA files cannot be opened for reading. This can occur because the file does not exist at the specified path, or bionitio does not have permission to read from the file. 
 * 2: A command line error occurred. This can happen if the user specifies an incorrect command line argument. In this circumstance bionitio will also print a usage message to the standard error device (stderr).
-* 3: Input FASTA file is invalid. This can occur if bionitio can read an input file but the file format is invalid. 
 
 
 # Testing

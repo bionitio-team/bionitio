@@ -52,6 +52,8 @@ Key features of the tool include:
 * A standard open-source software license. 
 * User documentation.
 * Code documentation.
+* [Docker](https://www.docker.com/) container.
+* [Common Workflow Language (CWL)](https://www.commonwl.org/) wrapper.
 
 Where possible we follow the recommended conventions for programming style for each implementation language.
 

@@ -13,6 +13,8 @@ An additional advantage of bionitio is that it allows us to compare programming 
 
 Bionitio is intended to work on POSIX-like operating systems (such as Linux and OSX). It has not been tested extensively on variants of the Windows operating system.
 
+Please see our publication [Bionitio: demonstrating and facilitating best practices for bioinformatics command-line software](https://academic.oup.com/gigascience/article/8/9/giz109/5572530)in GigaScience that provides a detailed discussion of the tool.
+
 ## Languages
 
 | Language | Repository | Travis Testing Status |

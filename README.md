@@ -104,9 +104,12 @@ Optional:
 If you don't have a local copy of the script, you can run it from the web like so, using curl:
 
 ```
-$ curl -sSf https://raw.githubusercontent.com/bionitio-team/bionitio/master/boot/bionitio-boot.sh \
+$ URL=https://git.io/bionitio-boot
+$ curl -sSfL $URL \
  | bash -s -- -i python -n skynet -c BSD-3-Clause -g cyberdyne -a 'Miles Bennett Dyson' -e 'miles@cyberdyne.com'
 ```
+
+Note that `https://git.io/bionitio-boot` redirects to the biontio bootstrap script on GitHub: `https://raw.githubusercontent.com/bionitio-team/bionitio/master/boot/bionitio-boot.sh`.
 
 Or if you have Docker installed on your computer, you can run the Docker container like so:
 

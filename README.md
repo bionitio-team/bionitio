@@ -122,7 +122,8 @@ Or you can make a local copy of the `bionitio-boot.sh` script, and run it locall
 
 ```
 # Copy the script to your local computer
-$ curl https://raw.githubusercontent.com/bionitio-team/bionitio/master/boot/bionitio-boot.sh > bionitio-boot.sh
+$ URL=https://git.io/bionitio-boot
+$ curl -sSfL $URL > bionitio-boot.sh
 
 # Inspect the script to ensure you are happy with the commands it will execute on your system.
 
